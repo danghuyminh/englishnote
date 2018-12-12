@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 import { createCategory, getCategories } from "../../redux/actions/CategoryAction"
 import {StyleSheet, View, TouchableHighlight, Modal} from "react-native";
 import HeaderDrawer from '../../components/HeaderDrawer'
+import CategoryCreatePopup from "./CategoryCreatePopup"
 
 class Category extends React.Component {
 
@@ -15,6 +16,7 @@ class Category extends React.Component {
 
     async componentWillMount() {
         console.log('Category List Did Mount')
+        console.log(auth.currentUser.uid);
         this.props.getCategories();
     }
 
@@ -42,28 +44,9 @@ class Category extends React.Component {
                 <Text>
                  List Content Here
                 </Text>
-
+                <CategoryCreatePopup visible={this.state.modalVisible} hide={() => {this.setModalVisible(false)}} />
                 <View style={{marginTop: 22}}>
-                    <Modal
-                        animationType="slide"
-                        transparent={false}
-                        visible={this.state.modalVisible}
-                        onRequestClose={() => {
-                            Alert.alert('Modal closed', 'Modal has been closed.');
-                        }}>
-                        <View style={{marginTop: 22}}>
-                            <View>
-                                <Text>Hello World!</Text>
 
-                                <TouchableHighlight
-                                    onPress={() => {
-                                        this.setModalVisible(!this.state.modalVisible);
-                                    }}>
-                                    <Text>Hide Modal</Text>
-                                </TouchableHighlight>
-                            </View>
-                        </View>
-                    </Modal>
 
                     <TouchableHighlight
                         onPress={() => {
