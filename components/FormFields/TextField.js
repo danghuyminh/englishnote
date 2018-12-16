@@ -11,6 +11,7 @@ const TextField = (props) => {
             <Label>{label}</Label>
             <Input
                 {...inputProps}
+                autoFocus={true}
                 onChangeText={input.onChange}
                 onBlur={input.onBlur}
                 onFocus={input.onFocus}

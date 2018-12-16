@@ -10,16 +10,23 @@ export class Sqlite {
                             'id integer primary key not null, ' +
                             'title varchar(255) not null, ' +
                             'explanation text,' +
-                            'cat_id integer not null' +
+                            'cat_id integer,' +
+                            'user_id varchar(128) not null' +
                         ');',
-                        [],
-                        (txt, result) => {
-                            resolve(result)
-                        },
-                        (txt, error) => {
-                            reject(error)
-                        }
+                        []
                     );
+                    tx.executeSql(
+                        'CREATE TABLE IF NOT EXISTS categories (' +
+                        'id integer primary key not null, ' +
+                        'title varchar(255) not null, ' +
+                        'user_id varchar(128) not null' +
+                        ');',
+                        []
+                    );
+                }, error => {
+                    reject(error)
+                }, result => {
+                    resolve(result)
                 }
             );
         })
@@ -64,11 +71,24 @@ export class Sqlite {
                 );
 
                 tx.executeSql(
+                    'DROP TABLE IF EXISTS categories',
+                    [],
+                    (txt, result) => {
+                        resolve(result)
+                    },
+                    (txt, error) => {
+                        console.log(error)
+                        reject(error)
+                    }
+                );
+
+                tx.executeSql(
                     'CREATE TABLE IF NOT EXISTS notes (' +
                     'id integer primary key not null, ' +
                     'title varchar(255) not null, ' +
                     'explanation text,' +
-                    'cat_id integer not null' +
+                    'cat_id integer,' +
+                    'user_id varchar(128) not null' +
                     ');',
                     [],
                     (txt, result) => {
