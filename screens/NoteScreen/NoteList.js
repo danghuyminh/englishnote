@@ -1,14 +1,19 @@
 import React from "react";
 import {
-    Container, Header, Title, Left, Icon, Right, Button, Body, List
+    Container, Header, Title, Left, Icon, Right, Button, Body, Footer, FooterTab, Item, Input, Content, View, Fab
 } from "native-base";
 import { connect } from 'react-redux'
 import { fetchNotes, fetchMoreNotes } from "../../redux/actions/NoteAction"
 import InfiniteNoteList from './InfiniteNoteList';
-import {StyleSheet} from "react-native";
+import {StyleSheet, Modal, Text, TouchableHighlight, Alert} from "react-native";
 
 
 class NoteList extends React.Component {
+
+    state = {
+        modalVisible: false,
+        active: false
+    };
 
     async componentWillMount() {
         console.log('NoteList Did Mount')
@@ -20,7 +25,7 @@ class NoteList extends React.Component {
     }
 
     reloadContent = () => {
-        this.props.fetchNotes();
+        this.props.fetchNotes({isRefresh: true});
     };
 
     loadMoreContent = () => {
@@ -31,10 +36,13 @@ class NoteList extends React.Component {
     deleteNote = (id) => {
         console.log(id)
     };
+    setModalVisible(visible) {
+        this.setState({modalVisible: visible});
+    }
 
     render() {
 
-        const {notes, hasMore, offset, isRefresh, isFetching, isLoadingMore, isFirstLoading} = this.props;
+        const {notes, hasMore, offset, total, limit, isRefresh, isFetching, isLoadingMore, isFirstLoading} = this.props;
 
         return (
             <Container>
@@ -51,11 +59,22 @@ class NoteList extends React.Component {
                     </Body>
                     <Right />
                 </Header>
+
+                <Header style={styles.searchContainer}>
+                    <Content>
+                        <Item rounded>
+                            <Icon active name='search' />
+                            <Input placeholder='Rounded Textbox'/>
+                        </Item>
+                    </Content>
+                </Header>
                 <Container style={styles.container}>
 
                     <InfiniteNoteList notes={notes}
                                       offset={offset}
+                                      total={total}
                                       hasMore={hasMore}
+                                      limit={limit}
                                       isRefresh={isRefresh}
                                       isFirstLoading={isFirstLoading}
                                       isFetching={isFetching}
@@ -65,17 +84,71 @@ class NoteList extends React.Component {
                                       loadMoreContent={this.loadMoreContent}/>
 
                 </Container>
+
+
+                <View style={{marginTop: 22}}>
+                    <Modal
+                        animationType="slide"
+                        transparent={false}
+                        visible={this.state.modalVisible}
+                        onRequestClose={() => {
+                            Alert.alert('Model closed', 'Modal has been closed.');
+                            this.setModalVisible(!this.state.modalVisible);
+                        }}>
+                        <View style={{marginTop: 100}}>
+                            <View>
+                                <Text>Hello World2!</Text>
+
+                                <TouchableHighlight
+                                    onPress={() => {
+                                        this.setModalVisible(!this.state.modalVisible);
+                                    }}>
+                                    <Text>Hide Modal</Text>
+                                </TouchableHighlight>
+                            </View>
+                        </View>
+                    </Modal>
+
+                    <TouchableHighlight
+                        onPress={() => {
+                            this.setModalVisible(true);
+                        }}>
+                        <Text>Show Modal</Text>
+                    </TouchableHighlight>
+                </View>
+
+
+                    <Fab
+                        active={this.state.active}
+                        direction="up"
+                        containerStyle={{ }}
+                        style={{ backgroundColor: '#5067FF' }}
+                        position="bottomRight"
+                        onPress={() => this.setState({ active: !this.state.active })}>
+                        <Icon name="share" />
+                        <Button style={{ backgroundColor: '#34A34F' }}>
+                            <Icon name="logo-whatsapp" />
+                        </Button>
+                        <Button style={{ backgroundColor: '#3B5998' }}>
+                            <Icon name="logo-facebook" />
+                        </Button>
+                        <Button disabled style={{ backgroundColor: '#DD5144' }}>
+                            <Icon name="mail" />
+                        </Button>
+                    </Fab>
+
             </Container>
         );
     }
 }
 
 function mapStateToProps (state) {
-    const {notes, hasMore, offset, total, isRefresh, isFetching, isLoadingMore, isFirstLoading} = state.sqliteGetNote;
+    const {notes, hasMore, offset, total, limit, isRefresh, isFetching, isLoadingMore, isFirstLoading} = state.sqliteGetNote;
 
     return {
         notes,
         hasMore,
+        limit,
         offset,
         total,
         isRefresh,
@@ -105,5 +178,10 @@ const styles = StyleSheet.create({
     },
     indicator: {
         textAlign: 'center',
+    },
+    searchContainer: {
+        paddingTop: 3,
+        backgroundColor: '#fff',
+        justifyContent: 'center'
     },
 });

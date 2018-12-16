@@ -35,6 +35,7 @@ export function createNote(params) {
 export function fetchNotes(params) {
 
     const isFirstLoading = params && params.isFirstLoading;
+    const isRefresh = params && params.isRefresh;
 
     return async dispatch => {
         dispatch(request());
@@ -49,8 +50,8 @@ export function fetchNotes(params) {
         }
     };
 
-    function request() { return { type: NOTE_GET_REQUEST, isFirstLoading } }
-    function success(data) { return { type: NOTE_GET_SUCCESS, data, isFirstLoading } }
+    function request() { return { type: NOTE_GET_REQUEST, isFirstLoading} }
+    function success(data) { return { type: NOTE_GET_SUCCESS, data, isFirstLoading, isRefresh } }
     function failure(error) { return { type: NOTE_GET_FAILURE, error, isFirstLoading } }
 }
 

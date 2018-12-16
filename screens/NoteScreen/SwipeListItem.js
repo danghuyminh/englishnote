@@ -78,7 +78,7 @@ export default class SwipeListItem extends Component {
                         { toggle ? (
                             <ActivityIndicator size="small" />
                         ) : (
-                            <Text note style={{fontSize: 10}}>3:43pm</Text>
+                            <Text note style={{fontSize: 10}}>{data.id}</Text>
                         )}
                     </Right>
                 </ListItem>

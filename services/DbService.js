@@ -106,13 +106,15 @@ export class Sqlite {
     static selectNotes = async (params) => {
 
         if (!params || (params && !params.limit && !params.offset)) {
+            console.log('sadasdasd')
             params = {
-                limit: '10',
-                offset: '0',
+                limit: 10,
+                offset: 0,
                 keyword: undefined
             }
         }
 
+        console.log(params);
         const {keyword} = params;
         let whereClause = keyword ? ' WHERE title like "%' + keyword + '%" OR explanation like "%' + keyword + '%"' : '';
 

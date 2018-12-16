@@ -6,20 +6,24 @@ import {
     StyleSheet
 } from 'react-native';
 import {
-    ListItem, Body, View, Text, Right, Button
+    View
 } from "native-base";
-import Swipeout from 'react-native-swipeout';
 import SwipeListItem from './SwipeListItem';
 
 export default class InfiniteNoteList extends React.Component {
 
     state = {
         notes: [],
-        offset: 0,
+        offset: -1,
         dataSource: new ListView.DataSource({
             rowHasChanged: (r1, r2) => r1 !== r2,
         })
     };
+
+    componentWillUnmount() {
+        console.log('Infinite Unmount')
+    }
+
 
     static getDerivedStateFromProps(nextProps, prevState) {
         console.log('getDerivedStateFromProps');
@@ -27,17 +31,21 @@ export default class InfiniteNoteList extends React.Component {
         if (nextProps.notes.length) {
             if (nextProps.isRefresh) {
                 notes = nextProps.notes;
-                console.log(notes)
+                return {
+                    notes,
+                    dataSource: prevState.dataSource.cloneWithRows(notes),
+                    offset: nextProps.offset
+                };
             } else if (nextProps.offset !== prevState.offset) {
                 notes = prevState.notes;
                 Array.prototype.push.apply(notes, nextProps.notes);
+                return {
+                    notes,
+                    dataSource: prevState.dataSource.cloneWithRows(notes),
+                    offset: nextProps.offset,
+                    isLoadingMoreDone: true,
+                };
             }
-
-            return {
-                dataSource: prevState.dataSource.cloneWithRows(notes),
-                notes,
-                isLoadingMoreDone: true,
-            };
         }
 
         return null;

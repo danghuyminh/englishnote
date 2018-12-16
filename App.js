@@ -37,7 +37,7 @@ export default class App extends React.Component {
 
         //Sqlite.createSampleNotes(sample30);
 
-        //this.getNotes();
+        this.getNotes();
        /* db.transaction(
             tx => {
                 tx.executeSql(
@@ -61,8 +61,8 @@ export default class App extends React.Component {
     }
 
     getNotes = async () => {
-        const notes = await Sqlite.selectNotes({limit: 10, offset: 0});
-        console.log('data')
+        const notes = await Sqlite.selectNotes({limit: 10, offset: 20});
+        console.log('data---------------------------')
         console.log(notes)
     };
 

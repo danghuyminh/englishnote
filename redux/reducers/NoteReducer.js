@@ -15,50 +15,51 @@ const initialState = {
 };
 
 export function sqliteGetNote (state = initialState, action) {
+    console.log(action.type)
     switch (action.type) {
         case NOTE_GET_REQUEST:
-            return {
-                ...state,
+            return Object.assign({}, state, {
                 isFirstLoading: action.isFirstLoading,
                 notes: [],
                 isFetching: true
-            };
+            });
         case NOTE_GET_SUCCESS:
-            const {offset, limit, total} = action.data;
-
-            return {
-                ...state,
+            return Object.assign({}, state, {
+                ...action.data,
                 ...action.data,
                 isFetching: false,
                 isFirstLoading: false,
-                hasMore: !(offset + limit === total),
-                isRefresh: true,
+                isRefresh: action.isRefresh,
+                hasMore: hasMore(action.data),
                 isLoadingMore: false
-            };
+            });
         case NOTE_GET_FAILURE:
-            return {
+            return Object.assign({}, state, {
                 isFetching: false,
                 isFirstLoading: false,
-            };
+            });
         case NOTE_MORE_REQUEST:
-            return {
-                ...state,
+            return Object.assign({}, state, {
                 notes: [],
                 isLoadingMore: true
-            };
+            });
         case NOTE_MORE_SUCCESS:
-            return {
-                ...state,
+            return Object.assign({}, state, {
                 ...action.data,
                 isLoadingMore: false,
-                hasMore: !(offset + limit === total),
-                isRefresh: false
-            };
+                isRefresh: false,
+                hasMore: hasMore(action.data)
+            });
         case NOTE_MORE_FAILURE:
-            return {
+            return Object.assign({}, state, {
                 isLoadingMore: false
-            };
+            });
         default:
             return state
     }
+}
+
+function hasMore(data) {
+    const {offset, limit, total} = data;
+    return !(offset + limit === total)
 }
