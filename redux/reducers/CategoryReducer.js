@@ -1,5 +1,6 @@
 import {
-    CATEGORY_GET_REQUEST, CATEGORY_GET_SUCCESS, CATEGORY_GET_FAILURE
+    CATEGORY_GET_REQUEST, CATEGORY_GET_SUCCESS, CATEGORY_GET_FAILURE,
+    CATEGORY_CREATE_SUCCESS
 } from '../actions/CategoryAction'
 
 const initialState = {
@@ -14,6 +15,7 @@ export function sqliteGetCategory (state = initialState, action) {
                 isFetching: true
             });
         case CATEGORY_GET_SUCCESS:
+        case CATEGORY_CREATE_SUCCESS:
             return Object.assign({}, state, {
                 ...action.data,
                 isFetching: false,

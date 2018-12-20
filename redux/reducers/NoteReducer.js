@@ -15,7 +15,6 @@ const initialState = {
 };
 
 export function sqliteGetNote (state = initialState, action) {
-    console.log(action.type)
     switch (action.type) {
         case NOTE_GET_REQUEST:
             return Object.assign({}, state, {

@@ -9,9 +9,10 @@ function createCategory(title) {
     return new Promise((resolve, reject) => {
         Sqlite.db.transaction(tx => {
                 tx.executeSql(
-                    'INSERT INTO categories (title) VALUES (?) ',
+                    'INSERT INTO categories (title, user_id) VALUES (?, ?) ',
                     [
-                        title
+                        title,
+                        auth.currentUser.uid
                     ],
                     (txt, result) => {
                         resolve(result)

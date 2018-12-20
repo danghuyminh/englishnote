@@ -36,11 +36,12 @@ export class Sqlite {
         return new Promise((resolve, reject) => {
             Sqlite.db.transaction(tx => {
                     tx.executeSql(
-                        'INSERT INTO notes (title, explanation, cat_id) VALUES (?, ?, ?) ',
+                        'INSERT INTO notes (title, explanation, cat_id, user_id) VALUES (?, ?, ?) ',
                         [
                             params.title,
                             params.explanation,
-                            params.category
+                            params.category,
+                            auth.currentUser.uid
                         ],
                         (txt, result) => {
                             resolve(result)
@@ -103,11 +104,12 @@ export class Sqlite {
                 arr.map((row) => {
                     //console.log(row)
                     tx.executeSql(
-                        'INSERT INTO notes (title, explanation, cat_id) VALUES (?, ?, ?) ',
+                        'INSERT INTO notes (title, explanation, cat_id, user_id) VALUES (?, ?, ?) ',
                         [
                             row.title,
                             row.explanation,
-                            row.cat_id
+                            row.cat_id,
+                            'SGETEjzYMmNSOB9quQeQ7FAWZzQ2'
                         ],
                         (txt, result) => {
                             resolve(result)
@@ -126,7 +128,6 @@ export class Sqlite {
     static selectNotes = async (params) => {
 
         if (!params || (params && !params.limit && !params.offset)) {
-            console.log('sadasdasd')
             params = {
                 limit: 10,
                 offset: 0,
@@ -134,9 +135,9 @@ export class Sqlite {
             }
         }
 
-        console.log(params);
         const {keyword} = params;
-        let whereClause = keyword ? ' WHERE title like "%' + keyword + '%" OR explanation like "%' + keyword + '%"' : '';
+        let whereClause = `WHERE user_id = "${auth.currentUser.uid}"`;
+        whereClause += keyword ? ' AND (title like "%' + keyword + '%" OR explanation like "%' + keyword + '%")' : '';
 
         return new Promise((resolve, reject) => {
             Sqlite.db.transaction(tx => {

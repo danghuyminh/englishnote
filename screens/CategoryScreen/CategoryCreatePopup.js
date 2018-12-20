@@ -1,20 +1,17 @@
 import React from "react";
-import {Modal, TouchableHighlight, Alert, View, StyleSheet} from "react-native";
+import {Modal, Alert, View, StyleSheet} from "react-native";
 import {
-    Container, Text, Content, Button, Footer
+    Text, Button
 } from "native-base";
 import { connect } from 'react-redux'
 import CategoryForm from "./CategoryForm";
+import Message from "../../components/Message";
 
 class CategoryCreatePopup extends React.Component {
 
-    onFormSubmit = (values) => {
-        console.log(values);
-    };
-
     render() {
-        const {visible, hide} = this.props;
-        console.log('render')
+        const {visible, hide, onFormSubmit} = this.props;
+
         return (
             <Modal
                 animationType="slide"
@@ -35,8 +32,9 @@ class CategoryCreatePopup extends React.Component {
                     <View style={{height: 50, marginLeft: 20, marginRight: 20, paddingTop: 10, borderBottomColor: '#47315a', borderBottomWidth: 1,}}>
                         <Text>Add new category</Text>
                     </View>
+                    <Message/>
                     <View style={{height: 120, marginLeft: 20, marginRight: 20, marginTop: -50, backgroundColor: 'skyblue'}}>
-                        <CategoryForm onSubmit={this.onFormSubmit}/>
+                        <CategoryForm onSubmit={onFormSubmit}/>
                     </View>
                     <View style={{height: 50, marginLeft: 20, marginRight: 20}}>
                         <Button full rounded danger onPress={hide}>

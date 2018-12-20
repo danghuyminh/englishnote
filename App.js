@@ -31,13 +31,11 @@ export default class App extends React.Component {
         global['auth'] = firebase.auth();
 
         console.ignoredYellowBox = ['Setting a timers'];
-
-
         //console.log(Expo.FileSystem.documentDirectory);
 
         //Sqlite.createSampleNotes(sample30);
 
-        this.getNotes();
+        //this.getNotes();
        /* db.transaction(
             tx => {
                 tx.executeSql(

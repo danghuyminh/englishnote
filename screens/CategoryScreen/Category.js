@@ -1,12 +1,13 @@
 import React from "react";
 import {
-    Container, Text
+    Container, Text, List, ListItem, Icon, Left, Right
 } from "native-base";
 import { connect } from 'react-redux'
 import { createCategory, getCategories } from "../../redux/actions/CategoryAction"
-import {StyleSheet, View, TouchableHighlight, Modal} from "react-native";
+import {StyleSheet, View, TouchableHighlight, FlatList} from "react-native";
 import HeaderDrawer from '../../components/HeaderDrawer'
 import CategoryCreatePopup from "./CategoryCreatePopup"
+import CategorySwipeListItem from "./CategorySwipeListItem";
 
 class Category extends React.Component {
 
@@ -16,7 +17,6 @@ class Category extends React.Component {
 
     async componentWillMount() {
         console.log('Category List Did Mount')
-        console.log(auth.currentUser.uid);
         this.props.getCategories();
     }
 
@@ -28,6 +28,16 @@ class Category extends React.Component {
         console.log('Category List Unmount')
     }
 
+    onFormSubmit = async (values) => {
+        console.log(values);
+        try {
+            await this.props.createCategory(values.title);
+            this.setModalVisible(false)
+        } catch (error) {
+            // Create category error
+        }
+    };
+
     deleteNote = (id) => {
         console.log(id)
     };
@@ -35,19 +45,20 @@ class Category extends React.Component {
     render() {
 
         const {categories, isFetching} = this.props;
+        console.log('categories');
+        console.log(categories);
 
         return (
             <Container>
                 <HeaderDrawer/>
-
-
-                <Text>
-                 List Content Here
-                </Text>
-                <CategoryCreatePopup visible={this.state.modalVisible} hide={() => {this.setModalVisible(false)}} />
+                <List style={styles.categoryList}>
+                    <FlatList
+                        data={categories}
+                        renderItem={this._renderCategoryListItem}
+                    />
+                </List>
+                <CategoryCreatePopup onFormSubmit={this.onFormSubmit} visible={this.state.modalVisible} hide={() => {this.setModalVisible(false)}} />
                 <View style={{marginTop: 22}}>
-
-
                     <TouchableHighlight
                         onPress={() => {
                             this.setModalVisible(true);
@@ -58,13 +69,24 @@ class Category extends React.Component {
             </Container>
         );
     }
+
+    _renderCategoryListItem = (data) => {
+        console.log('categoryItem');
+        return (
+            <CategorySwipeListItem data={data.item}/>
+        )
+    }
 }
 
 function mapStateToProps (state) {
     const {isFetching, categories} = state.sqliteGetCategory;
-    console.log(categories)
+
+    let modifiedCategories = categories.map((category) => {
+        category.key = category.id.toString();
+        return category;
+    });
     return {
-        categories,
+        categories: modifiedCategories,
         isFetching
     }
 }
@@ -90,4 +112,7 @@ const styles = StyleSheet.create({
     indicator: {
         textAlign: 'center',
     },
+    categoryList: {
+
+    }
 });

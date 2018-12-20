@@ -3,7 +3,8 @@ export default function AsyncReducer (state = {
 }, action) {
     if (action.type.includes('ASYNC_')) {
         return Object.assign({}, state, {
-            isFetching: action.type.includes('_REQUEST')
+            isFetching: action.type.includes('_REQUEST'),
+            errorMessage: action.type.includes('_FAILURE') ? action.error : undefined
         });
     }
     return state;
