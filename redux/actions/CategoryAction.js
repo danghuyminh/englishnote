@@ -15,7 +15,7 @@ export function createCategory(title) {
 
         try {
             const result = await CategoryService.createCategory(title);
-            dispatch(success());
+            dispatch(success(result));
             return result;
         } catch (error) {
             dispatch(failure(error.toString()));

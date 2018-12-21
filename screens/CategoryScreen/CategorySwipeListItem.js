@@ -79,15 +79,12 @@ export default class CategorySwipeListItem extends Component {
 
                     <Body>
                     <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
-
-                            <Button danger style={styles.leftSign}/>
-
-                            <Text style={toggle ? styles.itemTextBeforeDelete : undefined}>{data.title}</Text>
-
+                        <Button danger style={styles.leftRightSignButton}/>
+                        <Text style={[toggle ? styles.itemTextBeforeDelete : undefined, styles.categoryTitle]}>{data.title}</Text>
                     </View>
                     </Body>
                     <Right>
-                        <Button info style={styles.leftSign}/>
+                        <Button info style={styles.leftRightSignButton}/>
                     </Right>
                 </ListItem>
             </Swipeable>
@@ -100,24 +97,26 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    leftColumn: {
-      marginLeft: 5
+    categoryTitle: {
+      marginLeft: 20
     },
-    leftSign : {
-        width: 5
+    leftRightSignButton : {
+        width: 2,
+        marginLeft: -10,
+        marginRight: -10
 }   ,
     leftSwipeItem: {
         flex: 1,
         alignItems: 'flex-end',
         justifyContent: 'center',
-        //paddingRight: 20,
+        paddingRight: 20,
     },
     rightSwipeItem: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        //paddingLeft: 20,
-        //paddingRight: 20
+        paddingLeft: 20,
+        paddingRight: 20
     },
     leftSwipe: {
         backgroundColor: 'steelblue'

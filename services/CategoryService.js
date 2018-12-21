@@ -15,7 +15,9 @@ function createCategory(title) {
                         auth.currentUser.uid
                     ],
                     (txt, result) => {
-                        resolve(result)
+                        getCategories().then((categories) => {
+                            resolve(categories)
+                        });
                     },
                     (txt, error) => {
                         reject(error)

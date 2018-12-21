@@ -1,6 +1,6 @@
 import React from "react";
 import {
-    Container, Text, List, ListItem, Icon, Left, Right
+    Container, Text, List, Icon, Fab, Button
 } from "native-base";
 import { connect } from 'react-redux'
 import { createCategory, getCategories } from "../../redux/actions/CategoryAction"
@@ -38,7 +38,11 @@ class Category extends React.Component {
         }
     };
 
-    deleteNote = (id) => {
+    onAddButtonClick = () => {
+        this.setModalVisible(true);
+    };
+
+    deleteCategory = (id) => {
         console.log(id)
     };
 
@@ -58,14 +62,13 @@ class Category extends React.Component {
                     />
                 </List>
                 <CategoryCreatePopup onFormSubmit={this.onFormSubmit} visible={this.state.modalVisible} hide={() => {this.setModalVisible(false)}} />
-                <View style={{marginTop: 22}}>
-                    <TouchableHighlight
-                        onPress={() => {
-                            this.setModalVisible(true);
-                        }}>
-                        <Text>Show Modal</Text>
-                    </TouchableHighlight>
-                </View>
+                <Fab
+                    containerStyle={{ }}
+                    style={{ backgroundColor: '#34A34F' }}
+                    position="bottomRight"
+                    onPress={this.onAddButtonClick}>
+                    <Icon name="add" />
+                </Fab>
             </Container>
         );
     }
