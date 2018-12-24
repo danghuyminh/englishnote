@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, Alert, ActivityIndicator} from 'react-native';
+import {StyleSheet, Text, View, Alert} from 'react-native';
 import Swipeable from 'react-native-swipeable';
-import {Body, ListItem, Left, Right, Button} from "native-base";
+import {Body, ListItem, Right, Button} from "native-base";
 
 export default class CategorySwipeListItem extends Component {
 
     state = {
         leftActionActivated: false,
+        rightActionActivated: false,
         toggle: false,
         deleted: false,
     };
@@ -26,9 +27,9 @@ export default class CategorySwipeListItem extends Component {
     };
 
     delete = async () => {
-        const {data, deleteNote} = this.props;
+        const {data, onDeleteCategory} = this.props;
         try {
-            await deleteNote(data.id);
+            await onDeleteCategory(data.id);
             this.setState({
                 deleted: true
             })
@@ -44,8 +45,14 @@ export default class CategorySwipeListItem extends Component {
         })
     };
 
+    editSwipe = (id) => {
+        const {onEditButtonClick} = this.props;
+        this.setState({rightActionActivated: true});
+        onEditButtonClick(id)
+    };
+
     render() {
-        const {leftActionActivated, toggle, deleted} = this.state;
+        const {leftActionActivated, rightActionActivated, toggle, deleted} = this.state;
 
         if (deleted) {
             return null;
@@ -65,23 +72,24 @@ export default class CategorySwipeListItem extends Component {
                 )}
                 onLeftActionActivate={() => this.deleteSwipe()}
                 onLeftActionComplete={() => this.setState({toggle: !toggle})}
+                rightActionActivationDistance={160}
                 rightContent={(
-                    <View style={[styles.leftSwipeItem, leftActionActivated ? styles.leftSwipeActivated : styles.leftSwipe]}>
-                        {leftActionActivated ?
-                            <Text>delete!</Text> :
-                            <Text>pull to delete!</Text>}
+                    <View style={[styles.rightSwipeItem, rightActionActivated ? styles.rightSwipeActivated : styles.rightSwipe]}>
+                        {rightActionActivated ?
+                            <Text>edit</Text> :
+                            <Text>pull to edit!</Text>}
                     </View>
                 )}
-                onRightActionActivate={() => this.deleteSwipe()}
-                onRightActionComplete={() => this.setState({toggle: !toggle})}
+                onRightActionActivate={() => this.editSwipe(data.id)}
+                onRightActionComplete={() => this.setState({toggle: false})}
+                onRightActionDeactivate={() => this.setState({rightActionActivated: !rightActionActivated})}
             >
                 <ListItem style={[toggle ? styles.itemBeforeDelete : undefined, styles.listItem]}>
-
                     <Body>
-                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
-                        <Button danger style={styles.leftRightSignButton}/>
-                        <Text style={[toggle ? styles.itemTextBeforeDelete : undefined, styles.categoryTitle]}>{data.title}</Text>
-                    </View>
+                        <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+                            <Button danger style={styles.leftRightSignButton}/>
+                            <Text style={[toggle ? styles.itemTextBeforeDelete : undefined, styles.categoryTitle]}>{data.title}</Text>
+                        </View>
                     </Body>
                     <Right>
                         <Button info style={styles.leftRightSignButton}/>
@@ -113,16 +121,21 @@ const styles = StyleSheet.create({
     },
     rightSwipeItem: {
         flex: 1,
-        alignItems: 'center',
+        alignItems: 'flex-start',
         justifyContent: 'center',
         paddingLeft: 20,
-        paddingRight: 20
     },
     leftSwipe: {
-        backgroundColor: 'steelblue'
+        backgroundColor: '#ff3300'
     },
     leftSwipeActivated : {
-        backgroundColor: 'lightgoldenrodyellow'
+        backgroundColor: '#e62e00'
+    },
+    rightSwipe: {
+        backgroundColor: '#66ccff'
+    },
+    rightSwipeActivated : {
+        backgroundColor: '#0077b3'
     },
     itemTextExplanation : {
         color: '#8e9199',

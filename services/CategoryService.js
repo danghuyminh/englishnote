@@ -2,7 +2,9 @@ import {Sqlite} from "./DbService";
 
 export const CategoryService = {
     createCategory,
-    getCategories
+    updateCategory,
+    getCategories,
+    getCategory
 };
 
 function createCategory(title) {
@@ -18,6 +20,55 @@ function createCategory(title) {
                         getCategories().then((categories) => {
                             resolve(categories)
                         });
+                    },
+                    (txt, error) => {
+                        reject(error)
+                    }
+                );
+            }
+        );
+    })
+}
+
+function updateCategory(values) {
+    return new Promise((resolve, reject) => {
+        Sqlite.db.transaction(tx => {
+                tx.executeSql(
+                    'UPDATE categories SET title = ? WHERE id = ?',
+                    [
+                        values.title,
+                        values.id
+                    ],
+                    (txt, result) => {
+                        getCategories().then((categories) => {
+                            resolve(categories)
+                        });
+                    },
+                    (txt, error) => {
+                        reject(error)
+                    }
+                );
+            }
+        );
+    })
+}
+
+function getCategory(id) {
+    return new Promise((resolve, reject) => {
+        Sqlite.db.transaction(tx => {
+                tx.executeSql(
+                    'SELECT * FROM categories WHERE id = ? AND user_id = ?',
+                    [
+                        id,
+                        auth.currentUser.uid
+                    ],
+                    (txt, result) => {
+                        if (result.rows.length) {
+                            let {0 : category} = result.rows._array;
+                            resolve(category);
+                        } else {
+                            reject('There is no category matching the ID ' + id);
+                        }
                     },
                     (txt, error) => {
                         reject(error)

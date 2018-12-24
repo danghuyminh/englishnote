@@ -3,16 +3,16 @@ import {Field, reduxForm} from "redux-form";
 import TextField from "../../components/FormFields/TextField";
 import {maxLength128, required} from "../../helpers/Validations";
 import {
-    Button, Container, Text
+    Button, View, Text
 } from "native-base";
 
 class CategoryForm extends Component {
 
     render() {
 
-        const { handleSubmit } = this.props;
+        const { handleSubmit, update } = this.props;
         return (
-            <Container>
+            <View>
                 <Field
                     name='title'
                     component={TextField}
@@ -20,11 +20,11 @@ class CategoryForm extends Component {
                     validate={[ required, maxLength128 ]}
                 />
                 <Button full rounded success
-                        style={{ marginTop: 10 }}
+                        style={{ marginTop: update ? 60 : 20 }}
                         onPress={handleSubmit}>
-                    <Text>Add</Text>
+                    <Text>{update ? 'Update Category' : 'Create Category'}</Text>
                 </Button>
-            </Container>
+            </View>
         )
     }
 }

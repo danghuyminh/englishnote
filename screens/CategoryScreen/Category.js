@@ -1,6 +1,6 @@
 import React from "react";
 import {
-    Container, Text, List, Icon, Fab, Button
+    Container, Text, List, Icon, Fab, Button, Header, Left, Body, Title, Right
 } from "native-base";
 import { connect } from 'react-redux'
 import { createCategory, getCategories } from "../../redux/actions/CategoryAction"
@@ -8,12 +8,17 @@ import {StyleSheet, View, TouchableHighlight, FlatList} from "react-native";
 import HeaderDrawer from '../../components/HeaderDrawer'
 import CategoryCreatePopup from "./CategoryCreatePopup"
 import CategorySwipeListItem from "./CategorySwipeListItem";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 class Category extends React.Component {
 
     state = {
         modalVisible: false,
     };
+
+    static navigationOptions = ({ navigation }) => ({
+        header: null
+    });
 
     async componentWillMount() {
         console.log('Category List Did Mount')
@@ -46,19 +51,30 @@ class Category extends React.Component {
         console.log(id)
     };
 
+    onEditButtonClick = (id) => {
+        this.props.navigation.navigate('CategoryEdit', {
+            categoryId: id
+        });
+    };
+
+    onRefresh = () => {
+        this.props.getCategories();
+    };
+
     render() {
 
         const {categories, isFetching} = this.props;
-        console.log('categories');
-        console.log(categories);
 
         return (
             <Container>
-                <HeaderDrawer/>
+                <HeaderDrawer title='Categories' navigation={this.props.navigation}/>
+                <LoadingSpinner visible={isFetching} title='Loading Categories' />
                 <List style={styles.categoryList}>
                     <FlatList
                         data={categories}
                         renderItem={this._renderCategoryListItem}
+                        onRefresh={this.onRefresh}
+                        refreshing={isFetching}
                     />
                 </List>
                 <CategoryCreatePopup onFormSubmit={this.onFormSubmit} visible={this.state.modalVisible} hide={() => {this.setModalVisible(false)}} />
@@ -74,9 +90,8 @@ class Category extends React.Component {
     }
 
     _renderCategoryListItem = (data) => {
-        console.log('categoryItem');
         return (
-            <CategorySwipeListItem data={data.item}/>
+            <CategorySwipeListItem data={data.item} onDeleteCategory={this.deleteCategory} onEditButtonClick={this.onEditButtonClick}/>
         )
     }
 }
