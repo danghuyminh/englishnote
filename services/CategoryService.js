@@ -4,7 +4,8 @@ export const CategoryService = {
     createCategory,
     updateCategory,
     getCategories,
-    getCategory
+    getCategory,
+    deleteCategory
 };
 
 function createCategory(title) {
@@ -43,6 +44,27 @@ function updateCategory(values) {
                         getCategories().then((categories) => {
                             resolve(categories)
                         });
+                    },
+                    (txt, error) => {
+                        reject(error)
+                    }
+                );
+            }
+        );
+    })
+}
+
+
+function deleteCategory(id) {
+    return new Promise((resolve, reject) => {
+        Sqlite.db.transaction(tx => {
+                tx.executeSql(
+                    'DELETE FROM categories WHERE id = ?',
+                    [
+                        id
+                    ],
+                    (txt, result) => {
+                        resolve(result)
                     },
                     (txt, error) => {
                         reject(error)

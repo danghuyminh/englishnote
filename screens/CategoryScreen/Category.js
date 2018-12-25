@@ -1,14 +1,15 @@
 import React from "react";
 import {
-    Container, Text, List, Icon, Fab, Button, Header, Left, Body, Title, Right
+    Container, List, Icon, Fab, View, Text
 } from "native-base";
 import { connect } from 'react-redux'
-import { createCategory, getCategories } from "../../redux/actions/CategoryAction"
-import {StyleSheet, View, TouchableHighlight, FlatList} from "react-native";
+import { createCategory, getCategories, deleteCategory } from "../../redux/actions/CategoryAction"
+import {StyleSheet, FlatList} from "react-native";
 import HeaderDrawer from '../../components/HeaderDrawer'
 import CategoryCreatePopup from "./CategoryCreatePopup"
 import CategorySwipeListItem from "./CategorySwipeListItem";
 import LoadingSpinner from "../../components/LoadingSpinner";
+
 
 class Category extends React.Component {
 
@@ -47,14 +48,14 @@ class Category extends React.Component {
         this.setModalVisible(true);
     };
 
-    deleteCategory = (id) => {
-        console.log(id)
-    };
-
     onEditButtonClick = (id) => {
         this.props.navigation.navigate('CategoryEdit', {
             categoryId: id
         });
+    };
+
+    deleteCategory = (id) => {
+        this.props.deleteCategory(id);
     };
 
     onRefresh = () => {
@@ -75,6 +76,13 @@ class Category extends React.Component {
                         renderItem={this._renderCategoryListItem}
                         onRefresh={this.onRefresh}
                         refreshing={isFetching}
+                        ListEmptyComponent={() => {
+                            return (
+                                <View style={styles.emptyContentWrapper}>
+                                    <Text>No categories created. Let's create your first category!</Text>
+                                </View>
+                            )
+                        }}
                     />
                 </List>
                 <CategoryCreatePopup onFormSubmit={this.onFormSubmit} visible={this.state.modalVisible} hide={() => {this.setModalVisible(false)}} />
@@ -113,6 +121,7 @@ function mapDispatchToProps (dispatch) {
     return {
         getCategories: () => dispatch(getCategories()),
         createCategory: (title) => dispatch(createCategory(title)),
+        deleteCategory: (id) => dispatch(deleteCategory(id)),
     }
 }
 
@@ -130,7 +139,9 @@ const styles = StyleSheet.create({
     indicator: {
         textAlign: 'center',
     },
-    categoryList: {
-
-    }
+    emptyContentWrapper: {
+        marginLeft: 15,
+        marginRight: 15,
+        paddingTop: 15
+    },
 });

@@ -25,7 +25,6 @@ export function sqliteGetNote (state = initialState, action) {
         case NOTE_GET_SUCCESS:
             return Object.assign({}, state, {
                 ...action.data,
-                ...action.data,
                 isFetching: false,
                 isFirstLoading: false,
                 isRefresh: action.isRefresh,
@@ -60,5 +59,5 @@ export function sqliteGetNote (state = initialState, action) {
 
 function hasMore(data) {
     const {offset, limit, total} = data;
-    return !(offset + limit === total)
+    return (offset + limit <= total)
 }
