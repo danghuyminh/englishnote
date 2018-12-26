@@ -29,7 +29,8 @@ export default class InfiniteNoteList extends React.Component {
             if (nextProps.isRefresh) {
                 return {
                     notes: nextProps.notes,
-                    offset: nextProps.offset
+                    offset: nextProps.offset,
+                    isLoadingMoreDone: true
                 };
             } else if (nextProps.offset !== prevState.offset) {
                 notes = prevState.notes;
@@ -67,16 +68,13 @@ export default class InfiniteNoteList extends React.Component {
             ) : (
                 <FlatList
                     ref={listRef}
-                    initialNumToRender={10}
                     data={this.state.notes}
                     renderItem={this._renderRow}
                     refreshing={isFetching}
                     onRefresh={this.props.reloadContent}
                     onEndReachedThreshold={0.01}
-                    onEndReached={() => {
-                        console.log('isLoadingMore2');
-                        console.log(isLoadingMore);
-                        console.log(hasMore);
+                    onEndReached={
+                        () => {
                             (!isLoadingMore && hasMore) && this.loadMoreContent()
                         }
                     }

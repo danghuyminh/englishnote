@@ -59,5 +59,5 @@ export function sqliteGetNote (state = initialState, action) {
 
 function hasMore(data) {
     const {offset, limit, total} = data;
-    return (offset + limit <= total)
+    return (offset + limit < total)
 }

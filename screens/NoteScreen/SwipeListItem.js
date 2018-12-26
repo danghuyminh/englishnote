@@ -1,9 +1,9 @@
-import React, {Component} from 'react';
-import {ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert, ActivityIndicator} from 'react-native';
+import React, {PureComponent} from 'react';
+import {StyleSheet, Text, View, Alert, ActivityIndicator} from 'react-native';
 import Swipeable from 'react-native-swipeable';
-import {Body, ListItem, Left, Right, Button} from "native-base";
+import {Body, ListItem, Right, Button} from "native-base";
 
-export default class SwipeListItem extends Component {
+export default class SwipeListItem extends PureComponent {
 
     state = {
         leftActionActivated: false,

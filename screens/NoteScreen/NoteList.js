@@ -86,7 +86,6 @@ class NoteList extends React.Component {
                                       loadMoreContent={this.loadMoreContent}
                     />
                 </Container>
-
                 <Fab
                     active={this.state.active}
                     direction="up"
@@ -105,7 +104,6 @@ class NoteList extends React.Component {
                         <Icon type="Ionicons" name="ios-reorder" />
                     </Button>
                 </Fab>
-
             </Container>
         );
     }
