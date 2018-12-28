@@ -33,7 +33,7 @@ class CategoryCreatePopup extends React.Component {
                         <Text>Add new category</Text>
                     </View>
                     <Message/>
-                    <View style={{height: 120, marginLeft: 20, marginRight: 20, marginTop: -50, backgroundColor: 'skyblue'}}>
+                    <View style={{height: 120, marginLeft: 20, marginRight: 20, marginTop: -50}}>
                         <CategoryForm onSubmit={onFormSubmit}/>
                     </View>
                     <View style={{height: 50, marginLeft: 20, marginRight: 20}}>

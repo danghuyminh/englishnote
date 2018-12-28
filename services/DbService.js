@@ -63,7 +63,7 @@ export class Sqlite {
                     'DROP TABLE IF EXISTS notes',
                     [],
                     (txt, result) => {
-                        resolve(result)
+
                     },
                     (txt, error) => {
                         console.log(error)
@@ -75,7 +75,7 @@ export class Sqlite {
                     'DROP TABLE IF EXISTS categories',
                     [],
                     (txt, result) => {
-                        resolve(result)
+
                     },
                     (txt, error) => {
                         console.log(error)
@@ -93,33 +93,31 @@ export class Sqlite {
                     ');',
                     [],
                     (txt, result) => {
-                        resolve(result)
+                        arr.map((row) => {
+                            //console.log(row)
+                            tx.executeSql(
+                                'INSERT INTO notes (title, explanation, cat_id, user_id) VALUES (?, ?, ?, ?) ',
+                                [
+                                    row.title,
+                                    row.explanation,
+                                    row.cat_id,
+                                    'SGETEjzYMmNSOB9quQeQ7FAWZzQ2'
+                                ],
+                                (txt, result) => {
+                                    resolve(result)
+                                },
+                                (txt, error) => {
+                                    console.log(error)
+                                    reject(error)
+                                }
+                            );
+                        });
                     },
                     (txt, error) => {
                         console.log(error)
                         reject(error)
                     }
                 );
-
-                arr.map((row) => {
-                    //console.log(row)
-                    tx.executeSql(
-                        'INSERT INTO notes (title, explanation, cat_id, user_id) VALUES (?, ?, ?) ',
-                        [
-                            row.title,
-                            row.explanation,
-                            row.cat_id,
-                            'SGETEjzYMmNSOB9quQeQ7FAWZzQ2'
-                        ],
-                        (txt, result) => {
-                            resolve(result)
-                        },
-                        (txt, error) => {
-                            console.log(error)
-                            reject(error)
-                        }
-                    );
-                });
             }
             );
         })
@@ -136,21 +134,25 @@ export class Sqlite {
         }
 
         const {keyword} = params;
-        let whereClause = `WHERE user_id = "${auth.currentUser.uid}"`;
+
+        let whereClause = ` WHERE user_id = ?`;
         whereClause += keyword ? ' AND (title like "%' + keyword + '%" OR explanation like "%' + keyword + '%")' : '';
 
         return new Promise((resolve, reject) => {
             Sqlite.db.transaction(tx => {
                     tx.executeSql(
-                        'SELECT * FROM notes LIMIT ? OFFSET ?' + whereClause,
+                        'SELECT * FROM notes' + whereClause + ' LIMIT ? OFFSET ?',
                         [
+                            auth.currentUser.uid,
                             params.limit,
-                            params.offset
+                            params.offset,
                         ],
                         (txt, queryResult) => {
                             tx.executeSql(
                                 'SELECT count(*) as total FROM notes' + whereClause,
-                                [],
+                                [
+                                    auth.currentUser.uid
+                                ],
                                 (txt, allResult) => {
                                     resolve({
                                         notes: queryResult.rows._array,

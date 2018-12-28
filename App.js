@@ -93,7 +93,7 @@ export default class App extends React.Component {
             ]),
             Font.loadAsync({
                 // This is the font that we are using for our tab bar
-                ...Icon.Ionicons.font,
+                //...Icon.Ionicons.font,
                 // We include SpaceMono because we use it in HomeScreen.js. Feel free
                 // to remove this if you are not using it in your app
                 'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
@@ -101,8 +101,10 @@ export default class App extends React.Component {
             Font.loadAsync({
                 Roboto: require("native-base/Fonts/Roboto.ttf"),
                 Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf"),
-                Ionicons: require("@expo/vector-icons/fonts/Ionicons.ttf")
-            })
+                Ionicons: require("@expo/vector-icons/fonts/Ionicons.ttf"),
+                MaterialCommunityIcons: require('@expo/vector-icons/fonts/MaterialCommunityIcons.ttf'),
+                FontAwesome: require("@expo/vector-icons/fonts/FontAwesome.ttf"),
+            }),
         ]);
     };
 

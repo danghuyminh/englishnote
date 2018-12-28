@@ -9,6 +9,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@expo/vector-icons": "^8.0.0",
     "atob": "^2.1.2",
     "expo": "^31.0.0",
     "firebase": "^5.5.4",

@@ -1,1 +1,7 @@
 Note detail: Card
+
+onEndReached={({ distanceFromEnd }) =>
+            distanceFromEnd<=0.5&&
+            this.state.scrollBegin &&
+            this.onEndReached()
+          }

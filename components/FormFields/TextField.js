@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input, Item, Icon, Label } from 'native-base';
+import { Input, Label } from 'native-base';
 import FieldWrapper from "./FieldWrapper";
 
 const TextField = (props) => {
@@ -7,7 +7,6 @@ const TextField = (props) => {
 
     return (
         <FieldWrapper meta={meta}>
-
             <Label>{label}</Label>
             <Input
                 {...inputProps}
