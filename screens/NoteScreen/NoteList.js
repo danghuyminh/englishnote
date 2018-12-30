@@ -94,7 +94,7 @@ class NoteList extends React.Component {
                     position="bottomRight"
                     onPress={() => this.setState({ active: !this.state.active })}>
                     <Icon type="MaterialCommunityIcons" name={this.state.active ? 'reorder-vertical' : 'reorder-horizontal'} />
-                    <Button style={{ backgroundColor: '#34A34F' }}>
+                    <Button style={{ backgroundColor: '#34A34F' }} onPress={() => this.props.navigation.navigate('Home')}>
                         <Icon name="add" />
                     </Button>
                     <Button style={{ backgroundColor: '#3B5998' }}>

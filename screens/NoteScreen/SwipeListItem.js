@@ -78,7 +78,7 @@ export default class SwipeListItem extends PureComponent {
                         { toggle ? (
                             <ActivityIndicator size="small" />
                         ) : (
-                            <Text note style={{fontSize: 10}}>{data.id}</Text>
+                            <Text note style={{fontSize: 10}}>{data.created_at}</Text>
                         )}
                     </Right>
                 </ListItem>

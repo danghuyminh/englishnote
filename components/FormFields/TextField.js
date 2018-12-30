@@ -1,21 +1,31 @@
 import React from 'react';
-import { Input, Label } from 'native-base';
+import {Icon, Input, Item, Label, View} from 'native-base';
 import FieldWrapper from "./FieldWrapper";
 
 const TextField = (props) => {
-    const { input, meta, label, ...inputProps } = props;
+    const { input, meta, label, autoFocus, ...inputProps } = props;
+    const {error, touched} = meta;
 
     return (
         <FieldWrapper meta={meta}>
             <Label>{label}</Label>
+
             <Input
                 {...inputProps}
-                autoFocus={true}
+                autoFocus={autoFocus}
                 onChangeText={input.onChange}
                 onBlur={input.onBlur}
                 onFocus={input.onFocus}
                 value={input.value}
             />
+
+            {touched &&
+            (error ? (
+                    <Icon name='close-circle'/>
+                ) : (
+                    <Icon name='checkmark-circle'/>
+                ))
+            }
 
 
         </FieldWrapper>

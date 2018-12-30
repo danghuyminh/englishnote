@@ -4,7 +4,7 @@ import TextField from "../../components/FormFields/TextField";
 import SelectField from "../../components/FormFields/SelectField";
 import {maxLength128, required} from "../../helpers/Validations";
 import {
-    Button, Container, Text
+    Button, Container, Text, Content
 } from "native-base";
 
 class AddNoteForm extends Component {
@@ -26,11 +26,14 @@ class AddNoteForm extends Component {
         const { handleSubmit, isFetching } = this.props;
         return (
             <Container>
+                <Content keyboardShouldPersistTaps='never' keyboardDismissMode='on-drag'>
                 <Field
                     name='title'
                     component={TextField}
+                    autoFocus={true}
                     label="Note title"
                     validate={[ required, maxLength128 ]}
+                    keyboardShouldPersistTaps='handled' keyboardDismissMode='on-drag'
                 />
                 <Field
                     name='explanation'
@@ -53,6 +56,7 @@ class AddNoteForm extends Component {
                         onPress={handleSubmit}>
                     <Text>Save</Text>
                 </Button>
+                </Content>
             </Container>
         )
     }

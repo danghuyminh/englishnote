@@ -1,8 +1,9 @@
 import React from "react";
 import {Body, Button, Header, Icon, Left, Right, Title} from "native-base";
+import { blur } from 'redux-form';
+import connect from "react-redux/es/connect/connect";
 
-
-export default class HeaderDrawer extends React.Component {
+class HeaderDrawer extends React.Component {
 
     render() {
         const {navigation, title} = this.props;
@@ -12,7 +13,7 @@ export default class HeaderDrawer extends React.Component {
                 <Left>
                     <Button
                         transparent
-                        onPress={() => navigation.openDrawer()}>
+                        onPress={() => { navigation.openDrawer()}}>
                         <Icon name="menu" />
                     </Button>
                 </Left>
@@ -24,3 +25,14 @@ export default class HeaderDrawer extends React.Component {
         );
     }
 }
+
+function mapDispatchToProps (dispatch) {
+    return {
+        blurForm: () => {console.log('blurForm2'); dispatch(blur('form-note-create', 'title', 'draft'))}
+    }
+}
+
+export default connect(
+    null,
+    mapDispatchToProps
+)(HeaderDrawer)

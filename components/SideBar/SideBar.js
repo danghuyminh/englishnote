@@ -25,12 +25,13 @@ export default class SideBar extends React.Component {
                         </Button>
                     )}
                     <List
+                        keyboardShouldPersistTaps='always'
                         dataArray={routes}
                         renderRow={data => {
                             return (
                                 <ListItem
                                     button
-                                    onPress={() => this.props.navigation.navigate(data)}>
+                                    onPress={() => {this.props.navigation.navigate(data)}}>
                                     <Text>{data}</Text>
                                 </ListItem>
                             );

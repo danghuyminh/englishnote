@@ -1,12 +1,11 @@
 import React from "react";
 import {
-    Container, Header, Title, Left, Icon, Right, Button, Body, Content, Text, Input,
-    Card, CardItem, Item
+    Container, Button, Body, Content, Text, Card, CardItem
 } from "native-base";
 import { connect } from 'react-redux'
 import { createNote } from "../../redux/actions/NoteAction"
 import AddNoteForm from "./AddNoteForm";
-import {Sqlite} from "../../services/DbService";
+import HeaderDrawer from "../../components/HeaderDrawer";
 
 class HomeScreen extends React.Component {
 
@@ -32,20 +31,8 @@ class HomeScreen extends React.Component {
     render() {
         return (
             <Container>
-                <Header>
-                    <Left>
-                        <Button
-                            transparent
-                            onPress={() => this.props.navigation.openDrawer()}>
-                            <Icon name="menu" />
-                        </Button>
-                    </Left>
-                    <Body>
-                    <Title>HomeScreen</Title>
-                    </Body>
-                    <Right />
-                </Header>
-                <Content padder>
+                <HeaderDrawer title='Notes' navigation={this.props.navigation}/>
+                <Content padder keyboardShouldPersistTaps='never' keyboardDismissMode='on-drag'>
                     <Card>
                         <CardItem>
                             <Body>

@@ -11,6 +11,7 @@ export class Sqlite {
                             'title varchar(255) not null, ' +
                             'explanation text,' +
                             'cat_id integer,' +
+                            'created_at datetime,' +
                             'user_id varchar(128) not null' +
                         ');',
                         []
@@ -36,12 +37,13 @@ export class Sqlite {
         return new Promise((resolve, reject) => {
             Sqlite.db.transaction(tx => {
                     tx.executeSql(
-                        'INSERT INTO notes (title, explanation, cat_id, user_id) VALUES (?, ?, ?) ',
+                        'INSERT INTO notes (title, explanation, cat_id, created_at, user_id) VALUES (?, ?, ?, DateTime("now"), ?) ',
                         [
                             params.title,
                             params.explanation,
                             params.category,
-                            auth.currentUser.uid
+                            auth.currentUser.uid,
+
                         ],
                         (txt, result) => {
                             resolve(result)
@@ -89,6 +91,7 @@ export class Sqlite {
                     'title varchar(255) not null, ' +
                     'explanation text,' +
                     'cat_id integer,' +
+                    'created_at datetime,' +
                     'user_id varchar(128) not null' +
                     ');',
                     [],
@@ -96,7 +99,7 @@ export class Sqlite {
                         arr.map((row) => {
                             //console.log(row)
                             tx.executeSql(
-                                'INSERT INTO notes (title, explanation, cat_id, user_id) VALUES (?, ?, ?, ?) ',
+                                'INSERT INTO notes (title, explanation, cat_id, created_at, user_id) VALUES (?, ?, ?, DateTime("now"), ?) ',
                                 [
                                     row.title,
                                     row.explanation,

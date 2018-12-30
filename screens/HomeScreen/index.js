@@ -8,7 +8,7 @@ import SideBar from "../../components/SideBar/SideBar.js";
 import { createDrawerNavigator } from "react-navigation";
 const HomeScreenRouter = createDrawerNavigator(
     {
-        Home: { screen: NoteList },
+        Home: { screen: HomeScreen },
         Notes : { screen: NoteList },
         Categories : { screen: Category },
         ProfileScreen: { screen: Profile },
