@@ -97,7 +97,7 @@ class NoteList extends React.Component {
                     <Button style={{ backgroundColor: '#34A34F' }} onPress={() => this.props.navigation.navigate('Home')}>
                         <Icon name="add" />
                     </Button>
-                    <Button style={{ backgroundColor: '#3B5998' }}>
+                    <Button style={{ backgroundColor: '#3B5998' }} onPress={() => this.props.navigation.navigate('NoteCategory')}>
                         <Icon type="FontAwesome" name="filter" />
                     </Button>
                     <Button disabled style={{ backgroundColor: '#DD5144' }}>
@@ -111,12 +111,6 @@ class NoteList extends React.Component {
 
 function mapStateToProps (state) {
     const {notes, hasMore, offset, total, limit, isRefresh, isFetching, isLoadingMore, isFirstLoading} = state.sqliteGetNote;
-
-    console.log('offset total limit hasmore');
-    console.log(offset);
-    console.log(total);
-    console.log(limit);
-    console.log(hasMore);
     return {
         notes,
         hasMore,

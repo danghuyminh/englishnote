@@ -1,5 +1,5 @@
 import React from 'react';
-import {Icon, Input, Item, Label, View} from 'native-base';
+import {Icon, Input, Label} from 'native-base';
 import FieldWrapper from "./FieldWrapper";
 
 const TextField = (props) => {

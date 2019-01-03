@@ -1,6 +1,6 @@
-import React, { Component } from "react";
+import React from "react";
 import HomeScreen from "./HomeScreen.js";
-import NoteList from "../NoteScreen/NoteList.js";
+import NoteList from "../NoteScreen/index.js";
 import Profile from "../ProfileScreen/index";
 import Category from "../CategoryScreen/index";
 import Logout from "../AuthScreen/Logout";

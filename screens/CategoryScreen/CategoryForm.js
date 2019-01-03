@@ -10,12 +10,13 @@ class CategoryForm extends Component {
 
     render() {
 
-        const { handleSubmit, update } = this.props;
+        const { handleSubmit, update, autoFocus } = this.props;
         return (
             <View>
                 <Field
                     name='title'
                     component={TextField}
+                    autoFocus={true}
                     label="Category title"
                     validate={[ required, maxLength128 ]}
                 />
