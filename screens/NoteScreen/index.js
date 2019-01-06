@@ -6,7 +6,7 @@ import { createStackNavigator } from "react-navigation";
 export default (createStackNavigator(
     {
         NoteList,
-        NoteCategory
+        NoteCategory,
     },
     {
         initialRouteName: "NoteList",

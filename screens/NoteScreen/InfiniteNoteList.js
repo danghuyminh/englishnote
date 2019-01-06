@@ -1,4 +1,4 @@
-import React from "react";
+import React, {PureComponent} from "react";
 import {
     FlatList,
     RefreshControl,
@@ -10,7 +10,7 @@ import {
 } from "native-base";
 import SwipeListItem from './SwipeListItem';
 
-export default class InfiniteNoteList extends React.Component {
+export default class InfiniteNoteList extends PureComponent {
 
     state = {
         notes: [],
@@ -24,6 +24,8 @@ export default class InfiniteNoteList extends React.Component {
 
     static getDerivedStateFromProps(nextProps, prevState) {
         console.log('getDerivedStateFromProps');
+        console.log(nextProps.isRefresh)
+        console.log(nextProps.notes)
         let notes = [];
         if (nextProps.notes.length) {
             if (nextProps.isRefresh) {
@@ -58,6 +60,7 @@ export default class InfiniteNoteList extends React.Component {
     };
 
     render() {
+        console.log('render list');
         const {isFirstLoading, isFetching, isLoadingMore, hasMore, listRef} = this.props;
         return (
             <React.Fragment>

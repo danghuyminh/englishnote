@@ -20,6 +20,8 @@ export const CATEGORY_GET_SINGLE_REQUEST   = 'ASYNC_CATEGORY_GET_SINGLE_REQUEST'
 export const CATEGORY_GET_SINGLE_SUCCESS   = 'ASYNC_CATEGORY_GET_SINGLE_SUCCESS';
 export const CATEGORY_GET_SINGLE_FAILURE   = 'ASYNC_CATEGORY_GET_SINGLE_FAILURE';
 
+export const CATEGORY_SELECT   = 'CATEGORY_SELECT';
+
 export function createCategory(title) {
 
     return async dispatch => {
@@ -118,4 +120,13 @@ export function getCategories(params) {
     function request() { return { type: CATEGORY_GET_REQUEST, isFirstLoading } }
     function success(data) { return { type: CATEGORY_GET_SUCCESS, data, isFirstLoading } }
     function failure(error) { return { type: CATEGORY_GET_FAILURE, error, isFirstLoading } }
+}
+
+
+export function selectCategory(id) {
+
+   return {
+       type: CATEGORY_SELECT,
+       categoryId: id
+   }
 }

@@ -2,6 +2,7 @@ import {
     NOTE_GET_REQUEST, NOTE_GET_SUCCESS, NOTE_GET_FAILURE,
     NOTE_MORE_REQUEST, NOTE_MORE_SUCCESS, NOTE_MORE_FAILURE
 } from '../actions/NoteAction'
+import {CATEGORY_SELECT} from "../actions/CategoryAction";
 
 const initialState = {
     notes: [],
@@ -51,6 +52,19 @@ export function sqliteGetNote (state = initialState, action) {
         case NOTE_MORE_FAILURE:
             return Object.assign({}, state, {
                 isLoadingMore: false
+            });
+        default:
+            return state
+    }
+}
+
+export function sqliteGetNoteCategory (state = {
+    categoryId: undefined
+}, action) {
+    switch (action.type) {
+        case CATEGORY_SELECT:
+            return Object.assign({}, state, {
+                categoryId: action.categoryId
             });
         default:
             return state

@@ -70,7 +70,7 @@ class Category extends React.Component {
             <Container>
                 <HeaderDrawer title='Categories' navigation={this.props.navigation}/>
                 <LoadingSpinner visible={isFetching} title='Loading Categories' />
-                <List style={styles.categoryList}>
+                <List>
                     <FlatList
                         data={categories}
                         renderItem={this._renderCategoryListItem}

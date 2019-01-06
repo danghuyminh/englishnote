@@ -15,8 +15,7 @@ class NoteList extends React.Component {
     state = {
         modalVisible: false,
         active: false,
-        keyword: undefined,
-        category: undefined
+        keyword: undefined
     };
 
     listRef = React.createRef();
@@ -24,6 +23,14 @@ class NoteList extends React.Component {
     static navigationOptions = ({ navigation }) => ({
         header: null
     });
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+       if (prevProps.categoryId !== this.props.categoryId) {
+           this._scrollToTop();
+           this.props.fetchNotes({isRefresh: true, categoryId: this.props.categoryId});
+           this.setState({active: false})
+       }
+    }
 
     async componentWillMount() {
         console.log('NoteList Did Mount')
@@ -35,12 +42,12 @@ class NoteList extends React.Component {
     }
 
     reloadContent = () => {
-        this.props.fetchNotes({isRefresh: true});
+        this.props.fetchNotes({isRefresh: true, categoryId: this.props.categoryId});
     };
 
     loadMoreContent = () => {
        const {offset} = this.props;
-       this.props.fetchMoreNotes({limit: 10, offset: (10 + parseInt(offset)), keyword: this.state.keyword});
+       this.props.fetchMoreNotes({limit: 10, offset: (10 + parseInt(offset)), keyword: this.state.keyword, categoryId: this.props.categoryId});
     };
 
     deleteNote = (id) => {
@@ -49,8 +56,8 @@ class NoteList extends React.Component {
 
     onSearchSubmit = (values) => {
         const {keyword} = values;
-        this.listRef.current.scrollToIndex({index: 0, animated: true});
-        this.props.fetchNotes({isRefresh: true, limit: 10, offset: 0, keyword: keyword ? keyword : undefined});
+        this._scrollToTop();
+        this.props.fetchNotes({isRefresh: true, limit: 10, offset: 0, keyword, categoryId: this.props.categoryId});
         this.setState({
             keyword
         })
@@ -62,8 +69,12 @@ class NoteList extends React.Component {
         console.log(notes)
     };
 
-    render() {
+    _scrollToTop = () => {
+        this.listRef.current.scrollToIndex({index: 0, animated: true});
+    };
 
+    render() {
+        console.log('render NoteList')
         const {notes, hasMore, offset, total, limit, isRefresh, isFetching, isLoadingMore, isFirstLoading} = this.props;
 
         return (
@@ -111,6 +122,8 @@ class NoteList extends React.Component {
 
 function mapStateToProps (state) {
     const {notes, hasMore, offset, total, limit, isRefresh, isFetching, isLoadingMore, isFirstLoading} = state.sqliteGetNote;
+    const {categoryId} = state.sqliteGetNoteCategory;
+
     return {
         notes,
         hasMore,
@@ -120,7 +133,8 @@ function mapStateToProps (state) {
         isRefresh,
         isFetching,
         isLoadingMore,
-        isFirstLoading
+        isFirstLoading,
+        categoryId
     }
 }
 

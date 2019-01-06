@@ -1,50 +1,53 @@
 import React from "react";
 import {StyleSheet} from "react-native";
-import { View, Text } from "native-base";
+import {View} from "native-base";
 import { connect } from 'react-redux'
 import HeaderGoBack from "../../components/HeaderGoBack";
-import {getCategory, updateCategory} from "../../redux/actions/CategoryAction";
-import Message from "../../components/Message";
+import {getCategories, selectCategory} from "../../redux/actions/CategoryAction";
 import LoadingSpinner from "../../components/LoadingSpinner"
+import SelectionList from "../../components/SelectionList";
 
 class NoteCategory extends React.Component {
 
     async componentWillMount() {
-       /* const {categoryId} = this.props.navigation.state.params;
-        try {
-            await this.props.getCategory(categoryId);
-        } catch (error) {
-            // This may throw an error
-        }*/
+        this.props.getCategories();
     }
-
 
     static navigationOptions = ({ navigation }) => ({header: <HeaderGoBack navigation={navigation} title='Select Category' />});
 
+    onItemSelect = (item) => {
+        this.props.selectCategory(item.id === 'all' ? undefined : item.id);
+        this.props.navigation.navigate('NoteList');
+    };
+
     render() {
-        const {data, isFetching} = this.props;
+        const {categories, categoryId, isFetching} = this.props;
 
         return (
             <View style={styles.container}>
-               <Text>This is just a test text</Text>
+                <LoadingSpinner visible={isFetching} title='Loading Categories' />
+                <SelectionList selected={categoryId} items={categories} onItemSelect={this.onItemSelect} />
             </View>
         )
     }
 }
 
 function mapStateToProps (state) {
-    //const {isFetching, data} = state.sqliteGetCategory;
+    const {isFetching, categories} = state.sqliteGetCategory;
+    const {categoryId} = state.sqliteGetNoteCategory;
+
+    let modifedCategories = categories.slice();
+    modifedCategories.unshift({id: 'all', title: "All categories"});
 
     return {
-        /*isFetching,
-        data*/
+        isFetching, categories: modifedCategories, categoryId
     }
 }
 
 function mapDispatchToProps (dispatch) {
     return {
-        getCategory:    (categoryId) => dispatch(getCategory(categoryId)),
-        updateCategory: (values)     => dispatch(updateCategory(values))
+        getCategories: () => dispatch(getCategories()),
+        selectCategory: (categoryId) => dispatch(selectCategory(categoryId))
     }
 }
 
@@ -59,7 +62,6 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'stretch',
-        paddingLeft: 15,
-        paddingRight: 15
+
     }
 });

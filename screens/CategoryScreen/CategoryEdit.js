@@ -71,6 +71,7 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         alignItems: 'stretch',
         paddingLeft: 15,
-        paddingRight: 15
+        paddingRight: 15,
+        marginTop: 15
     }
 });

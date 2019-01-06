@@ -57,7 +57,7 @@ export class Sqlite {
         })
     };
 
-    static createSampleNotes = (arr) => {
+    static createSampleNotes = (arr, catArr) => {
         return new Promise((resolve, reject) => {
 
             Sqlite.db.transaction(tx => {
@@ -121,6 +121,38 @@ export class Sqlite {
                         reject(error)
                     }
                 );
+
+                tx.executeSql(
+                    'CREATE TABLE IF NOT EXISTS categories (' +
+                    'id integer primary key not null, ' +
+                    'title varchar(255) not null, ' +
+                    'user_id varchar(128) not null' +
+                    ');',
+                    [],
+                    (txt, result) => {
+                        catArr.map((row) => {
+                            //console.log(row)
+                            tx.executeSql(
+                                'INSERT INTO categories (title, user_id) VALUES (?, ?) ',
+                                [
+                                    row.title,
+                                    'SGETEjzYMmNSOB9quQeQ7FAWZzQ2'
+                                ],
+                                (txt, result) => {
+                                    resolve(result)
+                                },
+                                (txt, error) => {
+                                    console.log(error)
+                                    reject(error)
+                                }
+                            );
+                        });
+                    },
+                    (txt, error) => {
+                        console.log(error)
+                        reject(error)
+                    }
+                );
             }
             );
         })
@@ -129,17 +161,18 @@ export class Sqlite {
     static selectNotes = async (params) => {
 
         if (!params || (params && !params.limit && !params.offset)) {
-            params = {
+            params = Object.assign({}, params, {
                 limit: 10,
                 offset: 0,
                 keyword: undefined
-            }
+            });
         }
 
-        const {keyword} = params;
+        const {keyword, categoryId} = params;
 
         let whereClause = ` WHERE user_id = ?`;
         whereClause += keyword ? ' AND (title like "%' + keyword + '%" OR explanation like "%' + keyword + '%")' : '';
+        whereClause += categoryId ? ` AND cat_id = ${categoryId}` : '';
 
         return new Promise((resolve, reject) => {
             Sqlite.db.transaction(tx => {

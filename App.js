@@ -9,6 +9,7 @@ import InitScreen from "./screens/LoadingScreen";
 import {Root} from 'native-base';
 import {Sqlite} from "./services/DbService";
 import sample30 from "./screens/NoteScreen/sample30";
+import sampleCat from "./screens/NoteScreen/sampleCat";
 
 export default class App extends React.Component {
     state = {
@@ -33,7 +34,7 @@ export default class App extends React.Component {
         console.ignoredYellowBox = ['Setting a timers'];
         //console.log(Expo.FileSystem.documentDirectory);
 
-        //Sqlite.createSampleNotes(sample30);
+        //Sqlite.createSampleNotes(sample30, sampleCat);
 
         //this.getNotes();
        /* db.transaction(

@@ -2,6 +2,7 @@ import React, {PureComponent} from 'react';
 import {StyleSheet, Text, View, Alert, ActivityIndicator} from 'react-native';
 import Swipeable from 'react-native-swipeable';
 import {Body, ListItem, Right, Button} from "native-base";
+import Moment from 'moment';
 
 export default class SwipeListItem extends PureComponent {
 
@@ -52,7 +53,7 @@ export default class SwipeListItem extends PureComponent {
         }
 
         const {data} = this.props;
-
+        console.log(data.created_at + '----------------------')
         return (
             <Swipeable
                 leftActionActivationDistance={220}
@@ -66,21 +67,24 @@ export default class SwipeListItem extends PureComponent {
                 onLeftActionActivate={() => this.deleteSwipe()}
                 onLeftActionComplete={() => this.setState({toggle: !toggle})}
                 rightButtons={[
-                    <Button info style={styles.rightSwipeItem}><Text>Light</Text></Button>
+                    <Button info style={styles.rightSwipeItem}><Text>Edit</Text></Button>
                 ]}
             >
                 <ListItem style={[toggle ? styles.itemBeforeDelete : undefined, styles.listItem]}>
                     <Body>
                         <Text style={toggle ? styles.itemTextBeforeDelete : undefined}>{data.title}</Text>
                         <Text style={toggle ? styles.itemTextBeforeDelete : styles.itemTextExplanation} numberOfLines={2} note>{data.explanation}</Text>
+                        <Text style={styles.itemDate}>
+                            {new Moment(data.created_at).format("dddd, DD MMM YYYY")}
+                        </Text>
+
+
                     </Body>
-                    <Right>
-                        { toggle ? (
+                    {toggle && (
+                        <Right>
                             <ActivityIndicator size="small" />
-                        ) : (
-                            <Text note style={{fontSize: 10}}>{data.created_at}</Text>
-                        )}
-                    </Right>
+                        </Right>
+                    )}
                 </ListItem>
             </Swipeable>
         );
@@ -106,10 +110,10 @@ const styles = StyleSheet.create({
         paddingRight: 20
     },
     leftSwipe: {
-        backgroundColor: 'steelblue'
+        backgroundColor: '#ff3300'
     },
     leftSwipeActivated : {
-        backgroundColor: 'lightgoldenrodyellow'
+        backgroundColor: '#e62e00'
     },
     itemTextExplanation : {
         color: '#8e9199',
@@ -121,4 +125,8 @@ const styles = StyleSheet.create({
         borderBottomColor: 'red',
         borderBottomWidth: StyleSheet.hairlineWidth,
     },
+    itemDate: {
+        marginTop: 5,
+        color: '#cdb0f4'
+    }
 });
