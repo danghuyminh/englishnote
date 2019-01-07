@@ -163,8 +163,7 @@ export class Sqlite {
         if (!params || (params && !params.limit && !params.offset)) {
             params = Object.assign({}, params, {
                 limit: 10,
-                offset: 0,
-                keyword: undefined
+                offset: 0
             });
         }
 

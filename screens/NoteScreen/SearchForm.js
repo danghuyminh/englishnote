@@ -10,6 +10,7 @@ import {StyleSheet} from "react-native";
 class SearchForm extends Component {
 
     render() {
+        console.log('search form 22')
         const { handleSubmit } = this.props;
         return (
             <Header style={styles.searchContainer}>

@@ -24,8 +24,7 @@ export default class InfiniteNoteList extends PureComponent {
 
     static getDerivedStateFromProps(nextProps, prevState) {
         console.log('getDerivedStateFromProps');
-        console.log(nextProps.isRefresh)
-        console.log(nextProps.notes)
+        console.log(nextProps.notes.length)
         let notes = [];
         if (nextProps.notes.length) {
             if (nextProps.isRefresh) {
@@ -41,6 +40,16 @@ export default class InfiniteNoteList extends PureComponent {
                     notes,
                     offset: nextProps.offset,
                     isLoadingMoreDone: true,
+                };
+            }
+        } else {
+            console.log('When notes is empty');
+            console.log(nextProps.isRefresh)
+            if (nextProps.isRefresh) {
+                return {
+                    notes: nextProps.notes,
+                    offset: 0,
+                    isLoadingMoreDone: true
                 };
             }
         }
@@ -60,7 +69,7 @@ export default class InfiniteNoteList extends PureComponent {
     };
 
     render() {
-        console.log('render list');
+        console.log('render list*******');
         const {isFirstLoading, isFetching, isLoadingMore, hasMore, listRef} = this.props;
         return (
             <React.Fragment>

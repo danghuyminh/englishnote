@@ -27,7 +27,7 @@ class NoteList extends React.Component {
     componentDidUpdate(prevProps, prevState, snapshot) {
        if (prevProps.categoryId !== this.props.categoryId) {
            this._scrollToTop();
-           this.props.fetchNotes({isRefresh: true, categoryId: this.props.categoryId});
+           this.props.fetchNotes({isRefresh: true, keyword: prevState.keyword, categoryId: this.props.categoryId});
            this.setState({active: false})
        }
     }
@@ -42,7 +42,7 @@ class NoteList extends React.Component {
     }
 
     reloadContent = () => {
-        this.props.fetchNotes({isRefresh: true, categoryId: this.props.categoryId});
+        this.props.fetchNotes({isRefresh: true, keyword: this.state.keyword, categoryId: this.props.categoryId});
     };
 
     loadMoreContent = () => {

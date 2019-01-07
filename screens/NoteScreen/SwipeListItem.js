@@ -53,7 +53,7 @@ export default class SwipeListItem extends PureComponent {
         }
 
         const {data} = this.props;
-        console.log(data.created_at + '----------------------')
+
         return (
             <Swipeable
                 leftActionActivationDistance={220}

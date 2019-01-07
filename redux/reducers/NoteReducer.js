@@ -16,11 +16,11 @@ const initialState = {
 };
 
 export function sqliteGetNote (state = initialState, action) {
+    console.log(action.type)
     switch (action.type) {
         case NOTE_GET_REQUEST:
             return Object.assign({}, state, {
                 isFirstLoading: action.isFirstLoading,
-                notes: [],
                 isFetching: true
             });
         case NOTE_GET_SUCCESS:
@@ -40,6 +40,7 @@ export function sqliteGetNote (state = initialState, action) {
         case NOTE_MORE_REQUEST:
             return Object.assign({}, state, {
                 notes: [],
+                isRefresh: false,
                 isLoadingMore: true
             });
         case NOTE_MORE_SUCCESS:

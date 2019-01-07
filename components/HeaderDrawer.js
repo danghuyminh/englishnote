@@ -1,11 +1,10 @@
-import React from "react";
+import React, {PureComponent} from "react";
 import {Body, Button, Header, Icon, Left, Right, Title} from "native-base";
-import { blur } from 'redux-form';
-import connect from "react-redux/es/connect/connect";
 
-class HeaderDrawer extends React.Component {
+export default class HeaderDrawer extends PureComponent {
 
     render() {
+        console.log('header drwaer render')
         const {navigation, title} = this.props;
 
         return (
@@ -25,14 +24,3 @@ class HeaderDrawer extends React.Component {
         );
     }
 }
-
-function mapDispatchToProps (dispatch) {
-    return {
-        blurForm: () => {console.log('blurForm2'); dispatch(blur('form-note-create', 'title', 'draft'))}
-    }
-}
-
-export default connect(
-    null,
-    mapDispatchToProps
-)(HeaderDrawer)
