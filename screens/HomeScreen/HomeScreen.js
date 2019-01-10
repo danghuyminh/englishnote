@@ -43,7 +43,7 @@ class HomeScreen extends React.Component {
                     <AddNoteForm onSubmit={this.handleSubmit} />
                     <Button full rounded dark
                             style={{ marginTop: 10 }}
-                            onPress={() => this.props.navigation.navigate("Chat")}>
+                            onPress={() => this.props.navigation.navigate("NoteList")}>
                         <Text>View Notes</Text>
                     </Button>
                 </Content>

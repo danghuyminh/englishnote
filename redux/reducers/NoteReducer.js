@@ -21,7 +21,10 @@ export function sqliteGetNote (state = initialState, action) {
         case NOTE_GET_REQUEST:
             return Object.assign({}, state, {
                 isFirstLoading: action.isFirstLoading,
-                isFetching: true
+                isFetching: true,
+                isRefresh: action.isRefresh,
+                notes: [],
+                hasMore: false,
             });
         case NOTE_GET_SUCCESS:
             return Object.assign({}, state, {
@@ -39,7 +42,7 @@ export function sqliteGetNote (state = initialState, action) {
             });
         case NOTE_MORE_REQUEST:
             return Object.assign({}, state, {
-                notes: [],
+                //notes: [],
                 isRefresh: false,
                 isLoadingMore: true
             });

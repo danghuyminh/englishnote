@@ -9,13 +9,16 @@ import {
     View, Text
 } from "native-base";
 import SwipeListItem from './SwipeListItem';
+import _ from "lodash";
 
 export default class InfiniteNoteList extends PureComponent {
 
     state = {
         notes: [],
-        offset: -1
+        offset: -1,
     };
+
+    moreEnabled = false;
 
     componentWillUnmount() {
         console.log('Infinite Unmount')
@@ -26,6 +29,7 @@ export default class InfiniteNoteList extends PureComponent {
         console.log('getDerivedStateFromProps');
         console.log(nextProps.notes.length)
         let notes = [];
+
         if (nextProps.notes.length) {
             if (nextProps.isRefresh) {
                 return {
@@ -57,7 +61,13 @@ export default class InfiniteNoteList extends PureComponent {
         return null;
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        this.moreEnabled = false;
+    }
+
+
     loadMoreContent = () => {
+        console.log('loadmorehere')
         if (this.state.isLoadingMoreDone) {
             this.setState({
                 isLoadingMoreDone: false
@@ -69,8 +79,9 @@ export default class InfiniteNoteList extends PureComponent {
     };
 
     render() {
-        console.log('render list*******');
-        const {isFirstLoading, isFetching, isLoadingMore, hasMore, listRef} = this.props;
+        console.log('render list********');
+        const {isFirstLoading, isFetching, isLoadingMore, hasMore, listRef, isRefresh} = this.props;
+
         return (
             <React.Fragment>
             { isFirstLoading ? (
@@ -84,11 +95,22 @@ export default class InfiniteNoteList extends PureComponent {
                     renderItem={this._renderRow}
                     refreshing={isFetching}
                     onRefresh={this.props.reloadContent}
-                    onEndReachedThreshold={0.01}
+                    onScrollBeginDrag={() =>  {console.log('scroll drag');this.moreEnabled = true}}
+                    onEndReachedThreshold={0.1}
                     onEndReached={
                         () => {
-                            (!isLoadingMore && hasMore) && this.loadMoreContent()
+                            console.log('asdasdas');
+                            console.log(this.moreEnabled)
+                            if (this.moreEnabled) {
+                                console.log(isLoadingMore);
+                                console.log(hasMore);
+
+                                    if (!isLoadingMore && hasMore)
+                                        this.loadMoreContent()
+
+                            }
                         }
+
                     }
                     ListFooterComponent={() => {
                         return (
@@ -102,7 +124,11 @@ export default class InfiniteNoteList extends PureComponent {
                     ListEmptyComponent={() => {
                         return (
                             <View style={styles.emptyContentWrapper}>
-                                <Text>No notes created. Let's create your first note!</Text>
+                                { isRefresh ? (
+                                    <Text>Reloading...</Text>
+                                ) : (
+                                    <Text>No notes created. Let's create your first note!</Text>
+                                )}
                             </View>
                         )
                     }}

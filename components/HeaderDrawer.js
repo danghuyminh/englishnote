@@ -8,7 +8,7 @@ export default class HeaderDrawer extends PureComponent {
         const {navigation, title} = this.props;
 
         return (
-            <Header>
+            <Header style={{elevation: 4}}>
                 <Left>
                     <Button
                         transparent

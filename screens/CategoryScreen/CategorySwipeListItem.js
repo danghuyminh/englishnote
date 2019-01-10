@@ -62,7 +62,7 @@ export default class CategorySwipeListItem extends Component {
 
         return (
             <Swipeable
-                leftActionActivationDistance={220}
+                leftActionActivationDistance={120}
                 leftContent={(
                     <View style={[styles.leftSwipeItem, leftActionActivated ? styles.leftSwipeActivated : styles.leftSwipe]}>
                         {leftActionActivated ?
@@ -72,7 +72,7 @@ export default class CategorySwipeListItem extends Component {
                 )}
                 onLeftActionActivate={() => this.deleteSwipe()}
                 onLeftActionComplete={() => this.setState({toggle: !toggle})}
-                rightActionActivationDistance={160}
+                rightActionActivationDistance={120}
                 rightContent={(
                     <View style={[styles.rightSwipeItem, rightActionActivated ? styles.rightSwipeActivated : styles.rightSwipe]}>
                         {rightActionActivated ?

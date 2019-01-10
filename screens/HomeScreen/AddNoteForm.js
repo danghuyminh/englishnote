@@ -49,7 +49,6 @@ class AddNoteForm extends Component {
                     items={categories}
                     uniqueKey="cat_"
                     label="Category"
-                    validate={[ required ]}
                 />
                 <Button full rounded success
                         style={{ marginTop: 10 }}

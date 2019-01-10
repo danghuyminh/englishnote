@@ -56,7 +56,7 @@ export default class SwipeListItem extends PureComponent {
 
         return (
             <Swipeable
-                leftActionActivationDistance={220}
+                leftActionActivationDistance={120}
                 leftContent={(
                     <View style={[styles.leftSwipeItem, leftActionActivated ? styles.leftSwipeActivated : styles.leftSwipe]}>
                         {leftActionActivated ?
@@ -77,7 +77,7 @@ export default class SwipeListItem extends PureComponent {
                         <Text style={styles.itemDate}>
                             {new Moment(data.created_at).format("dddd, DD MMM YYYY")}
                         </Text>
-
+                        <Text>{data.cat_id}</Text>
 
                     </Body>
                     {toggle && (

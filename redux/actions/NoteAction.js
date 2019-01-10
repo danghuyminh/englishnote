@@ -50,7 +50,7 @@ export function fetchNotes(params) {
         }
     };
 
-    function request() { return { type: NOTE_GET_REQUEST, isFirstLoading} }
+    function request() { return { type: NOTE_GET_REQUEST, isFirstLoading, isRefresh} }
     function success(data) { return { type: NOTE_GET_SUCCESS, data, isFirstLoading, isRefresh } }
     function failure(error) { return { type: NOTE_GET_FAILURE, error, isFirstLoading } }
 }

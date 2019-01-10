@@ -1,6 +1,6 @@
 import React from "react";
 import {
-    Container, Header, Title, Left, Icon, Right, Button, Body, Item, Input, Content, View, Fab
+    Container, Icon, Button, View, Fab
 } from "native-base";
 import { connect } from 'react-redux'
 import { fetchNotes, fetchMoreNotes } from "../../redux/actions/NoteAction"
@@ -9,6 +9,7 @@ import {StyleSheet} from "react-native";
 import {Sqlite} from "../../services/DbService";
 import HeaderDrawer from "../../components/HeaderDrawer";
 import SearchForm from "./SearchForm";
+import { StatusBar, Platform } from 'react-native';
 
 class NoteList extends React.Component {
 
@@ -70,7 +71,10 @@ class NoteList extends React.Component {
     };
 
     _scrollToTop = () => {
-        this.listRef.current.scrollToIndex({index: 0, animated: true});
+        if (this.props.notes.length) {
+            console.log('scroll top!')
+            //this.listRef.current.scrollToIndex({index: 0, animated: false});
+        }
     };
 
     render() {
@@ -79,9 +83,18 @@ class NoteList extends React.Component {
 
         return (
             <Container>
+
+                    <View
+                        style={{
+                            height: StatusBar.currentHeight,
+                            backgroundColor: "transparent",
+                        }}
+                    />
+
+                <StatusBar translucent={true} />
                 <HeaderDrawer title='Notes' navigation={this.props.navigation}/>
                 <SearchForm onSubmit={this.onSearchSubmit} />
-                <Container style={styles.container}>
+
                     <InfiniteNoteList notes={notes}
                                       listRef={this.listRef}
                                       offset={offset}
@@ -96,7 +109,7 @@ class NoteList extends React.Component {
                                       reloadContent={this.reloadContent}
                                       loadMoreContent={this.loadMoreContent}
                     />
-                </Container>
+
                 <Fab
                     active={this.state.active}
                     direction="up"
@@ -105,7 +118,7 @@ class NoteList extends React.Component {
                     position="bottomRight"
                     onPress={() => this.setState({ active: !this.state.active })}>
                     <Icon type="MaterialCommunityIcons" name={this.state.active ? 'reorder-vertical' : 'reorder-horizontal'} />
-                    <Button style={{ backgroundColor: '#34A34F' }} onPress={() => this.props.navigation.navigate('Home')}>
+                    <Button style={{ backgroundColor: '#34A34F' }} onPress={() => this.props.navigation.navigate('NoteCreate')}>
                         <Icon name="add" />
                     </Button>
                     <Button style={{ backgroundColor: '#3B5998' }} onPress={() => this.props.navigation.navigate('NoteCategory')}>
