@@ -61,13 +61,12 @@ export default class InfiniteNoteList extends PureComponent {
         return null;
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
+    componentDidUpdate() {
         this.moreEnabled = false;
     }
 
 
     loadMoreContent = () => {
-        console.log('loadmorehere')
         if (this.state.isLoadingMoreDone) {
             this.setState({
                 isLoadingMoreDone: false
@@ -99,8 +98,6 @@ export default class InfiniteNoteList extends PureComponent {
                     onEndReachedThreshold={0.1}
                     onEndReached={
                         () => {
-                            console.log('asdasdas');
-                            console.log(this.moreEnabled)
                             if (this.moreEnabled) {
                                 console.log(isLoadingMore);
                                 console.log(hasMore);
@@ -125,7 +122,7 @@ export default class InfiniteNoteList extends PureComponent {
                         return (
                             <View style={styles.emptyContentWrapper}>
                                 { isRefresh ? (
-                                    <Text>Reloading...</Text>
+                                    <ActivityIndicator size="large" />
                                 ) : (
                                     <Text>No notes created. Let's create your first note!</Text>
                                 )}

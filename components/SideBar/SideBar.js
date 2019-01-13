@@ -7,17 +7,17 @@ export default class SideBar extends React.Component {
     render() {
 
         let user = auth.currentUser;
-
+        console.log(this.props.items);
         return (
             <Container>
                 <Content>
                     <Image
                         source={require('./logo.png')}
+
                         style={{
-                            height: 120,
-                            alignSelf: "stretch",
-                            justifyContent: "center",
-                            alignItems: "center"
+                            height: 160,
+                            width: 320,
+
                         }}/>
                     {user && (
                         <Button rounded light>
@@ -26,13 +26,13 @@ export default class SideBar extends React.Component {
                     )}
                     <List
                         keyboardShouldPersistTaps='always'
-                        dataArray={routes}
+                        dataArray={this.props.items}
                         renderRow={data => {
                             return (
                                 <ListItem
                                     button
-                                    onPress={() => {this.props.navigation.navigate(data)}}>
-                                    <Text>{data}</Text>
+                                    onPress={() => {this.props.navigation.navigate(data.routes[0].routeName)}}>
+                                    <Text>{data.routeName}</Text>
                                 </ListItem>
                             );
                         }}

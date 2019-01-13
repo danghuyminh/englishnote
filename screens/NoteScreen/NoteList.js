@@ -84,14 +84,9 @@ class NoteList extends React.Component {
         return (
             <Container>
 
-                    <View
-                        style={{
-                            height: StatusBar.currentHeight,
-                            backgroundColor: "transparent",
-                        }}
-                    />
 
-                <StatusBar translucent={true} />
+
+
                 <HeaderDrawer title='Notes' navigation={this.props.navigation}/>
                 <SearchForm onSubmit={this.onSearchSubmit} />
 

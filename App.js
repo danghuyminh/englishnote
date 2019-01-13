@@ -79,7 +79,10 @@ export default class App extends React.Component {
         return (
             <Provider store={store}>
                 <Root>
-                    {Platform.OS === 'ios' && <StatusBar barStyle="default"/>}
+                    <View
+                        style={styles.statusBar}
+                    />
+                    <StatusBar barStyle='light-content' />
                     <InitScreen/>
                 </Root>
             </Provider>
@@ -119,3 +122,10 @@ export default class App extends React.Component {
         this.setState({isLoadingComplete: true});
     };
 }
+
+const styles = StyleSheet.create({
+    statusBar: {
+        height: Platform.OS === 'ios' ? 20 : StatusBar.currentHeight,
+        backgroundColor: '#40c4a5'
+    },
+});

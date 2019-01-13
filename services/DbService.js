@@ -169,14 +169,15 @@ export class Sqlite {
 
         const {keyword, categoryId} = params;
 
-        let whereClause = ` WHERE user_id = ?`;
-        whereClause += keyword ? ' AND (title like "%' + keyword + '%" OR explanation like "%' + keyword + '%")' : '';
+        let whereClause = ` WHERE n.user_id = ?`;
+        whereClause += keyword ? ' AND (n.title like "%' + keyword + '%" OR n.explanation like "%' + keyword + '%")' : '';
         whereClause += categoryId ? ` AND cat_id = ${categoryId}` : '';
+        const leftJoin = ' LEFT JOIN categories as c on n.cat_id = c.id';
 
         return new Promise((resolve, reject) => {
             Sqlite.db.transaction(tx => {
                     tx.executeSql(
-                        'SELECT * FROM notes' + whereClause + ' LIMIT ? OFFSET ?',
+                        'SELECT n.id, n.title, n.explanation, c.title as cat_title, n.created_at FROM notes as n' + leftJoin + whereClause + ' LIMIT ? OFFSET ?',
                         [
                             auth.currentUser.uid,
                             params.limit,
@@ -184,7 +185,7 @@ export class Sqlite {
                         ],
                         (txt, queryResult) => {
                             tx.executeSql(
-                                'SELECT count(*) as total FROM notes' + whereClause,
+                                'SELECT count(*) as total FROM notes as n' + whereClause,
                                 [
                                     auth.currentUser.uid
                                 ],

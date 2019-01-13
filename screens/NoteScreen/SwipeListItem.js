@@ -77,8 +77,7 @@ export default class SwipeListItem extends PureComponent {
                         <Text style={styles.itemDate}>
                             {new Moment(data.created_at).format("dddd, DD MMM YYYY")}
                         </Text>
-                        <Text>{data.cat_id}</Text>
-
+                        <Text style={styles.itemCat}>{data.cat_title}</Text>
                     </Body>
                     {toggle && (
                         <Right>
@@ -116,7 +115,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#e62e00'
     },
     itemTextExplanation : {
-        color: '#8e9199',
+        color: '#0e7c62',
     },
     itemTextBeforeDelete : {
         color: '#bbb',
@@ -127,6 +126,12 @@ const styles = StyleSheet.create({
     },
     itemDate: {
         marginTop: 5,
-        color: '#cdb0f4'
+        color: '#276858',
+        fontSize: 9
+    },
+    itemCat: {
+        marginTop: 5,
+        color: '#276858',
+        fontSize: 9
     }
 });
