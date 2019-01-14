@@ -1,6 +1,6 @@
 import {
     NOTE_GET_REQUEST, NOTE_GET_SUCCESS, NOTE_GET_FAILURE,
-    NOTE_MORE_REQUEST, NOTE_MORE_SUCCESS, NOTE_MORE_FAILURE
+    NOTE_MORE_REQUEST, NOTE_MORE_SUCCESS, NOTE_MORE_FAILURE, NOTE_RESET
 } from '../actions/NoteAction'
 import {CATEGORY_SELECT} from "../actions/CategoryAction";
 
@@ -24,7 +24,7 @@ export function sqliteGetNote (state = initialState, action) {
                 isFetching: true,
                 isRefresh: action.isRefresh,
                 notes: [],
-                hasMore: false,
+                hasMore: false
             });
         case NOTE_GET_SUCCESS:
             return Object.assign({}, state, {
@@ -56,6 +56,12 @@ export function sqliteGetNote (state = initialState, action) {
         case NOTE_MORE_FAILURE:
             return Object.assign({}, state, {
                 isLoadingMore: false
+            });
+        case NOTE_RESET:
+            return Object.assign({}, state, {
+                notes: [],
+                offset: 0,
+                hasMore: false
             });
         default:
             return state

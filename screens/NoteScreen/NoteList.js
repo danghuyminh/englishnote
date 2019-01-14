@@ -1,15 +1,15 @@
 import React from "react";
 import {
-    Container, Icon, Button, View, Fab
+    Container, Icon, Button, Fab
 } from "native-base";
 import { connect } from 'react-redux'
-import { fetchNotes, fetchMoreNotes } from "../../redux/actions/NoteAction"
+import { fetchNotes, fetchMoreNotes, resetNoteList } from "../../redux/actions/NoteAction"
 import InfiniteNoteList from './InfiniteNoteList';
 import {StyleSheet} from "react-native";
 import {Sqlite} from "../../services/DbService";
 import HeaderDrawer from "../../components/HeaderDrawer";
 import SearchForm from "./SearchForm";
-import { StatusBar, Platform } from 'react-native';
+import SyncService from "../../services/SyncService";
 
 class NoteList extends React.Component {
 
@@ -34,12 +34,13 @@ class NoteList extends React.Component {
     }
 
     async componentWillMount() {
-        console.log('NoteList Did Mount')
-        this.props.fetchNotes({isFirstLoading: true});
+        console.log('NoteList Did Mount');
+        this.props.fetchNotes({isFirstLoading: true, keyword: '', offset: 0, limit: 10});
     }
 
     componentWillUnmount() {
         console.log('NoteList Unmount')
+        this.props.resetNoteList();
     }
 
     reloadContent = () => {
@@ -64,6 +65,11 @@ class NoteList extends React.Component {
         })
     };
 
+    syncLocalToHost = async () => {
+        const sync = new SyncService();
+        await sync.syncFromLocalToHost();
+    };
+
     getNotes = async () => {
         const notes = await Sqlite.selectNotes({limit: 10, offset: 0});
         console.log('data---------------------------')
@@ -83,28 +89,22 @@ class NoteList extends React.Component {
 
         return (
             <Container>
-
-
-
-
                 <HeaderDrawer title='Notes' navigation={this.props.navigation}/>
                 <SearchForm onSubmit={this.onSearchSubmit} />
-
-                    <InfiniteNoteList notes={notes}
-                                      listRef={this.listRef}
-                                      offset={offset}
-                                      total={total}
-                                      hasMore={hasMore}
-                                      limit={limit}
-                                      isRefresh={isRefresh}
-                                      isFirstLoading={isFirstLoading}
-                                      isFetching={isFetching}
-                                      isLoadingMore={isLoadingMore}
-                                      deleteNote={this.deleteNote}
-                                      reloadContent={this.reloadContent}
-                                      loadMoreContent={this.loadMoreContent}
-                    />
-
+                <InfiniteNoteList notes={notes}
+                                  listRef={this.listRef}
+                                  offset={offset}
+                                  total={total}
+                                  hasMore={hasMore}
+                                  limit={limit}
+                                  isRefresh={isRefresh}
+                                  isFirstLoading={isFirstLoading}
+                                  isFetching={isFetching}
+                                  isLoadingMore={isLoadingMore}
+                                  deleteNote={this.deleteNote}
+                                  reloadContent={this.reloadContent}
+                                  loadMoreContent={this.loadMoreContent}
+                />
                 <Fab
                     active={this.state.active}
                     direction="up"
@@ -113,13 +113,13 @@ class NoteList extends React.Component {
                     position="bottomRight"
                     onPress={() => this.setState({ active: !this.state.active })}>
                     <Icon type="MaterialCommunityIcons" name={this.state.active ? 'reorder-vertical' : 'reorder-horizontal'} />
-                    <Button style={{ backgroundColor: '#34A34F' }} onPress={() => this.props.navigation.navigate('NoteCreate')}>
-                        <Icon name="add" />
-                    </Button>
                     <Button style={{ backgroundColor: '#3B5998' }} onPress={() => this.props.navigation.navigate('NoteCategory')}>
                         <Icon type="FontAwesome" name="filter" />
                     </Button>
-                    <Button disabled style={{ backgroundColor: '#DD5144' }}>
+                    <Button style={{ backgroundColor: '#34A34F' }} onPress={() => this.props.navigation.navigate('NoteCreate')}>
+                        <Icon name="add" />
+                    </Button>
+                    <Button onPress={this.syncLocalToHost} style={{ backgroundColor: '#DD5144' }}>
                         <Icon type="Ionicons" name="ios-reorder" />
                     </Button>
                 </Fab>
@@ -150,6 +150,7 @@ function mapDispatchToProps (dispatch) {
     return {
         fetchNotes: (params) => dispatch(fetchNotes(params)),
         fetchMoreNotes: (params) => dispatch(fetchMoreNotes(params)),
+        resetNoteList: () => dispatch(resetNoteList()),
     }
 }
 

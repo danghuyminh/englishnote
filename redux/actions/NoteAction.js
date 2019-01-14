@@ -12,6 +12,8 @@ export const NOTE_MORE_REQUEST   = 'ASYNC_NOTE_MORE_REQUEST';
 export const NOTE_MORE_SUCCESS   = 'ASYNC_NOTE_MORE_SUCCESS';
 export const NOTE_MORE_FAILURE   = 'ASYNC_NOTE_MORE_FAILURE';
 
+export const NOTE_RESET   = 'NOTE_RESET';
+
 export function createNote(params) {
 
     return async dispatch => {
@@ -73,4 +75,10 @@ export function fetchMoreNotes(params) {
     function request() { return { type: NOTE_MORE_REQUEST } }
     function success(data) { return { type: NOTE_MORE_SUCCESS, data } }
     function failure(error) { return { type: NOTE_MORE_FAILURE, error } }
+}
+
+export function resetNoteList() {
+    return {
+        type: NOTE_RESET
+    }
 }

@@ -5,9 +5,7 @@ const routes = {"Home": "Home", "Notes": "Notes", "Category": "Categories", "Pro
 
 export default class SideBar extends React.Component {
     render() {
-
         let user = auth.currentUser;
-        console.log(this.props.items);
         return (
             <Container>
                 <Content>

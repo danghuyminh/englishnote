@@ -11,6 +11,7 @@ export class Sqlite {
                             'title varchar(255) not null, ' +
                             'explanation text,' +
                             'cat_id integer,' +
+                            'ref_id varchar(255),' +
                             'created_at datetime,' +
                             'user_id varchar(128) not null' +
                         ');',
@@ -20,6 +21,7 @@ export class Sqlite {
                         'CREATE TABLE IF NOT EXISTS categories (' +
                         'id integer primary key not null, ' +
                         'title varchar(255) not null, ' +
+                        'ref_id varchar(255),' +
                         'user_id varchar(128) not null' +
                         ');',
                         []
@@ -91,6 +93,7 @@ export class Sqlite {
                     'title varchar(255) not null, ' +
                     'explanation text,' +
                     'cat_id integer,' +
+                    'ref_id varchar(255),' +
                     'created_at datetime,' +
                     'user_id varchar(128) not null' +
                     ');',
@@ -126,6 +129,7 @@ export class Sqlite {
                     'CREATE TABLE IF NOT EXISTS categories (' +
                     'id integer primary key not null, ' +
                     'title varchar(255) not null, ' +
+                    'ref_id varchar(255),' +
                     'user_id varchar(128) not null' +
                     ');',
                     [],
@@ -177,7 +181,7 @@ export class Sqlite {
         return new Promise((resolve, reject) => {
             Sqlite.db.transaction(tx => {
                     tx.executeSql(
-                        'SELECT n.id, n.title, n.explanation, c.title as cat_title, n.created_at FROM notes as n' + leftJoin + whereClause + ' LIMIT ? OFFSET ?',
+                        'SELECT n.id, n.title, n.explanation, c.title as cat_title, n.created_at FROM notes as n' + leftJoin + whereClause + ' ORDER BY n.id DESC LIMIT ? OFFSET ?',
                         [
                             auth.currentUser.uid,
                             params.limit,

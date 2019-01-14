@@ -1,4 +1,4 @@
-import React, {PureComponent} from "react";
+import React, {PureComponent, Component} from "react";
 import {
     FlatList,
     RefreshControl,
@@ -24,7 +24,6 @@ export default class InfiniteNoteList extends PureComponent {
         console.log('Infinite Unmount')
     }
 
-
     static getDerivedStateFromProps(nextProps, prevState) {
         console.log('getDerivedStateFromProps');
         console.log(nextProps.notes.length)
@@ -47,8 +46,6 @@ export default class InfiniteNoteList extends PureComponent {
                 };
             }
         } else {
-            console.log('When notes is empty');
-            console.log(nextProps.isRefresh)
             if (nextProps.isRefresh) {
                 return {
                     notes: nextProps.notes,
@@ -94,17 +91,13 @@ export default class InfiniteNoteList extends PureComponent {
                     renderItem={this._renderRow}
                     refreshing={isFetching}
                     onRefresh={this.props.reloadContent}
-                    onScrollBeginDrag={() =>  {console.log('scroll drag');this.moreEnabled = true}}
+                    onScrollBeginDrag={() =>  {this.moreEnabled = true}}
                     onEndReachedThreshold={0.1}
                     onEndReached={
                         () => {
                             if (this.moreEnabled) {
-                                console.log(isLoadingMore);
-                                console.log(hasMore);
-
-                                    if (!isLoadingMore && hasMore)
-                                        this.loadMoreContent()
-
+                                if (!isLoadingMore && hasMore)
+                                    this.loadMoreContent()
                             }
                         }
 

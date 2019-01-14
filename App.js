@@ -10,6 +10,7 @@ import {Root} from 'native-base';
 import {Sqlite} from "./services/DbService";
 import sample30 from "./screens/NoteScreen/sample30";
 import sampleCat from "./screens/NoteScreen/sampleCat";
+import "./helpers/IgnoreTimerWarning";
 
 export default class App extends React.Component {
     state = {
@@ -24,14 +25,20 @@ export default class App extends React.Component {
             databaseURL: "https://englishnote.firebaseio.com",
             projectId: "englishnote-219616",
             storageBucket: "englishnote-219616.appspot.com",
-            messagingSenderId: "81512437678"
+            messagingSenderId: "81512437678",
+
         };
 
         firebase.initializeApp(config);
         global['fire'] = firebase;
         global['auth'] = firebase.auth();
+        const firestore = firebase.firestore();
+        const settings = {
+            timestampsInSnapshots: true
+        };
+        firestore.settings(settings);
 
-        console.ignoredYellowBox = ['Setting a timers'];
+
         //console.log(Expo.FileSystem.documentDirectory);
 
         //Sqlite.createSampleNotes(sample30, sampleCat);
