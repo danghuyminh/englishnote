@@ -6,12 +6,15 @@ import { connect } from 'react-redux'
 import { createNote } from "../../redux/actions/NoteAction"
 import AddNoteForm from "./AddNoteForm";
 import HeaderDrawer from "../../components/HeaderDrawer";
+import HeaderGoBack from "../../components/HeaderGoBack";
 
 class HomeScreen extends React.Component {
 
     state = {
         items: undefined
     };
+
+    static navigationOptions = ({ navigation }) => ({header: <HeaderGoBack navigation={navigation} title='Create Note' />});
 
     componentDidMount() {
         console.log('Home Did Mount')
@@ -31,7 +34,6 @@ class HomeScreen extends React.Component {
     render() {
         return (
             <Container>
-                <HeaderDrawer title='Notes' navigation={this.props.navigation}/>
                 <Content padder keyboardShouldPersistTaps='never' keyboardDismissMode='on-drag'>
                     <Card>
                         <CardItem>

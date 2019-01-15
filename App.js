@@ -18,7 +18,6 @@ export default class App extends React.Component {
     };
 
     componentDidMount() {
-
         const config = {
             apiKey: "AIzaSyDEoIIjVchgf7a7pr5FYnNKVCb-gZ73a4E",
             authDomain: "englishnote-219616.firebaseapp.com",
@@ -38,39 +37,11 @@ export default class App extends React.Component {
         };
         firestore.settings(settings);
 
-
         //console.log(Expo.FileSystem.documentDirectory);
 
         //Sqlite.createSampleNotes(sample30, sampleCat);
-
-        //this.getNotes();
-       /* db.transaction(
-            tx => {
-                tx.executeSql(
-                    'insert into notes (done, value) values (0, ?)',
-                    ['test text'],
-                    (txt, result) => {
-                        console.log('create row success')
-                        console.log(result)
-                    },
-                    (error) => {
-                        console.log('error create row')
-                        console.log(error)
-                    }
-                );
-                tx.executeSql('select * from notes', [], (_, { rows }) =>
-                    console.log(JSON.stringify(rows))
-                );
-            },
-            null
-        );*/
+        //Sqlite.resetRefId();
     }
-
-    getNotes = async () => {
-        const notes = await Sqlite.selectNotes({limit: 10, offset: 20});
-        console.log('data---------------------------')
-        console.log(notes)
-    };
 
     render() {
         if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {

@@ -12,6 +12,7 @@ export class Sqlite {
                             'explanation text,' +
                             'cat_id integer,' +
                             'ref_id varchar(255),' +
+                            'updated tinyint,' +
                             'created_at datetime,' +
                             'user_id varchar(128) not null' +
                         ');',
@@ -55,109 +56,6 @@ export class Sqlite {
                         }
                     );
                 }
-            );
-        })
-    };
-
-    static createSampleNotes = (arr, catArr) => {
-        return new Promise((resolve, reject) => {
-
-            Sqlite.db.transaction(tx => {
-                tx.executeSql(
-                    'DROP TABLE IF EXISTS notes',
-                    [],
-                    (txt, result) => {
-
-                    },
-                    (txt, error) => {
-                        console.log(error)
-                        reject(error)
-                    }
-                );
-
-                tx.executeSql(
-                    'DROP TABLE IF EXISTS categories',
-                    [],
-                    (txt, result) => {
-
-                    },
-                    (txt, error) => {
-                        console.log(error)
-                        reject(error)
-                    }
-                );
-
-                tx.executeSql(
-                    'CREATE TABLE IF NOT EXISTS notes (' +
-                    'id integer primary key not null, ' +
-                    'title varchar(255) not null, ' +
-                    'explanation text,' +
-                    'cat_id integer,' +
-                    'ref_id varchar(255),' +
-                    'created_at datetime,' +
-                    'user_id varchar(128) not null' +
-                    ');',
-                    [],
-                    (txt, result) => {
-                        arr.map((row) => {
-                            //console.log(row)
-                            tx.executeSql(
-                                'INSERT INTO notes (title, explanation, cat_id, created_at, user_id) VALUES (?, ?, ?, DateTime("now"), ?) ',
-                                [
-                                    row.title,
-                                    row.explanation,
-                                    row.cat_id,
-                                    'SGETEjzYMmNSOB9quQeQ7FAWZzQ2'
-                                ],
-                                (txt, result) => {
-                                    resolve(result)
-                                },
-                                (txt, error) => {
-                                    console.log(error)
-                                    reject(error)
-                                }
-                            );
-                        });
-                    },
-                    (txt, error) => {
-                        console.log(error)
-                        reject(error)
-                    }
-                );
-
-                tx.executeSql(
-                    'CREATE TABLE IF NOT EXISTS categories (' +
-                    'id integer primary key not null, ' +
-                    'title varchar(255) not null, ' +
-                    'ref_id varchar(255),' +
-                    'user_id varchar(128) not null' +
-                    ');',
-                    [],
-                    (txt, result) => {
-                        catArr.map((row) => {
-                            //console.log(row)
-                            tx.executeSql(
-                                'INSERT INTO categories (title, user_id) VALUES (?, ?) ',
-                                [
-                                    row.title,
-                                    'SGETEjzYMmNSOB9quQeQ7FAWZzQ2'
-                                ],
-                                (txt, result) => {
-                                    resolve(result)
-                                },
-                                (txt, error) => {
-                                    console.log(error)
-                                    reject(error)
-                                }
-                            );
-                        });
-                    },
-                    (txt, error) => {
-                        console.log(error)
-                        reject(error)
-                    }
-                );
-            }
             );
         })
     };
@@ -231,5 +129,140 @@ export class Sqlite {
                 }
             );
         })
-    }
+    };
+
+    static createSampleNotes = (arr, catArr) => {
+        return new Promise((resolve, reject) => {
+
+            Sqlite.db.transaction(tx => {
+                    tx.executeSql(
+                        'DROP TABLE IF EXISTS notes',
+                        [],
+                        (txt, result) => {
+
+                        },
+                        (txt, error) => {
+                            console.log(error)
+                            reject(error)
+                        }
+                    );
+
+                    tx.executeSql(
+                        'DROP TABLE IF EXISTS categories',
+                        [],
+                        (txt, result) => {
+
+                        },
+                        (txt, error) => {
+                            console.log(error)
+                            reject(error)
+                        }
+                    );
+
+                    tx.executeSql(
+                        'CREATE TABLE IF NOT EXISTS notes (' +
+                        'id integer primary key not null, ' +
+                        'title varchar(255) not null, ' +
+                        'explanation text,' +
+                        'cat_id integer,' +
+                        'ref_id varchar(255),' +
+                        'created_at datetime,' +
+                        'updated tinyint,' +
+                        'user_id varchar(128) not null' +
+                        ');',
+                        [],
+                        (txt, result) => {
+                            arr.map((row) => {
+                                //console.log(row)
+                                tx.executeSql(
+                                    'INSERT INTO notes (title, explanation, cat_id, created_at, user_id) VALUES (?, ?, ?, DateTime("now"), ?) ',
+                                    [
+                                        row.title,
+                                        row.explanation,
+                                        row.cat_id,
+                                        'SGETEjzYMmNSOB9quQeQ7FAWZzQ2'
+                                    ],
+                                    (txt, result) => {
+                                        resolve(result)
+                                    },
+                                    (txt, error) => {
+                                        console.log(error)
+                                        reject(error)
+                                    }
+                                );
+                            });
+                        },
+                        (txt, error) => {
+                            console.log(error)
+                            reject(error)
+                        }
+                    );
+
+                    tx.executeSql(
+                        'CREATE TABLE IF NOT EXISTS categories (' +
+                        'id integer primary key not null, ' +
+                        'title varchar(255) not null, ' +
+                        'ref_id varchar(255),' +
+                        'user_id varchar(128) not null' +
+                        ');',
+                        [],
+                        (txt, result) => {
+                            catArr.map((row) => {
+                                //console.log(row)
+                                tx.executeSql(
+                                    'INSERT INTO categories (title, user_id) VALUES (?, ?) ',
+                                    [
+                                        row.title,
+                                        'SGETEjzYMmNSOB9quQeQ7FAWZzQ2'
+                                    ],
+                                    (txt, result) => {
+                                        resolve(result)
+                                    },
+                                    (txt, error) => {
+                                        console.log(error)
+                                        reject(error)
+                                    }
+                                );
+                            });
+                        },
+                        (txt, error) => {
+                            console.log(error)
+                            reject(error)
+                        }
+                    );
+                }
+            );
+        })
+    };
+
+    static resetRefId = () => {
+        return new Promise((resolve, reject) => {
+            Sqlite.db.transaction(tx => {
+                    tx.executeSql(
+                        'UPDATE categories SET ref_id = null',
+                        [],
+                        (txt, result) => {
+
+                        },
+                        (txt, error) => {
+                            reject(error)
+                        }
+                    );
+                }
+            );
+            Sqlite.db.transaction(tx => {
+                    tx.executeSql(
+                        'UPDATE notes SET ref_id = null',
+                        [],
+                        (txt, result) => {
+                            resolve(result);
+                        },
+                        (txt, error) => {
+                            reject(error)
+                        }
+                    );
+                }
+            );
+        })
+    };
 }
