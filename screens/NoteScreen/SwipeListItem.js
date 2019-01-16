@@ -77,7 +77,7 @@ export default class SwipeListItem extends PureComponent {
                         <Text style={styles.itemDate}>
                             {new Moment(data.created_at).format("dddd, DD MMM YYYY")}
                         </Text>
-                        <Text style={styles.itemCat}>{data.cat_title}</Text>
+                        <Text style={styles.itemCat}>{data.cat_title ?? 'Uncategorized'}</Text>
                     </Body>
                     {toggle && (
                         <Right>

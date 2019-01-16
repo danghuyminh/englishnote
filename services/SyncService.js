@@ -1,4 +1,5 @@
 import {Sqlite} from "./DbService";
+import {synchronizeProgress, synchronizeStart} from "../redux/actions/NoteAction";
 
 const SyncService = class
 {
@@ -7,57 +8,98 @@ const SyncService = class
         this.db = fire.firestore();
     }
 
-    async syncFromLocalToHost()
+    async syncFromLocalToHost(dispatch)
     {
         console.log('Unsync Notes');
 
         const notes = await this.getUnsyncNotes();
-        //console.log(notes)
         let limit = 1;
+        const total = notes.length;
+        let done = 0;
+
+        if (notes.length === 0) {
+            return true;
+        }
+
+        dispatch(synchronizeStart())
 
         for (const note of notes) {
             // If category has not been synced
             // then sync category first
             if (limit >= 50) {
-                return false;
+                break;
             }
 
             limit++;
 
-            const category = await this.getCategory(note.cat_id);
+            // Delete scenario
+            if (note.deleted === 1) {
+                console.log(note)
+                // If note is already synced before, delete it from remote
+                if (note.ref_id) {
+                    await this.deleteRemoteNote(note.id, note.ref_id);
+
+                // If note has not been synced, delete from local is enough
+                } else {
+                    await Sqlite.deleteNote(note.id);
+                }
+                // continue to process next note
+                continue;
+            }
+
+            // Create and update scenario
+            const category = note.cat_id ? await this.getCategory(note.cat_id) : {ref_id: 'uncategorized'};
             let catRefId = category.ref_id;
 
-            console.log('CatRefId');
-            console.log(catRefId);
+            console.log('Syncing note ID ' + note.id);
+            console.log(note.ref_id);
 
             if (!catRefId) {
                 catRefId = await this.createRemoteCategory(note.cat_id, note.cat_title, note.user_id);
             }
 
             await this.createRemoteNote(note.id, note.ref_id, catRefId, note);
+
+            done++;
+            dispatch(synchronizeProgress(((done * 100 / total)/100), done, total))
         }
     }
 
     async createRemoteNote(noteId, noteRefId, catRefId, params)
     {
         try {
-            let docRef = null;
             let data = {
                 ...params,
-                cat_ref_id: catRefId
+                cat_ref_id: catRefId === 'uncategorized' ? null : catRefId
             };
 
+            // If noteRefId exists then update data with the new one
             if (noteRefId) {
-                docRef = await this.db.collection("notes").doc(noteRefId).set(data);
+                await this.db.collection("notes").doc(noteRefId).set(data);
+
+            // If noteRefId does not exist, create a new instance on firebase
             } else {
-                docRef = await this.db.collection("notes").add(data);
+                const docRef = await this.db.collection("notes").add(data);
                 await this.updateNoteRefId(noteId, docRef.id);
                 await this.db.collection("notes").doc(docRef.id).update({ref_id: docRef.id});
+                catRefId = docRef.id;
             }
-            return docRef.id
+            return catRefId
         } catch(error) {
             console.error("Error adding note document: ", error);
-            throw(error)
+            //throw(error)
+        }
+    }
+
+    async deleteRemoteNote(noteId, noteRefId)
+    {
+        try {
+            await this.db.collection("notes").doc(noteRefId).delete();
+            // finally delete from local also
+            await Sqlite.deleteNote(noteId);
+        } catch (error) {
+            console.error("Error delete note document: ", error);
+            // no need to throw error
         }
     }
 
@@ -81,10 +123,10 @@ const SyncService = class
         return new Promise((resolve, reject) => {
             Sqlite.db.transaction(tx => {
                     tx.executeSql(
-                        'SELECT n.id, n.title, n.explanation, n.user_id, n.ref_id, n.cat_id, c.title as cat_title ' +
+                        'SELECT n.id, n.title, n.explanation, n.user_id, n.ref_id, n.cat_id, c.title as cat_title, n.deleted ' +
                         'FROM notes n ' +
                         'LEFT JOIN categories c ON n.cat_id = c.id ' +
-                        'WHERE n.user_id = ? AND (n.ref_id is null OR n.updated = 1)',
+                        'WHERE n.user_id = ? AND (n.ref_id is null OR n.updated = 1 OR n.deleted = 1)',
                         [
                             auth.currentUser.uid
                         ],
@@ -148,9 +190,6 @@ const SyncService = class
 
     updateNoteRefId(id, refId) {
         return new Promise((resolve, reject) => {
-            console.log('Update note ref');
-            console.log(id);
-            console.log(refId);
             Sqlite.db.transaction(tx => {
                     tx.executeSql(
                         'UPDATE notes SET ref_id = ? WHERE id = ?',

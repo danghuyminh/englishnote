@@ -57,11 +57,35 @@ function updateCategory(values) {
 
 function deleteCategory(id) {
     return new Promise((resolve, reject) => {
+        // set parent id of all children to null first
+        resetParentForChildren(id).then(() => {
+            // then delete category
+            Sqlite.db.transaction(tx => {
+                    tx.executeSql(
+                        'DELETE FROM categories WHERE id = ?',
+                        [
+                            id
+                        ],
+                        (txt, result) => {
+                            resolve(result)
+                        },
+                        (txt, error) => {
+                            reject(error)
+                        }
+                    );
+                }
+            );
+        });
+    })
+}
+
+function resetParentForChildren(parentId) {
+    return new Promise((resolve, reject) => {
         Sqlite.db.transaction(tx => {
                 tx.executeSql(
-                    'DELETE FROM categories WHERE id = ?',
+                    'UPDATE notes SET cat_id = null, updated = 1 WHERE cat_id = ?',
                     [
-                        id
+                        parentId
                     ],
                     (txt, result) => {
                         resolve(result)

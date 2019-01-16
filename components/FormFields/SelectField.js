@@ -23,7 +23,7 @@ const SelectField = (props) => {
                 <Picker.Item label="Select from the list" value="" key={uniqueKey + '0'} />
                 { items.map(
                     (item) => {
-                        return <Picker.Item label={item.name} value={item.id} key={uniqueKey + item.id} />
+                        return <Picker.Item label={item.title} value={item.id} key={uniqueKey + item.id} />
                     })
                 }
             </Picker>

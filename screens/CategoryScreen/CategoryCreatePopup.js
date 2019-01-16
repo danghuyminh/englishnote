@@ -19,7 +19,7 @@ class CategoryCreatePopup extends React.Component {
                 visible={visible}
                 presentationStyle="overFullScreen"
                 onRequestClose={() => {
-                    Alert.alert('Modal closed', 'Modal has been closed.');
+                    hide()
                 }}
             >
 

@@ -25,7 +25,6 @@ export default class App extends React.Component {
             projectId: "englishnote-219616",
             storageBucket: "englishnote-219616.appspot.com",
             messagingSenderId: "81512437678",
-
         };
 
         firebase.initializeApp(config);
@@ -41,6 +40,7 @@ export default class App extends React.Component {
 
         //Sqlite.createSampleNotes(sample30, sampleCat);
         //Sqlite.resetRefId();
+        //Sqlite.setUpdateTest();
     }
 
     render() {

@@ -1,6 +1,6 @@
 import {
     NOTE_GET_REQUEST, NOTE_GET_SUCCESS, NOTE_GET_FAILURE,
-    NOTE_MORE_REQUEST, NOTE_MORE_SUCCESS, NOTE_MORE_FAILURE, NOTE_RESET
+    NOTE_MORE_REQUEST, NOTE_MORE_SUCCESS, NOTE_MORE_FAILURE, NOTE_RESET, NOTE_SYNC_PROGRESS, NOTE_SYNC_SUCCESS, NOTE_SYNC_FAILURE, NOTE_SYNC_REQUEST
 } from '../actions/NoteAction'
 import {CATEGORY_SELECT} from "../actions/CategoryAction";
 
@@ -75,6 +75,36 @@ export function sqliteGetNoteCategory (state = {
         case CATEGORY_SELECT:
             return Object.assign({}, state, {
                 categoryId: action.categoryId
+            });
+        default:
+            return state
+    }
+}
+
+export function synchronizeNote (state = {
+    progress: 0,
+    done: 0,
+    total: 0,
+    isSynchronizing: false,
+    canClose: false,
+}, action) {
+    switch (action.type) {
+        case NOTE_SYNC_REQUEST:
+            return Object.assign({}, state, {
+                isSynchronizing: true,
+                canClose: false,
+                progress: 0,
+                done: 0
+            });
+        case NOTE_SYNC_PROGRESS:
+            return Object.assign({}, state, {
+                ...action.data
+            });
+        case NOTE_SYNC_SUCCESS:
+        case NOTE_SYNC_FAILURE:
+            return Object.assign({}, state, {
+                isSynchronizing: false,
+                canClose: true
             });
         default:
             return state

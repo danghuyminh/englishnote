@@ -7,6 +7,7 @@ import { createNote } from "../../redux/actions/NoteAction"
 import AddNoteForm from "./AddNoteForm";
 import HeaderDrawer from "../../components/HeaderDrawer";
 import HeaderGoBack from "../../components/HeaderGoBack";
+import {getCategories} from "../../redux/actions/CategoryAction";
 
 class HomeScreen extends React.Component {
 
@@ -16,12 +17,12 @@ class HomeScreen extends React.Component {
 
     static navigationOptions = ({ navigation }) => ({header: <HeaderGoBack navigation={navigation} title='Create Note' />});
 
-    componentDidMount() {
-        console.log('Home Did Mount')
-    }
-
-    componentWillUnmount() {
-        console.log('Home Unmount')
+    componentWillMount() {
+        try {
+            this.props.getCategories();
+        } catch (error) {
+            // throw error here
+        }
     }
 
     handleSubmit = async (values) => {
@@ -32,6 +33,9 @@ class HomeScreen extends React.Component {
     };
 
     render() {
+        const {categories} = this.props;
+        console.log('categories');
+        console.log(categories);
         return (
             <Container>
                 <Content padder keyboardShouldPersistTaps='never' keyboardDismissMode='on-drag'>
@@ -42,10 +46,9 @@ class HomeScreen extends React.Component {
                             </Body>
                         </CardItem>
                     </Card>
-                    <AddNoteForm onSubmit={this.handleSubmit} />
+                    <AddNoteForm onSubmit={this.handleSubmit} categories={categories} />
                     <Button full rounded dark
-                            style={{ marginTop: 10 }}
-                            onPress={() => this.props.navigation.navigate("NoteList")}>
+                            style={{ marginTop: 10 }}>
                         <Text>View Notes</Text>
                     </Button>
                 </Content>
@@ -55,14 +58,17 @@ class HomeScreen extends React.Component {
 }
 
 function mapStateToProps (state) {
-    return {
 
+    const {categories} = state.sqliteGetCategory;
+    return {
+        categories
     }
 }
 
 function mapDispatchToProps (dispatch) {
     return {
-        createNote: (values) => dispatch(createNote(values))
+        createNote: (values) => dispatch(createNote(values)),
+        getCategories: () => dispatch(getCategories()),
     }
 }
 

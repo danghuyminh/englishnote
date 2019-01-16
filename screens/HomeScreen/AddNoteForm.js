@@ -10,20 +10,8 @@ import {
 class AddNoteForm extends Component {
 
     render() {
-        const categories = [
-            {id: 1, name: 'Wallet'},
-            {id: 2, name: 'ATM Card'},
-            {id: 3, name: 'Debit Card'},
-            {id: 4, name: 'Credit Card'},
-            {id: 5, name: 'Net Banking'},
-        ];
 
-        const languages = [
-            {id: 1, name: 'English'},
-            {id: 2, name: 'Vietnamese'},
-        ];
-
-        const { handleSubmit, isFetching } = this.props;
+        const { handleSubmit, categories } = this.props;
         return (
             <Container>
                 <Content keyboardShouldPersistTaps='never' keyboardDismissMode='on-drag'>

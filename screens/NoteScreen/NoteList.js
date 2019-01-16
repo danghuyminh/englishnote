@@ -3,20 +3,22 @@ import {
     Container, Icon, Button, Fab
 } from "native-base";
 import { connect } from 'react-redux'
-import { fetchNotes, fetchMoreNotes, resetNoteList } from "../../redux/actions/NoteAction"
+import { fetchNotes, fetchMoreNotes, resetNoteList, deleteNote, synchronizeLocalToRemote } from "../../redux/actions/NoteAction"
 import InfiniteNoteList from './InfiniteNoteList';
 import {StyleSheet} from "react-native";
 import {Sqlite} from "../../services/DbService";
 import HeaderDrawer from "../../components/HeaderDrawer";
 import SearchForm from "./SearchForm";
 import SyncService from "../../services/SyncService";
+import LoadingSynchronization from "../../components/LoadingSynchronization";
 
 class NoteList extends React.Component {
 
     state = {
         modalVisible: false,
         active: false,
-        keyword: undefined
+        keyword: undefined,
+        showLoading: false,
     };
 
     listRef = React.createRef();
@@ -34,7 +36,7 @@ class NoteList extends React.Component {
     }
 
     async componentWillMount() {
-        console.log('NoteList Did Mount');
+        console.log('NoteList Will Mount');
         this.props.fetchNotes({isFirstLoading: true, keyword: '', offset: 0, limit: 10});
     }
 
@@ -53,7 +55,13 @@ class NoteList extends React.Component {
     };
 
     deleteNote = (id) => {
-        console.log(id)
+        console.log(id);
+        try {
+            this.props.deleteNote(id);
+        } catch (error) {
+            console.log(error);
+            // throw error here
+        }
     };
 
     onSearchSubmit = (values) => {
@@ -66,8 +74,16 @@ class NoteList extends React.Component {
     };
 
     syncLocalToHost = async () => {
-        const sync = new SyncService();
-        await sync.syncFromLocalToHost();
+        this.setState({
+            showLoading: true
+        });
+        this.props.synchronize();
+    };
+
+    togglePopup = () => {
+        this.setState({
+            showLoading: !this.state.showLoading
+        })
     };
 
     getNotes = async () => {
@@ -85,10 +101,11 @@ class NoteList extends React.Component {
 
     render() {
         console.log('render NoteList')
-        const {notes, hasMore, offset, total, limit, isRefresh, isFetching, isLoadingMore, isFirstLoading} = this.props;
+        const {notes, hasMore, offset, total, limit, isRefresh, isFetching, isLoadingMore, isFirstLoading, isSynchronizing} = this.props;
 
         return (
             <Container>
+                <LoadingSynchronization visible={isSynchronizing} togglePopup={this.togglePopup}/>
                 <HeaderDrawer title='Notes' navigation={this.props.navigation}/>
                 <SearchForm onSubmit={this.onSearchSubmit} />
                 <InfiniteNoteList notes={notes}
@@ -131,6 +148,7 @@ class NoteList extends React.Component {
 function mapStateToProps (state) {
     const {notes, hasMore, offset, total, limit, isRefresh, isFetching, isLoadingMore, isFirstLoading} = state.sqliteGetNote;
     const {categoryId} = state.sqliteGetNoteCategory;
+    const {isSynchronizing} = state.synchronizeNote;
 
     return {
         notes,
@@ -142,7 +160,8 @@ function mapStateToProps (state) {
         isFetching,
         isLoadingMore,
         isFirstLoading,
-        categoryId
+        categoryId,
+        isSynchronizing
     }
 }
 
@@ -151,6 +170,8 @@ function mapDispatchToProps (dispatch) {
         fetchNotes: (params) => dispatch(fetchNotes(params)),
         fetchMoreNotes: (params) => dispatch(fetchMoreNotes(params)),
         resetNoteList: () => dispatch(resetNoteList()),
+        deleteNote: (id) => dispatch(deleteNote(id)),
+        synchronize: () => dispatch(synchronizeLocalToRemote())
     }
 }
 

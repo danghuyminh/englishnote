@@ -13,6 +13,7 @@ export class Sqlite {
                             'cat_id integer,' +
                             'ref_id varchar(255),' +
                             'updated tinyint,' +
+                            'deleted tinyint,' +
                             'created_at datetime,' +
                             'user_id varchar(128) not null' +
                         ');',
@@ -60,6 +61,48 @@ export class Sqlite {
         })
     };
 
+    static deleteNoteTemporarily = (id) => {
+        return new Promise((resolve, reject) => {
+            Sqlite.db.transaction(tx => {
+                    tx.executeSql(
+                        'UPDATE notes SET deleted = 1 WHERE id = ? AND user_id = ? ',
+                        [
+                            id,
+                            auth.currentUser.uid
+                        ],
+                        (txt, result) => {
+                            resolve(result)
+                        },
+                        (txt, error) => {
+                            reject(error)
+                        }
+                    );
+                }
+            );
+        })
+    };
+
+    static deleteNote = (id) => {
+        return new Promise((resolve, reject) => {
+            Sqlite.db.transaction(tx => {
+                    tx.executeSql(
+                        'DELETE FROM notes WHERE id = ? AND user_id = ? ',
+                        [
+                            id,
+                            auth.currentUser.uid
+                        ],
+                        (txt, result) => {
+                            resolve(result)
+                        },
+                        (txt, error) => {
+                            reject(error)
+                        }
+                    );
+                }
+            );
+        })
+    };
+
     static selectNotes = async (params) => {
 
         if (!params || (params && !params.limit && !params.offset)) {
@@ -71,7 +114,7 @@ export class Sqlite {
 
         const {keyword, categoryId} = params;
 
-        let whereClause = ` WHERE n.user_id = ?`;
+        let whereClause = ` WHERE n.user_id = ? AND (n.deleted is null OR n.deleted = 0)`;
         whereClause += keyword ? ' AND (n.title like "%' + keyword + '%" OR n.explanation like "%' + keyword + '%")' : '';
         whereClause += categoryId ? ` AND cat_id = ${categoryId}` : '';
         const leftJoin = ' LEFT JOIN categories as c on n.cat_id = c.id';
@@ -168,6 +211,7 @@ export class Sqlite {
                         'ref_id varchar(255),' +
                         'created_at datetime,' +
                         'updated tinyint,' +
+                        'deleted tinyint,' +
                         'user_id varchar(128) not null' +
                         ');',
                         [],
@@ -253,6 +297,24 @@ export class Sqlite {
             Sqlite.db.transaction(tx => {
                     tx.executeSql(
                         'UPDATE notes SET ref_id = null',
+                        [],
+                        (txt, result) => {
+                            resolve(result);
+                        },
+                        (txt, error) => {
+                            reject(error)
+                        }
+                    );
+                }
+            );
+        })
+    };
+
+    static setUpdateTest = () => {
+        return new Promise((resolve, reject) => {
+            Sqlite.db.transaction(tx => {
+                    tx.executeSql(
+                        'UPDATE notes SET updated = 1 WHERE id = 1',
                         [],
                         (txt, result) => {
                             resolve(result);
