@@ -1,5 +1,9 @@
 import {Sqlite} from "./DbService";
-import {synchronizeProgress, synchronizeStart} from "../redux/actions/NoteAction";
+
+export const NOTE_SYNC_REQUEST   = 'ASYNC_NOTE_SYNC_REQUEST';
+export const NOTE_SYNC_SUCCESS   = 'ASYNC_NOTE_SYNC_SUCCESS';
+export const NOTE_SYNC_FAILURE   = 'ASYNC_NOTE_SYNC_FAILURE';
+export const NOTE_SYNC_PROGRESS  = 'ASYNC_NOTE_SYNC_PROGRESS';
 
 const SyncService = class
 {
@@ -21,7 +25,7 @@ const SyncService = class
             return true;
         }
 
-        dispatch(synchronizeStart())
+        dispatch(this.synchronizeStart())
 
         for (const note of notes) {
             // If category has not been synced
@@ -61,7 +65,7 @@ const SyncService = class
             await this.createRemoteNote(note.id, note.ref_id, catRefId, note);
 
             done++;
-            dispatch(synchronizeProgress(((done * 100 / total)/100), done, total))
+            dispatch(this.synchronizeProgress(((done * 100 / total)/100), done, total))
         }
     }
 
@@ -207,6 +211,23 @@ const SyncService = class
                 }
             );
         })
+    }
+
+    synchronizeProgress(progress, done, total) {
+        return {
+            type: NOTE_SYNC_PROGRESS,
+            data: {
+                progress,
+                done,
+                total
+            }
+        }
+    }
+
+    synchronizeStart() {
+        return {
+            type: NOTE_SYNC_REQUEST
+        }
     }
 };
 

@@ -1,5 +1,5 @@
 import {Sqlite} from "../../services/DbService";
-import SyncService from "../../services/SyncService";
+import SyncService, {NOTE_SYNC_SUCCESS, NOTE_SYNC_FAILURE} from "../../services/SyncService";
 
 export const NOTE_CREATE_REQUEST   = 'ASYNC_NOTE_CREATE_REQUEST';
 export const NOTE_CREATE_SUCCESS   = 'ASYNC_NOTE_CREATE_SUCCESS';
@@ -16,11 +16,6 @@ export const NOTE_MORE_FAILURE   = 'ASYNC_NOTE_MORE_FAILURE';
 export const NOTE_DELETE_REQUEST   = 'ASYNC_NOTE_DELETE_REQUEST';
 export const NOTE_DELETE_SUCCESS   = 'ASYNC_NOTE_DELETE_SUCCESS';
 export const NOTE_DELETE_FAILURE   = 'ASYNC_NOTE_DELETE_FAILURE';
-
-export const NOTE_SYNC_REQUEST   = 'ASYNC_NOTE_SYNC_REQUEST';
-export const NOTE_SYNC_SUCCESS   = 'ASYNC_NOTE_SYNC_SUCCESS';
-export const NOTE_SYNC_FAILURE   = 'ASYNC_NOTE_SYNC_FAILURE';
-export const NOTE_SYNC_PROGRESS  = 'ASYNC_NOTE_SYNC_PROGRESS';
 
 export const NOTE_RESET   = 'NOTE_RESET';
 
@@ -131,21 +126,4 @@ export function synchronizeLocalToRemote(params) {
     //function request() { return { type: NOTE_SYNC_REQUEST } }
     function success(data) { return { type: NOTE_SYNC_SUCCESS, data } }
     function failure(error) { return { type: NOTE_SYNC_FAILURE, error } }
-}
-
-export function synchronizeProgress(progress, done, total) {
-    return {
-        type: NOTE_SYNC_PROGRESS,
-        data: {
-            progress,
-            done,
-            total
-        }
-    }
-}
-
-export function synchronizeStart() {
-    return {
-        type: NOTE_SYNC_REQUEST
-    }
 }
