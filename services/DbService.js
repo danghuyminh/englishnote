@@ -50,7 +50,14 @@ export class Sqlite {
 
                         ],
                         (txt, result) => {
-                            resolve(result)
+                            Sqlite.selectNotes()
+                                .then((noteData) => {
+                                resolve(noteData)
+                            })
+                                .catch((error) => {
+                                    console.log('CATCHED AND ERROR');
+                                console.log(error);
+                            });
                         },
                         (txt, error) => {
                             reject(error)

@@ -27,6 +27,8 @@ export default class InfiniteNoteList extends PureComponent {
     static getDerivedStateFromProps(nextProps, prevState) {
         console.log('getDerivedStateFromProps');
         console.log(nextProps.notes.length)
+        console.log(nextProps.isRefresh)
+        console.log(nextProps.offset + ' vx ' + prevState.offset);
         let notes = [];
 
         if (nextProps.notes.length) {
@@ -92,7 +94,7 @@ export default class InfiniteNoteList extends PureComponent {
                     refreshing={isFetching}
                     onRefresh={this.props.reloadContent}
                     onScrollBeginDrag={() =>  {this.moreEnabled = true}}
-                    onEndReachedThreshold={0.1}
+                    onEndReachedThreshold={0.3}
                     onEndReached={
                         () => {
                             if (this.moreEnabled) {
@@ -100,7 +102,6 @@ export default class InfiniteNoteList extends PureComponent {
                                     this.loadMoreContent()
                             }
                         }
-
                     }
                     ListFooterComponent={() => {
                         return (

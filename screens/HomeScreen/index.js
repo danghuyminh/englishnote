@@ -1,5 +1,5 @@
 import React from "react";
-import HomeScreen from "./HomeScreen.js";
+import HomeStackNavigator from "./StackNavigator";
 import NoteList from "../NoteScreen/index.js";
 import Profile from "../ProfileScreen/index";
 import Category from "../CategoryScreen/index";
@@ -8,14 +8,13 @@ import SideBar from "../../components/SideBar/SideBar.js";
 import { createDrawerNavigator } from "react-navigation";
 const HomeScreenRouter = createDrawerNavigator(
     {
-        Home: { screen: NoteList },
-        Notes : { screen: NoteList },
-        Categories : { screen: Category },
-        ProfileScreen: { screen: Profile },
+        HomePage: { screen: HomeStackNavigator },
         Logout: {screen: Logout}
     },
     {
-        contentComponent: props => <SideBar {...props} />
+        contentComponent: props => <SideBar {...props} />,
+        headerMode: "none",
+        /*drawerWidth: 250*/
     }
 );
 export default HomeScreenRouter;

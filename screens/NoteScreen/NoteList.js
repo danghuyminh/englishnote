@@ -17,8 +17,7 @@ class NoteList extends React.Component {
     state = {
         modalVisible: false,
         active: false,
-        keyword: undefined,
-        showLoading: false,
+        keyword: undefined
     };
 
     listRef = React.createRef();
@@ -28,21 +27,24 @@ class NoteList extends React.Component {
     });
 
     componentDidUpdate(prevProps, prevState, snapshot) {
+
        if (prevProps.categoryId !== this.props.categoryId) {
            this._scrollToTop();
            this.props.fetchNotes({isRefresh: true, keyword: prevState.keyword, categoryId: this.props.categoryId});
            this.setState({active: false})
+       } else if (this.props.newItemCreated) {
+           this._scrollToTop();
        }
     }
 
-    async componentWillMount() {
+    async componentDidMount() {
         console.log('NoteList Will Mount');
-        this.props.fetchNotes({isFirstLoading: true, keyword: '', offset: 0, limit: 10});
+        await this.props.fetchNotes({isFirstLoading: true, keyword: ''});
     }
 
     componentWillUnmount() {
-        console.log('NoteList Unmount')
-        this.props.resetNoteList();
+        console.log('NoteList Unmount');
+        //this.props.resetNoteList();
     }
 
     reloadContent = () => {
@@ -74,9 +76,6 @@ class NoteList extends React.Component {
     };
 
     syncLocalToHost = async () => {
-        this.setState({
-            showLoading: true
-        });
         this.props.synchronize();
     };
 
@@ -94,8 +93,7 @@ class NoteList extends React.Component {
 
     _scrollToTop = () => {
         if (this.props.notes.length) {
-            console.log('scroll top!')
-            //this.listRef.current.scrollToIndex({index: 0, animated: false});
+            this.listRef.current.scrollToIndex({index: 0, animated: true});
         }
     };
 
@@ -146,7 +144,7 @@ class NoteList extends React.Component {
 }
 
 function mapStateToProps (state) {
-    const {notes, hasMore, offset, total, limit, isRefresh, isFetching, isLoadingMore, isFirstLoading} = state.sqliteGetNote;
+    const {notes, hasMore, offset, total, limit, isRefresh, isFetching, isLoadingMore, isFirstLoading, newItemCreated} = state.sqliteGetNote;
     const {categoryId} = state.sqliteGetNoteCategory;
     const {isSynchronizing} = state.synchronizeNote;
 
@@ -161,7 +159,8 @@ function mapStateToProps (state) {
         isLoadingMore,
         isFirstLoading,
         categoryId,
-        isSynchronizing
+        isSynchronizing,
+        newItemCreated
     }
 }
 
@@ -169,9 +168,9 @@ function mapDispatchToProps (dispatch) {
     return {
         fetchNotes: (params) => dispatch(fetchNotes(params)),
         fetchMoreNotes: (params) => dispatch(fetchMoreNotes(params)),
-        resetNoteList: () => dispatch(resetNoteList()),
         deleteNote: (id) => dispatch(deleteNote(id)),
-        synchronize: () => dispatch(synchronizeLocalToRemote())
+        synchronize: () => dispatch(synchronizeLocalToRemote()),
+        //resetNoteList: () => dispatch(resetNoteList()),
     }
 }
 

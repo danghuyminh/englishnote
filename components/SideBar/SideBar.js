@@ -24,8 +24,8 @@ export default class SideBar extends React.Component {
                     )}
                     <List
                         keyboardShouldPersistTaps='always'
-                        dataArray={this.props.items}
-                        renderRow={data => {
+                        /*dataArray={this.props.items}*/
+                       /* renderRow={data => {
                             return (
                                 <ListItem
                                     button
@@ -33,8 +33,39 @@ export default class SideBar extends React.Component {
                                     <Text>{data.routeName}</Text>
                                 </ListItem>
                             );
-                        }}
-                    />
+                        }}*/
+                    >
+                        <ListItem
+                            button
+                            onPress={() => {this.props.navigation.navigate('CategoryList')}}>
+                            <Text>Profile</Text>
+                        </ListItem>
+                        <ListItem
+                            button
+                            onPress={() => {this.props.navigation.navigate('NoteList')}}>
+                            <Text>Notes</Text>
+                        </ListItem>
+                        <ListItem
+                            button
+                            onPress={() => {this.props.navigation.navigate('CategoryList')}}>
+                            <Text>Categories</Text>
+                        </ListItem>
+                        <ListItem
+                            button
+                            onPress={() => {this.props.navigation.navigate('CategoryList')}}>
+                            <Text>Settings</Text>
+                        </ListItem>
+                        <ListItem
+                            button
+                            onPress={() => {this.props.navigation.navigate('CategoryList')}}>
+                            <Text>About</Text>
+                        </ListItem>
+                        <ListItem
+                            button
+                            onPress={() => {this.props.navigation.navigate('Logout')}}>
+                            <Text>Logout</Text>
+                        </ListItem>
+                    </List>
                 </Content>
             </Container>
         );

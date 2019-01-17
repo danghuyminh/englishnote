@@ -1,5 +1,5 @@
 import {
-    NOTE_GET_REQUEST, NOTE_GET_SUCCESS, NOTE_GET_FAILURE,
+    NOTE_GET_REQUEST, NOTE_GET_SUCCESS, NOTE_GET_FAILURE, NOTE_CREATE_SUCCESS,
     NOTE_MORE_REQUEST, NOTE_MORE_SUCCESS, NOTE_MORE_FAILURE, NOTE_RESET,
 } from '../actions/NoteAction'
 
@@ -30,13 +30,15 @@ export function sqliteGetNote (state = initialState, action) {
                 hasMore: false
             });
         case NOTE_GET_SUCCESS:
+        case NOTE_CREATE_SUCCESS:
             return Object.assign({}, state, {
                 ...action.data,
                 isFetching: false,
                 isFirstLoading: false,
                 isRefresh: action.isRefresh,
                 hasMore: hasMore(action.data),
-                isLoadingMore: false
+                isLoadingMore: false,
+                newItemCreated: action.type === NOTE_CREATE_SUCCESS
             });
         case NOTE_GET_FAILURE:
             return Object.assign({}, state, {
@@ -64,7 +66,7 @@ export function sqliteGetNote (state = initialState, action) {
             return Object.assign({}, state, {
                 notes: [],
                 offset: 0,
-                hasMore: false
+                isRefresh: false
             });
         default:
             return state

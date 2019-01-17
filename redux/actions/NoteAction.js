@@ -26,7 +26,7 @@ export function createNote(params) {
 
         try {
             const result = await Sqlite.createNote(params);
-            dispatch(success());
+            dispatch(success(result));
             return result;
         } catch (error) {
             dispatch(failure(error.toString()));
@@ -35,7 +35,7 @@ export function createNote(params) {
     };
 
     function request() { return { type: NOTE_CREATE_REQUEST } }
-    function success(data) { return { type: NOTE_CREATE_SUCCESS, data } }
+    function success(data) { return { type: NOTE_CREATE_SUCCESS, data, isRefresh: true } }
     function failure(error) { return { type: NOTE_CREATE_FAILURE, error } }
 }
 
@@ -108,13 +108,13 @@ export function resetNoteList() {
     }
 }
 
-export function synchronizeLocalToRemote(params) {
+export function synchronizeLocalToRemote() {
 
     return async dispatch => {
         //dispatch(request());
 
         try {
-            const result = await new SyncService().syncFromLocalToHost(dispatch);
+            const result = await new SyncService().runSync(dispatch);
             dispatch(success(result));
             return result;
         } catch (error) {

@@ -1,11 +1,10 @@
 import React from "react";
 import {
-    Container, Button, Body, Content, Text, Card, CardItem
+    Container, Button, Body, Content, Text, Card, CardItem, Toast
 } from "native-base";
 import { connect } from 'react-redux'
 import { createNote } from "../../redux/actions/NoteAction"
 import AddNoteForm from "./AddNoteForm";
-import HeaderDrawer from "../../components/HeaderDrawer";
 import HeaderGoBack from "../../components/HeaderGoBack";
 import {getCategories} from "../../redux/actions/CategoryAction";
 
@@ -18,6 +17,7 @@ class HomeScreen extends React.Component {
     static navigationOptions = ({ navigation }) => ({header: <HeaderGoBack navigation={navigation} title='Create Note' />});
 
     componentWillMount() {
+        console.log('HomeScreen Will Mount');
         try {
             this.props.getCategories();
         } catch (error) {
@@ -25,17 +25,24 @@ class HomeScreen extends React.Component {
         }
     }
 
+    componentWillUnmount() {
+        console.log('HomeScreen Will Unmount');
+    }
+
     handleSubmit = async (values) => {
         console.log(values)
         await this.props.createNote(values);
-        //const notes = await Sqlite.selectNotes();
-        this.props.navigation.navigate("Notes")
+        Toast.show({
+            text: "Create note successfully",
+            buttonText: "Okay",
+            duration: 5000,
+            type: "success"
+        });
+        this.props.navigation.navigate("NoteList")
     };
 
     render() {
         const {categories} = this.props;
-        console.log('categories');
-        console.log(categories);
         return (
             <Container>
                 <Content padder keyboardShouldPersistTaps='never' keyboardDismissMode='on-drag'>

@@ -1,4 +1,5 @@
 import {Sqlite} from "./DbService";
+import {NetInfo} from 'react-native';
 
 export const NOTE_SYNC_REQUEST   = 'ASYNC_NOTE_SYNC_REQUEST';
 export const NOTE_SYNC_SUCCESS   = 'ASYNC_NOTE_SYNC_SUCCESS';
@@ -10,12 +11,40 @@ const SyncService = class
     constructor()
     {
         this.db = fire.firestore();
+
+        NetInfo.isConnected.fetch().then(isConnected => {
+            console.log('First, is ' + (isConnected ? 'online' : 'offline'));
+        });
+        function handleFirstConnectivityChange(isConnected) {
+            console.log('Then, is ' + (isConnected ? 'online' : 'offline'));
+           
+        }
+    }
+
+    static handleFirstConnectivityChange(connectionInfo) {
+        console.log('First change, type: ' + connectionInfo.type + ', effectiveType: ' + connectionInfo.effectiveType);
+    }
+
+    async runSync(dispatch)
+    {
+        if (NetInfo.isConnected) {
+           await this.syncFromLocalToHost(dispatch)
+        }
+
+        /*fire.database().ref('.info/connected').on('value', async (connectedSnap) => {
+            if (connectedSnap.val() === true) {
+                console.log('online');
+                await this.syncFromLocalToHost(dispatch)
+            } else {
+                /!* we're disconnected! *!/
+                console.log('offline')
+            }
+        });*/
     }
 
     async syncFromLocalToHost(dispatch)
     {
         console.log('Unsync Notes');
-
         const notes = await this.getUnsyncNotes();
         let limit = 1;
         const total = notes.length;
@@ -25,7 +54,7 @@ const SyncService = class
             return true;
         }
 
-        dispatch(this.synchronizeStart())
+        dispatch(this.synchronizeStart());
 
         for (const note of notes) {
             // If category has not been synced
