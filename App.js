@@ -35,7 +35,7 @@ export default class App extends React.Component {
             timestampsInSnapshots: true
         };
         firestore.settings(settings);
-
+        global['firestore'] = firestore;
         //console.log(Expo.FileSystem.documentDirectory);
 
         //Sqlite.createSampleNotes(sample30, sampleCat);

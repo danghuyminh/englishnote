@@ -3,7 +3,7 @@ import {
     NOTE_MORE_REQUEST, NOTE_MORE_SUCCESS, NOTE_MORE_FAILURE, NOTE_RESET,
 } from '../actions/NoteAction'
 
-import {NOTE_SYNC_REQUEST, NOTE_SYNC_SUCCESS, NOTE_SYNC_PROGRESS, NOTE_SYNC_FAILURE} from "../../services/SyncService";
+import {NOTE_SYNC_REQUEST, NOTE_SYNC_SUCCESS, NOTE_SYNC_PROGRESS, NOTE_SYNC_FAILURE, NOTE_SYNC_CONTINUE} from "../../services/SyncService";
 
 import {CATEGORY_SELECT} from "../actions/CategoryAction";
 
@@ -74,12 +74,14 @@ export function sqliteGetNote (state = initialState, action) {
 }
 
 export function sqliteGetNoteCategory (state = {
-    categoryId: undefined
+    categoryId: undefined,
+    categoryName: undefined
 }, action) {
     switch (action.type) {
         case CATEGORY_SELECT:
             return Object.assign({}, state, {
-                categoryId: action.categoryId
+                categoryId: action.categoryId,
+                categoryName: action.categoryName
             });
         default:
             return state
@@ -110,6 +112,11 @@ export function synchronizeNote (state = {
             return Object.assign({}, state, {
                 isSynchronizing: false,
                 canClose: true
+            });
+        case NOTE_SYNC_CONTINUE:
+            return Object.assign({}, state, {
+                isSynchronizing: true,
+                canClose: false
             });
         default:
             return state

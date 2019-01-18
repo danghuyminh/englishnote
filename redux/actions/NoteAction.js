@@ -114,7 +114,7 @@ export function synchronizeLocalToRemote() {
         //dispatch(request());
 
         try {
-            const result = await new SyncService().runSync(dispatch);
+            const result = await SyncService.runSync(dispatch);
             dispatch(success(result));
             return result;
         } catch (error) {

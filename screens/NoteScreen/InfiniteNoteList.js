@@ -78,7 +78,8 @@ export default class InfiniteNoteList extends PureComponent {
 
     render() {
         console.log('render list********');
-        const {isFirstLoading, isFetching, isLoadingMore, hasMore, listRef, isRefresh} = this.props;
+        console.log(this.props.isFirstLoading)
+        const {isFirstLoading, isFetching, isLoadingMore, hasMore, listRef, category} = this.props;
 
         return (
             <React.Fragment>
@@ -115,8 +116,8 @@ export default class InfiniteNoteList extends PureComponent {
                     ListEmptyComponent={() => {
                         return (
                             <View style={styles.emptyContentWrapper}>
-                                { isRefresh ? (
-                                    <ActivityIndicator size="large" />
+                                {category ? (
+                                    <Text>No notes found in the selected category!</Text>
                                 ) : (
                                     <Text>No notes created. Let's create your first note!</Text>
                                 )}

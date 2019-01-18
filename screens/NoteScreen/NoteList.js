@@ -1,9 +1,9 @@
 import React from "react";
 import {
-    Container, Icon, Button, Fab
+    Container, Icon, Button, Fab, Text
 } from "native-base";
 import { connect } from 'react-redux'
-import { fetchNotes, fetchMoreNotes, resetNoteList, deleteNote, synchronizeLocalToRemote } from "../../redux/actions/NoteAction"
+import { fetchNotes, fetchMoreNotes, deleteNote, synchronizeLocalToRemote } from "../../redux/actions/NoteAction"
 import InfiniteNoteList from './InfiniteNoteList';
 import {StyleSheet} from "react-native";
 import {Sqlite} from "../../services/DbService";
@@ -29,6 +29,7 @@ class NoteList extends React.Component {
     componentDidUpdate(prevProps, prevState, snapshot) {
 
        if (prevProps.categoryId !== this.props.categoryId) {
+           console.log('category changed---------------------------')
            this._scrollToTop();
            this.props.fetchNotes({isRefresh: true, keyword: prevState.keyword, categoryId: this.props.categoryId});
            this.setState({active: false})
@@ -69,7 +70,7 @@ class NoteList extends React.Component {
     onSearchSubmit = (values) => {
         const {keyword} = values;
         this._scrollToTop();
-        this.props.fetchNotes({isRefresh: true, limit: 10, offset: 0, keyword, categoryId: this.props.categoryId});
+        this.props.fetchNotes({isRefresh: true, keyword, categoryId: this.props.categoryId});
         this.setState({
             keyword
         })
@@ -99,15 +100,19 @@ class NoteList extends React.Component {
 
     render() {
         console.log('render NoteList')
-        const {notes, hasMore, offset, total, limit, isRefresh, isFetching, isLoadingMore, isFirstLoading, isSynchronizing} = this.props;
+        const {notes, hasMore, offset, total, limit, isRefresh, isFetching, isLoadingMore, isFirstLoading, isSynchronizing, categoryId, categoryName} = this.props;
 
         return (
             <Container>
                 <LoadingSynchronization visible={isSynchronizing} togglePopup={this.togglePopup}/>
                 <HeaderDrawer title='Notes' navigation={this.props.navigation}/>
                 <SearchForm onSubmit={this.onSearchSubmit} />
+                {categoryId && (
+                    <Button info block><Text>{categoryName}</Text></Button>
+                )}
                 <InfiniteNoteList notes={notes}
                                   listRef={this.listRef}
+                                  category={categoryId}
                                   offset={offset}
                                   total={total}
                                   hasMore={hasMore}
@@ -144,8 +149,8 @@ class NoteList extends React.Component {
 }
 
 function mapStateToProps (state) {
-    const {notes, hasMore, offset, total, limit, isRefresh, isFetching, isLoadingMore, isFirstLoading, newItemCreated} = state.sqliteGetNote;
-    const {categoryId} = state.sqliteGetNoteCategory;
+    const {notes, hasMore, offset, total, limit, isRefresh, isFetching, isLoadingMore, isFirstLoading} = state.sqliteGetNote;
+    const {categoryId, categoryName} = state.sqliteGetNoteCategory;
     const {isSynchronizing} = state.synchronizeNote;
 
     return {
@@ -160,7 +165,7 @@ function mapStateToProps (state) {
         isFirstLoading,
         categoryId,
         isSynchronizing,
-        newItemCreated
+        categoryName
     }
 }
 

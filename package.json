@@ -23,7 +23,7 @@
     "react-native-progress": "^3.5.0",
     "react-native-swipeable": "^0.6.0",
     "react-native-swipeout": "^2.3.6",
-    "react-navigation": "^2.18.0",
+    "react-navigation": "^3.0.9",
     "react-redux": "^5.0.7",
     "redux": "^4.0.1",
     "redux-form": "^7.4.2",

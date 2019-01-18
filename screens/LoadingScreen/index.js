@@ -1,5 +1,5 @@
 import React from 'react'
-import { createSwitchNavigator } from 'react-navigation'
+import { createSwitchNavigator, createAppContainer } from 'react-navigation'
 
 // import the different screens
 import Loading from './LoadingScreen'
@@ -18,6 +18,6 @@ const InitScreen = createSwitchNavigator(
     {
         initialRouteName: 'Loading'
     }
-)
+);
 
-export default InitScreen
+export default createAppContainer(InitScreen)

@@ -16,7 +16,7 @@ class NoteCategory extends React.Component {
     static navigationOptions = ({ navigation }) => ({header: <HeaderGoBack navigation={navigation} title='Select Category' />});
 
     onItemSelect = (item) => {
-        this.props.selectCategory(item.id === 'all' ? undefined : item.id);
+        this.props.selectCategory(item.id === 'all' ? undefined : item.id, item.title);
         this.props.navigation.navigate('NoteList');
     };
 
@@ -47,7 +47,7 @@ function mapStateToProps (state) {
 function mapDispatchToProps (dispatch) {
     return {
         getCategories: () => dispatch(getCategories()),
-        selectCategory: (categoryId) => dispatch(selectCategory(categoryId))
+        selectCategory: (categoryId, categoryName) => dispatch(selectCategory(categoryId, categoryName))
     }
 }
 

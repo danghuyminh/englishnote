@@ -123,10 +123,11 @@ export function getCategories(params) {
 }
 
 
-export function selectCategory(id) {
+export function selectCategory(id, name) {
 
    return {
        type: CATEGORY_SELECT,
-       categoryId: id
+       categoryId: id,
+       categoryName: name
    }
 }

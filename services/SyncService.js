@@ -5,47 +5,58 @@ export const NOTE_SYNC_REQUEST   = 'ASYNC_NOTE_SYNC_REQUEST';
 export const NOTE_SYNC_SUCCESS   = 'ASYNC_NOTE_SYNC_SUCCESS';
 export const NOTE_SYNC_FAILURE   = 'ASYNC_NOTE_SYNC_FAILURE';
 export const NOTE_SYNC_PROGRESS  = 'ASYNC_NOTE_SYNC_PROGRESS';
+export const NOTE_SYNC_CONTINUE  = 'ASYNC_NOTE_SYNC_CONTINUE';
 
 const SyncService = class
 {
-    constructor()
-    {
-        this.db = fire.firestore();
+    static isBroken         = false;
+    static isRunning        = false;
+    static eventRegistered  = false;
+    static db               = undefined;
+    static dispatch         = undefined;
 
-        NetInfo.isConnected.fetch().then(isConnected => {
-            console.log('First, is ' + (isConnected ? 'online' : 'offline'));
-        });
-        function handleFirstConnectivityChange(isConnected) {
-            console.log('Then, is ' + (isConnected ? 'online' : 'offline'));
-           
-        }
-    }
+    static registerEvent(dispatch) {
+        SyncService.db          = firestore;
+        SyncService.dispatch    = dispatch;
 
-    static handleFirstConnectivityChange(connectionInfo) {
-        console.log('First change, type: ' + connectionInfo.type + ', effectiveType: ' + connectionInfo.effectiveType);
-    }
-
-    async runSync(dispatch)
-    {
-        if (NetInfo.isConnected) {
-           await this.syncFromLocalToHost(dispatch)
-        }
-
-        /*fire.database().ref('.info/connected').on('value', async (connectedSnap) => {
-            if (connectedSnap.val() === true) {
-                console.log('online');
-                await this.syncFromLocalToHost(dispatch)
+        let connectedRef = fire.database().ref('.info/connected');
+        connectedRef.on('value', async (snap) => {
+            if (snap.val() === true) {
+                console.log('internet reconnected');
+                if (SyncService.isRunning) {
+                    if (SyncService.isBroken === true) {
+                        console.log('resync again!');
+                        await SyncService.runSync(dispatch)
+                    } else {
+                        dispatch(SyncService.synchronizeContinue(dispatch));
+                    }
+                }
             } else {
-                /!* we're disconnected! *!/
-                console.log('offline')
+                console.log('internet disconnected');
+                dispatch({
+                    type: NOTE_SYNC_FAILURE,
+                    error: 'Internet disconnected'
+                })
             }
-        });*/
+        });
     }
 
-    async syncFromLocalToHost(dispatch)
+    static async runSync(dispatch)
+    {
+        if (!SyncService.eventRegistered) {
+            SyncService.eventRegistered = true;
+            SyncService.registerEvent(dispatch);
+        }
+        const isConnected = await NetInfo.isConnected.fetch();
+        if (isConnected) {
+           await SyncService.syncFromLocalToHost(dispatch)
+        }
+    }
+
+    static async syncFromLocalToHost(dispatch)
     {
         console.log('Unsync Notes');
-        const notes = await this.getUnsyncNotes();
+        const notes = await SyncService.getUnsyncNotes();
         let limit = 1;
         const total = notes.length;
         let done = 0;
@@ -54,7 +65,9 @@ const SyncService = class
             return true;
         }
 
-        dispatch(this.synchronizeStart());
+        dispatch(SyncService.synchronizeStart());
+
+        SyncService.isRunning = true;
 
         for (const note of notes) {
             // If category has not been synced
@@ -70,7 +83,7 @@ const SyncService = class
                 console.log(note)
                 // If note is already synced before, delete it from remote
                 if (note.ref_id) {
-                    await this.deleteRemoteNote(note.id, note.ref_id);
+                    await SyncService.deleteRemoteNote(note.id, note.ref_id);
 
                 // If note has not been synced, delete from local is enough
                 } else {
@@ -81,24 +94,30 @@ const SyncService = class
             }
 
             // Create and update scenario
-            const category = note.cat_id ? await this.getCategory(note.cat_id) : {ref_id: 'uncategorized'};
+            const category = note.cat_id ? await SyncService.getCategory(note.cat_id) : {ref_id: 'uncategorized'};
             let catRefId = category.ref_id;
 
             console.log('Syncing note ID ' + note.id);
             console.log(note.ref_id);
 
-            if (!catRefId) {
-                catRefId = await this.createRemoteCategory(note.cat_id, note.cat_title, note.user_id);
+            try {
+                if (!catRefId) {
+                    catRefId = await SyncService.createRemoteCategory(note.cat_id, note.cat_title, note.user_id);
+                }
+
+                await SyncService.createRemoteNote(note.id, note.ref_id, catRefId, note);
+            } catch (error) {
+                SyncService.isBroken = true;
             }
-
-            await this.createRemoteNote(note.id, note.ref_id, catRefId, note);
-
             done++;
-            dispatch(this.synchronizeProgress(((done * 100 / total)/100), done, total))
+            dispatch(SyncService.synchronizeProgress(((done * 100 / total)/100), done, total))
         }
+
+        SyncService.isBroken = !(done >= total);
+        SyncService.isRunning = false;
     }
 
-    async createRemoteNote(noteId, noteRefId, catRefId, params)
+    static async createRemoteNote(noteId, noteRefId, catRefId, params)
     {
         try {
             let data = {
@@ -108,26 +127,26 @@ const SyncService = class
 
             // If noteRefId exists then update data with the new one
             if (noteRefId) {
-                await this.db.collection("notes").doc(noteRefId).set(data);
+                await SyncService.db.collection("notes").doc(noteRefId).set(data);
 
             // If noteRefId does not exist, create a new instance on firebase
             } else {
-                const docRef = await this.db.collection("notes").add(data);
-                await this.updateNoteRefId(noteId, docRef.id);
-                await this.db.collection("notes").doc(docRef.id).update({ref_id: docRef.id});
+                const docRef = await SyncService.db.collection("notes").add(data);
+                await SyncService.updateNoteRefId(noteId, docRef.id);
+                await SyncService.db.collection("notes").doc(docRef.id).update({ref_id: docRef.id});
                 catRefId = docRef.id;
             }
             return catRefId
         } catch(error) {
             console.error("Error adding note document: ", error);
-            //throw(error)
+            throw(error)
         }
     }
 
-    async deleteRemoteNote(noteId, noteRefId)
+    static async deleteRemoteNote(noteId, noteRefId)
     {
         try {
-            await this.db.collection("notes").doc(noteRefId).delete();
+            await SyncService.db.collection("notes").doc(noteRefId).delete();
             // finally delete from local also
             await Sqlite.deleteNote(noteId);
         } catch (error) {
@@ -136,14 +155,14 @@ const SyncService = class
         }
     }
 
-    async createRemoteCategory(catId, title, userId)
+    static async createRemoteCategory(catId, title, userId)
     {
         try {
-            const docRef = await this.db.collection("categories").add({
+            const docRef = await SyncService.db.collection("categories").add({
                 title: title,
                 user_id: userId
             });
-            await this.updateCategoryRefId(catId, docRef.id);
+            await SyncService.updateCategoryRefId(catId, docRef.id);
             return docRef.id
         } catch(error) {
             console.error("Error adding category document: ", error);
@@ -151,7 +170,7 @@ const SyncService = class
         }
     }
 
-    getUnsyncNotes()
+    static getUnsyncNotes()
     {
         return new Promise((resolve, reject) => {
             Sqlite.db.transaction(tx => {
@@ -175,7 +194,7 @@ const SyncService = class
         })
     }
 
-    getCategory(id) {
+    static getCategory(id) {
         return new Promise((resolve, reject) => {
             Sqlite.db.transaction(tx => {
                     tx.executeSql(
@@ -200,7 +219,7 @@ const SyncService = class
         })
     }
 
-    updateCategoryRefId(id, refId) {
+    static updateCategoryRefId(id, refId) {
         return new Promise((resolve, reject) => {
             Sqlite.db.transaction(tx => {
                     tx.executeSql(
@@ -221,7 +240,7 @@ const SyncService = class
         })
     }
 
-    updateNoteRefId(id, refId) {
+    static updateNoteRefId(id, refId) {
         return new Promise((resolve, reject) => {
             Sqlite.db.transaction(tx => {
                     tx.executeSql(
@@ -242,7 +261,7 @@ const SyncService = class
         })
     }
 
-    synchronizeProgress(progress, done, total) {
+    static synchronizeProgress(progress, done, total) {
         return {
             type: NOTE_SYNC_PROGRESS,
             data: {
@@ -253,10 +272,29 @@ const SyncService = class
         }
     }
 
-    synchronizeStart() {
+    static synchronizeStart() {
         return {
             type: NOTE_SYNC_REQUEST
         }
+    }
+
+    static synchronizeContinue() {
+        return {
+            type: NOTE_SYNC_CONTINUE
+        }
+    }
+
+    static async synchronizeLocalToRemote(dispatch) {
+        try {
+            const result = await SyncService.runSync(dispatch);
+            dispatch(success(result));
+            return result;
+        } catch (error) {
+            dispatch(failure(error.toString()));
+            throw error.toString()
+        }
+        function success(data) { return { type: NOTE_SYNC_SUCCESS, data } }
+        function failure(error) { return { type: NOTE_SYNC_FAILURE, error } }
     }
 };
 
