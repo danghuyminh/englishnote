@@ -7,7 +7,7 @@ import {
     Button, Container, Text, Content
 } from "native-base";
 
-class AddNoteForm extends Component {
+class NoteForm extends Component {
 
     render() {
 
@@ -49,9 +49,9 @@ class AddNoteForm extends Component {
     }
 }
 
-AddNoteForm = reduxForm({
+NoteForm = reduxForm({
     form: 'form-note-create',
     enableReinitialize: true
-})(AddNoteForm);
+})(NoteForm);
 
-export default AddNoteForm
+export default NoteForm

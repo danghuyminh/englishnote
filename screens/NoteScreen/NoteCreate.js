@@ -4,11 +4,11 @@ import {
 } from "native-base";
 import { connect } from 'react-redux'
 import { createNote } from "../../redux/actions/NoteAction"
-import AddNoteForm from "./AddNoteForm";
+import NoteForm from "./NoteForm";
 import HeaderGoBack from "../../components/HeaderGoBack";
 import {getCategories} from "../../redux/actions/CategoryAction";
 
-class HomeScreen extends React.Component {
+class NoteCreate extends React.Component {
 
     state = {
         items: undefined
@@ -17,7 +17,7 @@ class HomeScreen extends React.Component {
     static navigationOptions = ({ navigation }) => ({header: <HeaderGoBack navigation={navigation} title='Create Note' />});
 
     componentWillMount() {
-        console.log('HomeScreen Will Mount');
+        console.log('NoteScreen Will Mount');
         try {
             this.props.getCategories();
         } catch (error) {
@@ -26,7 +26,7 @@ class HomeScreen extends React.Component {
     }
 
     componentWillUnmount() {
-        console.log('HomeScreen Will Unmount');
+        console.log('NoteScreen Will Unmount');
     }
 
     handleSubmit = async (values) => {
@@ -53,7 +53,7 @@ class HomeScreen extends React.Component {
                             </Body>
                         </CardItem>
                     </Card>
-                    <AddNoteForm onSubmit={this.handleSubmit} categories={categories} />
+                    <NoteForm onSubmit={this.handleSubmit} categories={categories} />
                     <Button full rounded dark
                             style={{ marginTop: 10 }}>
                         <Text>View Notes</Text>
@@ -82,4 +82,4 @@ function mapDispatchToProps (dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(HomeScreen)
+)(NoteCreate)

@@ -33,12 +33,12 @@ class NoteList extends React.Component {
            this._scrollToTop();
            this.props.fetchNotes({isRefresh: true, keyword: prevState.keyword, categoryId: this.props.categoryId});
            this.setState({active: false})
-       } else if (this.props.newItemCreated) {
+       } else if (this.props.newItemModified) {
            this._scrollToTop();
        }
     }
 
-    async componentDidMount() {
+    async componentWillMount() {
         console.log('NoteList Will Mount');
         await this.props.fetchNotes({isFirstLoading: true, keyword: ''});
     }
@@ -99,8 +99,8 @@ class NoteList extends React.Component {
     };
 
     render() {
-        console.log('render NoteList')
-        const {notes, hasMore, offset, total, limit, isRefresh, isFetching, isLoadingMore, isFirstLoading, isSynchronizing, categoryId, categoryName} = this.props;
+        console.log('render NoteList');
+        const {notes, hasMore, offset, total, limit, isRefresh, isFetching, isLoadingMore, isFirstLoading, isSynchronizing, categoryId, categoryName, updatedItem} = this.props;
 
         return (
             <Container>
@@ -112,6 +112,7 @@ class NoteList extends React.Component {
                 )}
                 <InfiniteNoteList notes={notes}
                                   listRef={this.listRef}
+                                  updatedItem={updatedItem}
                                   category={categoryId}
                                   offset={offset}
                                   total={total}
@@ -149,7 +150,7 @@ class NoteList extends React.Component {
 }
 
 function mapStateToProps (state) {
-    const {notes, hasMore, offset, total, limit, isRefresh, isFetching, isLoadingMore, isFirstLoading} = state.sqliteGetNote;
+    const {notes, hasMore, offset, total, limit, isRefresh, isFetching, isLoadingMore, isFirstLoading, newItemModified} = state.sqliteGetNote;
     const {categoryId, categoryName} = state.sqliteGetNoteCategory;
     const {isSynchronizing} = state.synchronizeNote;
 
@@ -165,7 +166,8 @@ function mapStateToProps (state) {
         isFirstLoading,
         categoryId,
         isSynchronizing,
-        categoryName
+        categoryName,
+        newItemModified
     }
 }
 

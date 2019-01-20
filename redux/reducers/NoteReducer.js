@@ -1,6 +1,6 @@
 import {
-    NOTE_GET_REQUEST, NOTE_GET_SUCCESS, NOTE_GET_FAILURE, NOTE_CREATE_SUCCESS,
-    NOTE_MORE_REQUEST, NOTE_MORE_SUCCESS, NOTE_MORE_FAILURE, NOTE_RESET,
+    NOTE_GET_REQUEST, NOTE_GET_SUCCESS, NOTE_GET_FAILURE, NOTE_CREATE_SUCCESS, NOTE_UPDATE_SUCCESS, NOTE_UPDATE_REQUEST, NOTE_UPDATE_FAILURE,
+    NOTE_MORE_REQUEST, NOTE_MORE_SUCCESS, NOTE_MORE_FAILURE, NOTE_RESET, NOTE_GET_SINGLE_SUCCESS, NOTE_GET_SINGLE_REQUEST, NOTE_GET_SINGLE_FAILURE
 } from '../actions/NoteAction'
 
 import {NOTE_SYNC_REQUEST, NOTE_SYNC_SUCCESS, NOTE_SYNC_PROGRESS, NOTE_SYNC_FAILURE, NOTE_SYNC_CONTINUE} from "../../services/SyncService";
@@ -38,7 +38,12 @@ export function sqliteGetNote (state = initialState, action) {
                 isRefresh: action.isRefresh,
                 hasMore: hasMore(action.data),
                 isLoadingMore: false,
-                newItemCreated: action.type === NOTE_CREATE_SUCCESS
+                newItemModified: action.type === NOTE_CREATE_SUCCESS
+            });
+        case NOTE_UPDATE_SUCCESS:
+            return Object.assign({}, state, {
+                newItemModified: true,
+                updatedItem: action.data,
             });
         case NOTE_GET_FAILURE:
             return Object.assign({}, state, {
@@ -49,7 +54,8 @@ export function sqliteGetNote (state = initialState, action) {
             return Object.assign({}, state, {
                 //notes: [],
                 isRefresh: false,
-                isLoadingMore: true
+                isLoadingMore: true,
+                newItemModified: false
             });
         case NOTE_MORE_SUCCESS:
             return Object.assign({}, state, {
@@ -67,6 +73,15 @@ export function sqliteGetNote (state = initialState, action) {
                 notes: [],
                 offset: 0,
                 isRefresh: false
+            });
+        case NOTE_GET_SINGLE_SUCCESS:
+            return Object.assign({}, state, {
+                data: action.data
+            });
+        case NOTE_UPDATE_REQUEST:
+        case NOTE_UPDATE_FAILURE:
+            return Object.assign({}, state, {
+                updatedItem: undefined
             });
         default:
             return state

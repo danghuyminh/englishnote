@@ -16,6 +16,7 @@ export default class InfiniteNoteList extends PureComponent {
     state = {
         notes: [],
         offset: -1,
+        updatedItem: undefined
     };
 
     moreEnabled = false;
@@ -29,33 +30,35 @@ export default class InfiniteNoteList extends PureComponent {
         console.log(nextProps.notes.length)
         console.log(nextProps.isRefresh)
         console.log(nextProps.offset + ' vx ' + prevState.offset);
-        let notes = [];
 
-        if (nextProps.notes.length) {
-            if (nextProps.isRefresh) {
-                return {
-                    notes: nextProps.notes,
-                    offset: nextProps.offset,
-                    isLoadingMoreDone: true
-                };
-            } else if (nextProps.offset !== prevState.offset) {
-                notes = prevState.notes;
-                Array.prototype.push.apply(notes, nextProps.notes);
-                return {
-                    notes,
-                    offset: nextProps.offset,
-                    isLoadingMoreDone: true,
-                };
+        if (nextProps.notes.length && nextProps.offset !== prevState.offset) {
+            let notes = prevState.notes;
+            Array.prototype.push.apply(notes, nextProps.notes);
+            return {
+                notes,
+                offset: nextProps.offset,
+                isLoadingMoreDone: true,
+            };
+        } else if (nextProps.isRefresh) {
+            return {
+                notes: nextProps.notes,
+                offset: 0,
+                isLoadingMoreDone: true
+            };
+        } else if (prevState.notes.length && nextProps.updatedItem && prevState.updatedItem === undefined) {
+            console.log('Its time to update note list item!!!!!!!!!!!!!!!!!!!!!!');
+            let foundIndex = prevState.notes.findIndex(obj => obj .id === nextProps.updatedItem.id);
+            prevState.notes[foundIndex] = nextProps.updatedItem;
+            return {
+                notes: prevState.notes,
+                updatedItem: nextProps.updatedItem
             }
         } else {
-            if (nextProps.isRefresh) {
-                return {
-                    notes: nextProps.notes,
-                    offset: 0,
-                    isLoadingMoreDone: true
-                };
+            return {
+                updatedItem: nextProps.updatedItem
             }
         }
+
 
         return null;
     }

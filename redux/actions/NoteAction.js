@@ -5,6 +5,10 @@ export const NOTE_CREATE_REQUEST   = 'ASYNC_NOTE_CREATE_REQUEST';
 export const NOTE_CREATE_SUCCESS   = 'ASYNC_NOTE_CREATE_SUCCESS';
 export const NOTE_CREATE_FAILURE   = 'ASYNC_NOTE_CREATE_FAILURE';
 
+export const NOTE_UPDATE_REQUEST   = 'ASYNC_NOTE_UPDATE_REQUEST';
+export const NOTE_UPDATE_SUCCESS   = 'ASYNC_NOTE_UPDATE_SUCCESS';
+export const NOTE_UPDATE_FAILURE   = 'ASYNC_NOTE_UPDATE_FAILURE';
+
 export const NOTE_GET_REQUEST   = 'ASYNC_NOTE_GET_REQUEST';
 export const NOTE_GET_SUCCESS   = 'ASYNC_NOTE_GET_SUCCESS';
 export const NOTE_GET_FAILURE   = 'ASYNC_NOTE_GET_FAILURE';
@@ -17,7 +21,32 @@ export const NOTE_DELETE_REQUEST   = 'ASYNC_NOTE_DELETE_REQUEST';
 export const NOTE_DELETE_SUCCESS   = 'ASYNC_NOTE_DELETE_SUCCESS';
 export const NOTE_DELETE_FAILURE   = 'ASYNC_NOTE_DELETE_FAILURE';
 
+export const NOTE_GET_SINGLE_REQUEST   = 'ASYNC_NOTE_GET_SINGLE_REQUEST';
+export const NOTE_GET_SINGLE_SUCCESS   = 'ASYNC_NOTE_GET_SINGLE_SUCCESS';
+export const NOTE_GET_SINGLE_FAILURE   = 'ASYNC_NOTE_GET_SINGLE_FAILURE';
+
+
 export const NOTE_RESET   = 'NOTE_RESET';
+
+export function getNote(id) {
+
+    return async dispatch => {
+        dispatch(request());
+
+        try {
+            const result = await Sqlite.getNote(id);
+            dispatch(success(result));
+            return result;
+        } catch (error) {
+            dispatch(failure(error.toString()));
+            throw error.toString()
+        }
+    };
+
+    function request() { return { type: NOTE_GET_SINGLE_REQUEST } }
+    function success(data) { return { type: NOTE_GET_SINGLE_SUCCESS, data } }
+    function failure(error) { return { type: NOTE_GET_SINGLE_FAILURE, error } }
+}
 
 export function createNote(params) {
 
@@ -37,6 +66,26 @@ export function createNote(params) {
     function request() { return { type: NOTE_CREATE_REQUEST } }
     function success(data) { return { type: NOTE_CREATE_SUCCESS, data, isRefresh: true } }
     function failure(error) { return { type: NOTE_CREATE_FAILURE, error } }
+}
+
+export function updateNote(id, params) {
+
+    return async dispatch => {
+        dispatch(request());
+
+        try {
+            const result = await Sqlite.updateNote(id, params);
+            dispatch(success(result));
+            return result;
+        } catch (error) {
+            dispatch(failure(error.toString()));
+            throw error.toString()
+        }
+    };
+
+    function request() { return { type: NOTE_UPDATE_REQUEST } }
+    function success(data) { return { type: NOTE_UPDATE_SUCCESS, data } }
+    function failure(error) { return { type: NOTE_UPDATE_FAILURE, error } }
 }
 
 export function deleteNote(id) {

@@ -80,7 +80,6 @@ const SyncService = class
 
             // Delete scenario
             if (note.deleted === 1) {
-                console.log(note)
                 // If note is already synced before, delete it from remote
                 if (note.ref_id) {
                     await SyncService.deleteRemoteNote(note.id, note.ref_id);

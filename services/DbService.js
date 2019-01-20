@@ -37,6 +37,32 @@ export class Sqlite {
         })
     };
 
+    static getNote(id) {
+        return new Promise((resolve, reject) => {
+            Sqlite.db.transaction(tx => {
+                    tx.executeSql(
+                        'SELECT * FROM notes WHERE id = ? AND user_id = ?',
+                        [
+                            id,
+                            auth.currentUser.uid
+                        ],
+                        (txt, result) => {
+                            if (result.rows.length) {
+                                let {0 : note} = result.rows._array;
+                                resolve(note);
+                            } else {
+                                reject('There is no note matching the ID ' + id);
+                            }
+                        },
+                        (txt, error) => {
+                            reject(error)
+                        }
+                    );
+                }
+            );
+        })
+    }
+
     static createNote = (params) => {
         return new Promise((resolve, reject) => {
             Sqlite.db.transaction(tx => {
@@ -68,11 +94,35 @@ export class Sqlite {
         })
     };
 
+    static updateNote = (id, params) => {
+        return new Promise((resolve, reject) => {
+            Sqlite.db.transaction(tx => {
+                    tx.executeSql(
+                        'UPDATE notes SET title = ?, explanation = ?, cat_id = ? WHERE id = ? AND user_id = ?',
+                        [
+                            id,
+                            params.title,
+                            params.explanation,
+                            params.cat_id,
+                            auth.currentUser.uid
+                        ],
+                        (txt, result) => {
+                            resolve(result)
+                        },
+                        (txt, error) => {
+                            reject(error)
+                        }
+                    );
+                }
+            );
+        })
+    };
+
     static deleteNoteTemporarily = (id) => {
         return new Promise((resolve, reject) => {
             Sqlite.db.transaction(tx => {
                     tx.executeSql(
-                        'UPDATE notes SET deleted = 1 WHERE id = ? AND user_id = ? ',
+                        'UPDATE notes SET deleted = 1 WHERE id = ? AND user_id = ?',
                         [
                             id,
                             auth.currentUser.uid
