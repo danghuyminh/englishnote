@@ -10,7 +10,6 @@ import CategoryCreatePopup from "./CategoryCreatePopup"
 import CategorySwipeListItem from "./CategorySwipeListItem";
 import LoadingSpinner from "../../components/LoadingSpinner";
 
-
 class Category extends React.Component {
 
     state = {

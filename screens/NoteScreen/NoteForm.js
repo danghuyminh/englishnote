@@ -6,40 +6,50 @@ import {maxLength128, required} from "../../helpers/Validations";
 import {
     Button, Container, Text, Content
 } from "native-base";
-import {View} from 'react-native';
-
+import {View, TextInput} from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import KeyboardShift from "../../components/KeyboardShift";
 class NoteForm extends Component {
 
     render() {
 
         const { handleSubmit, categories } = this.props;
         return (
-            <View keyboardShouldPersistTaps='never' keyboardDismissMode='on-drag'>
 
-                <Field
-                    name='title'
-                    component={TextField}
-                    autoFocus={true}
-                    label="Note title"
-                    validate={[ required, maxLength128 ]}
-                />
-                <Field
-                    name='explanation'
-                    component={TextField}
-                    multiline={true}
-                    numberOfLines={6}
-                    label="Note explanation"
-                    validate={[ required ]}
-                />
-                <Field
-                    name={'category'}
-                    component={SelectField}
-                    items={categories}
-                    uniqueKey="cat_"
-                    label="Category"
-                />
+                <KeyboardShift>
+                    {() => (
+                        <View keyboardShouldPersistTaps='never' keyboardDismissMode='on-drag'>
+                        <Field
+                            name='title'
+                            component={TextField}
+                            autoFocus={true}
+                            label="Note title"
+                            validate={[ required, maxLength128 ]}
+                        />
 
-            </View>
+                        <Field
+                        name='explanation'
+                        component={TextField}
+                        multiline={true}
+                        numberOfLines={6}
+                        label="Note explanation"
+                        validate={[ required ]}
+                        />
+
+
+                        <Field
+                        name={'category'}
+                        component={SelectField}
+                        items={categories}
+                        uniqueKey="cat_"
+                        label="Category"
+                        />
+                        </View>
+                    )}
+
+                </KeyboardShift>
+
+
         )
     }
 }
