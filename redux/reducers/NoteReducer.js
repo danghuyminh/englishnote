@@ -103,6 +103,23 @@ export function sqliteGetNoteCategory (state = {
     }
 }
 
+export function sqliteGetSingleNote (state = {
+    data: {}
+}, action) {
+    switch (action.type) {
+        case NOTE_GET_SINGLE_REQUEST:
+            return Object.assign({}, state, {
+                data: {}
+            });
+        case NOTE_GET_SINGLE_SUCCESS:
+            return Object.assign({}, state, {
+                data: action.data
+            });
+        default:
+            return state
+    }
+}
+
 export function synchronizeNote (state = {
     progress: 0,
     done: 0,

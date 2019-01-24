@@ -1,5 +1,5 @@
 import React from 'react';
-import {Item, Icon, View, Label, Content} from 'native-base';
+import {Item, View} from 'native-base';
 import { FormStyles } from '../../helpers/Styles';
 
 const FieldWrapper = (props) => {

@@ -52,7 +52,7 @@ export default class SwipeListItem extends PureComponent {
             return null;
         }
 
-        const {data} = this.props;
+        const {data, editNote} = this.props;
 
         return (
             <Swipeable
@@ -67,7 +67,7 @@ export default class SwipeListItem extends PureComponent {
                 onLeftActionActivate={() => this.deleteSwipe()}
                 onLeftActionComplete={() => this.setState({toggle: !toggle})}
                 rightButtons={[
-                    <Button info style={styles.rightSwipeItem}><Text>Edit</Text></Button>
+                    <Button info style={styles.rightSwipeItem} onPress={() => editNote(data.id)}><Text>Edit</Text></Button>
                 ]}
             >
                 <ListItem style={[toggle ? styles.itemBeforeDelete : undefined, styles.listItem]}>
@@ -126,12 +126,12 @@ const styles = StyleSheet.create({
     },
     itemDate: {
         marginTop: 5,
-        color: '#276858',
-        fontSize: 9
+        color: '#773d1d',
+        fontSize: 10
     },
     itemCat: {
         marginTop: 5,
         color: '#276858',
-        fontSize: 9
+        fontSize: 10
     }
 });

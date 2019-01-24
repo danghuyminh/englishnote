@@ -2,6 +2,6 @@ import {StyleSheet} from "react-native";
 
 export const FormStyles = StyleSheet.create({
     fieldWrapper: {
-        marginTop: 10
+        marginTop: 30
     },
 });

@@ -6,6 +6,7 @@ import {maxLength128, required} from "../../helpers/Validations";
 import {
     Button, Container, Text, Content
 } from "native-base";
+import {View} from 'react-native';
 
 class NoteForm extends Component {
 
@@ -13,15 +14,14 @@ class NoteForm extends Component {
 
         const { handleSubmit, categories } = this.props;
         return (
-            <Container>
-                <Content keyboardShouldPersistTaps='never' keyboardDismissMode='on-drag'>
+            <View keyboardShouldPersistTaps='never' keyboardDismissMode='on-drag'>
+
                 <Field
                     name='title'
                     component={TextField}
                     autoFocus={true}
                     label="Note title"
                     validate={[ required, maxLength128 ]}
-                    keyboardShouldPersistTaps='handled' keyboardDismissMode='on-drag'
                 />
                 <Field
                     name='explanation'
@@ -38,13 +38,8 @@ class NoteForm extends Component {
                     uniqueKey="cat_"
                     label="Category"
                 />
-                <Button full rounded success
-                        style={{ marginTop: 10 }}
-                        onPress={handleSubmit}>
-                    <Text>Save</Text>
-                </Button>
-                </Content>
-            </Container>
+
+            </View>
         )
     }
 }

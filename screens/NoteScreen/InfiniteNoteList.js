@@ -58,9 +58,6 @@ export default class InfiniteNoteList extends PureComponent {
                 updatedItem: nextProps.updatedItem
             }
         }
-
-
-        return null;
     }
 
     componentDidUpdate() {
@@ -137,6 +134,7 @@ export default class InfiniteNoteList extends PureComponent {
     _renderRow = (data) => {
         return (
             <SwipeListItem data={data.item}
+                           editNote={this.props.editNote}
                            deleteNote={this.props.deleteNote} />
         )
     };

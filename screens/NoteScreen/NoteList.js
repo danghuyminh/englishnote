@@ -58,13 +58,18 @@ class NoteList extends React.Component {
     };
 
     deleteNote = (id) => {
-        console.log(id);
         try {
             this.props.deleteNote(id);
         } catch (error) {
             console.log(error);
             // throw error here
         }
+    };
+
+    editNote = (id) => {
+        this.props.navigation.navigate('NoteUpdate',{
+            noteId: id
+        })
     };
 
     onSearchSubmit = (values) => {
@@ -122,6 +127,7 @@ class NoteList extends React.Component {
                                   isFirstLoading={isFirstLoading}
                                   isFetching={isFetching}
                                   isLoadingMore={isLoadingMore}
+                                  editNote={this.editNote}
                                   deleteNote={this.deleteNote}
                                   reloadContent={this.reloadContent}
                                   loadMoreContent={this.loadMoreContent}
