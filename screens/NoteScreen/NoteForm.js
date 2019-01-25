@@ -3,22 +3,16 @@ import {Field, reduxForm} from "redux-form";
 import TextField from "../../components/FormFields/TextField";
 import SelectField from "../../components/FormFields/SelectField";
 import {maxLength128, required} from "../../helpers/Validations";
-import {
-    Button, Container, Text, Content
-} from "native-base";
-import {View, TextInput} from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import {View} from 'react-native';
 import KeyboardShift from "../../components/KeyboardShift";
+
 class NoteForm extends Component {
-
     render() {
-
-        const { handleSubmit, categories } = this.props;
+        const { categories } = this.props;
         return (
-
-                <KeyboardShift>
-                    {() => (
-                        <View keyboardShouldPersistTaps='never' keyboardDismissMode='on-drag'>
+            <KeyboardShift>
+                {() => (
+                    <View>
                         <Field
                             name='title'
                             component={TextField}
@@ -28,28 +22,24 @@ class NoteForm extends Component {
                         />
 
                         <Field
-                        name='explanation'
-                        component={TextField}
-                        multiline={true}
-                        numberOfLines={6}
-                        label="Note explanation"
-                        validate={[ required ]}
+                            name='explanation'
+                            component={TextField}
+                            multiline={true}
+                            numberOfLines={6}
+                            label="Note explanation"
+                            validate={[ required ]}
                         />
-
 
                         <Field
-                        name={'category'}
-                        component={SelectField}
-                        items={categories}
-                        uniqueKey="cat_"
-                        label="Category"
+                            name={'cat_id'}
+                            component={SelectField}
+                            items={categories}
+                            uniqueKey="cat_"
+                            label="Category"
                         />
-                        </View>
-                    )}
-
-                </KeyboardShift>
-
-
+                    </View>
+                )}
+            </KeyboardShift>
         )
     }
 }

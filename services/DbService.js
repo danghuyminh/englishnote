@@ -63,6 +63,35 @@ export class Sqlite {
         })
     }
 
+    static getNoteFull(id) {
+        return new Promise((resolve, reject) => {
+            Sqlite.db.transaction(tx => {
+                    tx.executeSql(
+                        'SELECT n.*, c.title as cat_title ' +
+                        'FROM notes as n ' +
+                        'LEFT JOIN categories as c ON n.cat_id = c.id ' +
+                        'WHERE n.id = ? AND n.user_id = ?',
+                        [
+                            id,
+                            auth.currentUser.uid
+                        ],
+                        (txt, result) => {
+                            if (result.rows.length) {
+                                let {0 : note} = result.rows._array;
+                                resolve(note);
+                            } else {
+                                reject('There is no note matching the ID ' + id);
+                            }
+                        },
+                        (txt, error) => {
+                            reject(error)
+                        }
+                    );
+                }
+            );
+        })
+    }
+
     static createNote = (params) => {
         return new Promise((resolve, reject) => {
             Sqlite.db.transaction(tx => {
@@ -71,7 +100,7 @@ export class Sqlite {
                         [
                             params.title,
                             params.explanation,
-                            params.category,
+                            params.cat_id,
                             auth.currentUser.uid,
 
                         ],
@@ -98,16 +127,16 @@ export class Sqlite {
         return new Promise((resolve, reject) => {
             Sqlite.db.transaction(tx => {
                     tx.executeSql(
-                        'UPDATE notes SET title = ?, explanation = ?, cat_id = ? WHERE id = ? AND user_id = ?',
+                        'UPDATE notes SET title = ?, explanation = ?, cat_id = ?, updated = 1 WHERE id = ? AND user_id = ?',
                         [
-                            id,
                             params.title,
                             params.explanation,
                             params.cat_id,
+                            id,
                             auth.currentUser.uid
                         ],
                         (txt, result) => {
-                            resolve(result)
+                            resolve(Sqlite.getNoteFull(id))
                         },
                         (txt, error) => {
                             reject(error)

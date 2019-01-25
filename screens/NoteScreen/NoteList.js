@@ -34,6 +34,7 @@ class NoteList extends React.Component {
            this.props.fetchNotes({isRefresh: true, keyword: prevState.keyword, categoryId: this.props.categoryId});
            this.setState({active: false})
        } else if (this.props.newItemModified) {
+           console.log('scroll top after did update');
            this._scrollToTop();
        }
     }
@@ -68,6 +69,12 @@ class NoteList extends React.Component {
 
     editNote = (id) => {
         this.props.navigation.navigate('NoteUpdate',{
+            noteId: id
+        })
+    };
+
+    viewNote = (id) => {
+        this.props.navigation.navigate('NoteView',{
             noteId: id
         })
     };
@@ -127,6 +134,7 @@ class NoteList extends React.Component {
                                   isFirstLoading={isFirstLoading}
                                   isFetching={isFetching}
                                   isLoadingMore={isLoadingMore}
+                                  viewNote={this.viewNote}
                                   editNote={this.editNote}
                                   deleteNote={this.deleteNote}
                                   reloadContent={this.reloadContent}
@@ -156,7 +164,7 @@ class NoteList extends React.Component {
 }
 
 function mapStateToProps (state) {
-    const {notes, hasMore, offset, total, limit, isRefresh, isFetching, isLoadingMore, isFirstLoading, newItemModified} = state.sqliteGetNote;
+    const {notes, hasMore, offset, total, limit, isRefresh, isFetching, isLoadingMore, isFirstLoading, newItemModified, updatedItem} = state.sqliteGetNote;
     const {categoryId, categoryName} = state.sqliteGetNoteCategory;
     const {isSynchronizing} = state.synchronizeNote;
 
@@ -173,7 +181,8 @@ function mapStateToProps (state) {
         categoryId,
         isSynchronizing,
         categoryName,
-        newItemModified
+        newItemModified,
+        updatedItem
     }
 }
 

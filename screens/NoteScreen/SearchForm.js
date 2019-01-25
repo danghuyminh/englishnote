@@ -9,6 +9,15 @@ import {StyleSheet} from "react-native";
 
 class SearchForm extends Component {
 
+    handleBlur = (value) => {
+        console.log('onBlur values')
+        console.log(value)
+        if (!value || value === '') {
+            this.props.handleSubmit()
+        }
+       return true;
+    };
+
     render() {
         const { handleSubmit } = this.props;
         return (
@@ -21,6 +30,7 @@ class SearchForm extends Component {
                            component={SearchField}
                            placeholder="Search for..."
                            onSubmitEditing={handleSubmit}
+                           handleBlur={this.handleBlur}
                            validate={[ maxLength128 ]}
                        />
                    </Item>

@@ -48,6 +48,26 @@ export function getNote(id) {
     function failure(error) { return { type: NOTE_GET_SINGLE_FAILURE, error } }
 }
 
+export function getNoteFull(id) {
+
+    return async dispatch => {
+        dispatch(request());
+
+        try {
+            const result = await Sqlite.getNoteFull(id);
+            dispatch(success(result));
+            return result;
+        } catch (error) {
+            dispatch(failure(error.toString()));
+            throw error.toString()
+        }
+    };
+
+    function request() { return { type: NOTE_GET_SINGLE_REQUEST } }
+    function success(data) { return { type: NOTE_GET_SINGLE_SUCCESS, data } }
+    function failure(error) { return { type: NOTE_GET_SINGLE_FAILURE, error } }
+}
+
 export function createNote(params) {
 
     return async dispatch => {

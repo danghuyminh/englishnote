@@ -26,7 +26,7 @@ export function sqliteGetNote (state = initialState, action) {
                 isFirstLoading: action.isFirstLoading,
                 isFetching: true,
                 isRefresh: action.isRefresh,
-                notes: [],
+                //notes: [],
                 hasMore: false
             });
         case NOTE_GET_SUCCESS:
@@ -42,8 +42,9 @@ export function sqliteGetNote (state = initialState, action) {
             });
         case NOTE_UPDATE_SUCCESS:
             return Object.assign({}, state, {
-                newItemModified: true,
+                newItemModified: undefined,
                 updatedItem: action.data,
+                isRefresh: false
             });
         case NOTE_GET_FAILURE:
             return Object.assign({}, state, {

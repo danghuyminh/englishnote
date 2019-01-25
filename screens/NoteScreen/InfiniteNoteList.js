@@ -26,10 +26,10 @@ export default class InfiniteNoteList extends PureComponent {
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
-        console.log('getDerivedStateFromProps');
+      /*  console.log('getDerivedStateFromProps');
         console.log(nextProps.notes.length)
         console.log(nextProps.isRefresh)
-        console.log(nextProps.offset + ' vx ' + prevState.offset);
+        console.log(nextProps.offset + ' vx ' + prevState.offset);*/
 
         if (nextProps.notes.length && nextProps.offset !== prevState.offset) {
             let notes = prevState.notes;
@@ -46,7 +46,7 @@ export default class InfiniteNoteList extends PureComponent {
                 isLoadingMoreDone: true
             };
         } else if (prevState.notes.length && nextProps.updatedItem && prevState.updatedItem === undefined) {
-            console.log('Its time to update note list item!!!!!!!!!!!!!!!!!!!!!!');
+            //console.log('Its time to update note list item!!!!!!!!!!!!!!!!!!!!!!');
             let foundIndex = prevState.notes.findIndex(obj => obj .id === nextProps.updatedItem.id);
             prevState.notes[foundIndex] = nextProps.updatedItem;
             return {
@@ -77,8 +77,8 @@ export default class InfiniteNoteList extends PureComponent {
     };
 
     render() {
-        console.log('render list********');
-        console.log(this.props.isFirstLoading)
+        /*console.log('render list********');
+        console.log(this.props.isFirstLoading)*/
         const {isFirstLoading, isFetching, isLoadingMore, hasMore, listRef, category} = this.props;
 
         return (
@@ -135,6 +135,8 @@ export default class InfiniteNoteList extends PureComponent {
         return (
             <SwipeListItem data={data.item}
                            editNote={this.props.editNote}
+                           viewNote={this.props.viewNote}
+                           updatedItem={this.state.updatedItem}
                            deleteNote={this.props.deleteNote} />
         )
     };

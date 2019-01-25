@@ -1,8 +1,6 @@
 import React from 'react';
-import {View, TextInput} from 'react-native';
 import {Icon, Input, Label} from 'native-base';
 import FieldWrapper from "./FieldWrapper";
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 const TextField = (props) => {
     const { input, meta, label, autoFocus, ...inputProps } = props;
     const {error, touched} = meta;
@@ -10,8 +8,6 @@ const TextField = (props) => {
     return (
         <FieldWrapper meta={meta}>
             <Label>{label}</Label>
-
-
             <Input
                 {...inputProps}
                 autoFocus={autoFocus}
@@ -19,9 +15,8 @@ const TextField = (props) => {
                 onBlur={input.onBlur}
                 onFocus={input.onFocus}
                 value={input.value}
+                style={{height: 200}}
             />
-
-
             {touched &&
             (error ? (
                     <Icon name='close-circle'/>

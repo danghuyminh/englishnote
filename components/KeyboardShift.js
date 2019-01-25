@@ -36,7 +36,7 @@ export default class KeyboardShift extends Component {
         UIManager.measure(currentlyFocusedField, (originX, originY, width, height, pageX, pageY) => {
             const fieldHeight = height;
             const fieldTop = pageY;
-            const gap = (windowHeight - keyboardHeight) - (fieldTop + fieldHeight)-50;
+            const gap = (windowHeight - keyboardHeight) - (fieldTop + fieldHeight)-50; // minus 50 because sticky button height is 50
             if (gap >= 0) {
                 return;
             }

@@ -243,7 +243,7 @@ const SyncService = class
         return new Promise((resolve, reject) => {
             Sqlite.db.transaction(tx => {
                     tx.executeSql(
-                        'UPDATE notes SET ref_id = ? WHERE id = ?',
+                        'UPDATE notes SET ref_id = ?, updated = null WHERE id = ?',
                         [
                             refId,
                             id

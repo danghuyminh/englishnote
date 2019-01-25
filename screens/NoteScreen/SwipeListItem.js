@@ -1,5 +1,5 @@
 import React, {PureComponent} from 'react';
-import {StyleSheet, Text, View, Alert, ActivityIndicator} from 'react-native';
+import {StyleSheet, Text, View, Alert, ActivityIndicator, Animated} from 'react-native';
 import Swipeable from 'react-native-swipeable';
 import {Body, ListItem, Right, Button} from "native-base";
 import Moment from 'moment';
@@ -9,8 +9,11 @@ export default class SwipeListItem extends PureComponent {
     state = {
         leftActionActivated: false,
         toggle: false,
-        deleted: false,
+        deleted: false
     };
+    swipeable   = null;
+    springValue = new Animated.Value(1);
+    borderColor = new Animated.Value(0);
 
     deleteSwipe = () => {
         Alert.alert(
@@ -45,6 +48,67 @@ export default class SwipeListItem extends PureComponent {
         })
     };
 
+    componentDidUpdate() {
+        const {updatedItem, data} = this.props;
+        if (updatedItem && updatedItem.id === data.id) {
+            this.swipeable.recenter();
+            this.handleAnimation();
+        }
+    }
+
+
+    handleAnimation = () => {
+        this.borderColor.setValue(0);
+        this.springValue.setValue(1);
+
+        Animated.sequence([
+            Animated.timing(
+                this.borderColor,
+                {
+                    toValue: 5,
+                    duration: 1000,
+
+                }
+            ),
+            Animated.spring(
+                this.springValue,
+                {
+                    toValue: 1.5,
+                    friction: 4
+                }
+            ),
+            Animated.timing(
+                this.springValue,
+                {
+                    toValue: 1,
+                    duration: 500
+                }
+            )
+        ]).start();
+    };
+
+    handleItemClick = (id) => {
+        this.springValue.setValue(1);
+        Animated.sequence([
+            Animated.spring(
+                this.springValue,
+                {
+                    toValue: 2,
+                    tension : 60,
+                }
+            ),
+        ]).start(() => this.props.viewNote(id));
+        setTimeout(() => {
+            Animated.timing(
+                this.springValue,
+                {
+                    toValue: 1,
+                    duration: 500
+                }
+            ).start();
+        }, 2000);
+    };
+
     render() {
         const {leftActionActivated, toggle, deleted} = this.state;
 
@@ -56,6 +120,7 @@ export default class SwipeListItem extends PureComponent {
 
         return (
             <Swipeable
+                onRef={ref => this.swipeable = ref}
                 leftActionActivationDistance={120}
                 leftContent={(
                     <View style={[styles.leftSwipeItem, leftActionActivated ? styles.leftSwipeActivated : styles.leftSwipe]}>
@@ -70,21 +135,32 @@ export default class SwipeListItem extends PureComponent {
                     <Button info style={styles.rightSwipeItem} onPress={() => editNote(data.id)}><Text>Edit</Text></Button>
                 ]}
             >
-                <ListItem style={[toggle ? styles.itemBeforeDelete : undefined, styles.listItem]}>
-                    <Body>
-                        <Text style={toggle ? styles.itemTextBeforeDelete : undefined}>{data.title}</Text>
-                        <Text style={toggle ? styles.itemTextBeforeDelete : styles.itemTextExplanation} numberOfLines={2} note>{data.explanation}</Text>
-                        <Text style={styles.itemDate}>
-                            {new Moment(data.created_at).format("dddd, DD MMM YYYY")}
-                        </Text>
-                        <Text style={styles.itemCat}>{data.cat_title ?? 'Uncategorized'}</Text>
-                    </Body>
-                    {toggle && (
-                        <Right>
-                            <ActivityIndicator size="small" />
-                        </Right>
-                    )}
-                </ListItem>
+                <Animated.View style={{
+                    transform: [{scale: this.springValue}],
+                    borderColor: this.borderColor.interpolate({
+                        inputRange: [0, 1, 3, 4, 5],
+                        outputRange: ['red', 'blue', 'green', 'violet', 'white']
+                    }),
+                    borderWidth: this.borderColor.interpolate({
+                        inputRange: [0, 1, 3, 4, 5],
+                        outputRange: [0, 2, 2, 2, 0]
+                    }) }}>
+                    <ListItem onPress={() => this.handleItemClick(data.id)} style={[toggle ? styles.itemBeforeDelete : undefined, styles.listItem]}>
+                        <Body>
+                            <Text style={toggle ? styles.itemTextBeforeDelete : undefined}>{data.title}</Text>
+                            <Text style={toggle ? styles.itemTextBeforeDelete : styles.itemTextExplanation} numberOfLines={2} note>{data.explanation}</Text>
+                            <Text style={styles.itemDate}>
+                                {new Moment(data.created_at).format("dddd, DD MMM YYYY")}
+                            </Text>
+                            <Text style={styles.itemCat}>{data.cat_title ?? 'Uncategorized'}</Text>
+                        </Body>
+                        {toggle && (
+                            <Right>
+                                <ActivityIndicator size="small" />
+                            </Right>
+                        )}
+                    </ListItem>
+                </Animated.View>
             </Swipeable>
         );
     }
@@ -126,7 +202,7 @@ const styles = StyleSheet.create({
     },
     itemDate: {
         marginTop: 5,
-        color: '#773d1d',
+        color: '#8ea5a1',
         fontSize: 10
     },
     itemCat: {
