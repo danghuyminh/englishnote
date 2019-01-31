@@ -8,6 +8,7 @@ export default class KeyboardShift extends Component {
     state = {
         shift: new Animated.Value(0),
     };
+    keyboardHeight = 0;
 
     componentWillMount() {
         this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow);
@@ -24,15 +25,18 @@ export default class KeyboardShift extends Component {
         const { shift } = this.state;
         return (
             <Animated.View style={[styles.container, { transform: [{translateY: shift}] }]}>
-                {renderProp()}
+                {renderProp(this.handleKeyboardDidShow)}
             </Animated.View>
         );
     }
 
     handleKeyboardDidShow = (event) => {
+        console.log('--------------> ran here')
         const { height: windowHeight } = Dimensions.get('window');
-        const keyboardHeight = event.endCoordinates.height;
+        const keyboardHeight = event ? event.endCoordinates.height : this.keyboardHeight;
+        this.keyboardHeight = keyboardHeight;
         const currentlyFocusedField = TextInputState.currentlyFocusedField();
+        console.log(TextInputState)
         UIManager.measure(currentlyFocusedField, (originX, originY, width, height, pageX, pageY) => {
             const fieldHeight = height;
             const fieldTop = pageY;
@@ -49,7 +53,7 @@ export default class KeyboardShift extends Component {
                 }
             ).start();
         });
-    }
+    };
 
     handleKeyboardDidHide = () => {
         Animated.timing(

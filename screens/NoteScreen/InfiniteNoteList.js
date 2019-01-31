@@ -43,7 +43,8 @@ export default class InfiniteNoteList extends PureComponent {
             return {
                 notes: nextProps.notes,
                 offset: 0,
-                isLoadingMoreDone: true
+                isLoadingMoreDone: true,
+                updatedItem: nextProps.updatedItem
             };
         } else if (prevState.notes.length && nextProps.updatedItem && prevState.updatedItem === undefined) {
             //console.log('Its time to update note list item!!!!!!!!!!!!!!!!!!!!!!');

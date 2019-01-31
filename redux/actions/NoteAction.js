@@ -196,3 +196,20 @@ export function synchronizeLocalToRemote() {
     function success(data) { return { type: NOTE_SYNC_SUCCESS, data } }
     function failure(error) { return { type: NOTE_SYNC_FAILURE, error } }
 }
+
+export function synchronizeRemoteToLocal() {
+
+    return async dispatch => {
+        try {
+            const result = await SyncService.runSync(dispatch, true);
+            dispatch(success(result));
+            return result;
+        } catch (error) {
+            dispatch(failure(error.toString()));
+            throw error.toString()
+        }
+    };
+
+    function success(data) { return { type: NOTE_SYNC_SUCCESS, data } }
+    function failure(error) { return { type: NOTE_SYNC_FAILURE, error } }
+}

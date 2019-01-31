@@ -3,13 +3,12 @@ import {
     Container, Icon, Button, Fab, Text
 } from "native-base";
 import { connect } from 'react-redux'
-import { fetchNotes, fetchMoreNotes, deleteNote, synchronizeLocalToRemote } from "../../redux/actions/NoteAction"
+import { fetchNotes, fetchMoreNotes, deleteNote, synchronizeLocalToRemote, synchronizeRemoteToLocal } from "../../redux/actions/NoteAction"
 import InfiniteNoteList from './InfiniteNoteList';
 import {StyleSheet} from "react-native";
 import {Sqlite} from "../../services/DbService";
 import HeaderDrawer from "../../components/HeaderDrawer";
 import SearchForm from "./SearchForm";
-import SyncService from "../../services/SyncService";
 import LoadingSynchronization from "../../components/LoadingSynchronization";
 
 class NoteList extends React.Component {
@@ -36,6 +35,7 @@ class NoteList extends React.Component {
        } else if (this.props.newItemModified) {
            console.log('scroll top after did update');
            this._scrollToTop();
+           this.syncLocalToHost();
        }
     }
 
@@ -68,13 +68,13 @@ class NoteList extends React.Component {
     };
 
     editNote = (id) => {
-        this.props.navigation.navigate('NoteUpdate',{
+        this.props.navigation.navigate('NoteUpdate', {
             noteId: id
         })
     };
 
     viewNote = (id) => {
-        this.props.navigation.navigate('NoteView',{
+        this.props.navigation.navigate('NoteView', {
             noteId: id
         })
     };
@@ -89,7 +89,8 @@ class NoteList extends React.Component {
     };
 
     syncLocalToHost = async () => {
-        this.props.synchronize();
+        //this.props.synchronizeLocalToRemote();
+        this.props.synchronizeRemoteToLocal();
     };
 
     togglePopup = () => {
@@ -112,7 +113,12 @@ class NoteList extends React.Component {
 
     render() {
         console.log('render NoteList');
-        const {notes, hasMore, offset, total, limit, isRefresh, isFetching, isLoadingMore, isFirstLoading, isSynchronizing, categoryId, categoryName, updatedItem} = this.props;
+
+        const {
+            notes, hasMore, offset, total, limit, isRefresh,
+            isFetching, isLoadingMore, isFirstLoading, isSynchronizing,
+            categoryId, categoryName, updatedItem
+        } = this.props;
 
         return (
             <Container>
@@ -191,7 +197,8 @@ function mapDispatchToProps (dispatch) {
         fetchNotes: (params) => dispatch(fetchNotes(params)),
         fetchMoreNotes: (params) => dispatch(fetchMoreNotes(params)),
         deleteNote: (id) => dispatch(deleteNote(id)),
-        synchronize: () => dispatch(synchronizeLocalToRemote()),
+        synchronizeLocalToRemote: () => dispatch(synchronizeLocalToRemote()),
+        synchronizeRemoteToLocal: () => dispatch(synchronizeRemoteToLocal()),
         //resetNoteList: () => dispatch(resetNoteList()),
     }
 }

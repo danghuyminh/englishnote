@@ -105,12 +105,13 @@ export class Sqlite {
 
                         ],
                         (txt, result) => {
-                            Sqlite.selectNotes()
-                                .then((noteData) => {
+                            console.log('craeted data');
+                            console.log(result);
+                            Sqlite.selectNotes().then(async (noteData) => {
+                                noteData.newNote = await Sqlite.getNoteFull(result.insertId);
                                 resolve(noteData)
-                            })
-                                .catch((error) => {
-                                    console.log('CATCHED AND ERROR');
+                            }).catch((error) => {
+                                console.log('CATCHED AND ERROR');
                                 console.log(error);
                             });
                         },

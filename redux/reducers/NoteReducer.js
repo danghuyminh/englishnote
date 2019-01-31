@@ -38,7 +38,8 @@ export function sqliteGetNote (state = initialState, action) {
                 isRefresh: action.isRefresh,
                 hasMore: hasMore(action.data),
                 isLoadingMore: false,
-                newItemModified: action.type === NOTE_CREATE_SUCCESS
+                newItemModified: action.type === NOTE_CREATE_SUCCESS,
+                updatedItem: action.data.newNote
             });
         case NOTE_UPDATE_SUCCESS:
             return Object.assign({}, state, {

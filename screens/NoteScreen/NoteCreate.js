@@ -78,9 +78,15 @@ class NoteCreate extends React.Component {
                 <NoteForm onSubmit={this.handleSubmit} categories={categories} />
                 <KeyboardAccessory>
                     <View style={GlobalStyles.stickyButtonWrapper}>
-                        <Button danger onPress={this.onIgnoreClick} style={GlobalStyles.stickyButton}>
-                            <Text>Ignore</Text>
-                        </Button>
+                        {this.state.isKeyboardOpened ? (
+                            <Button info onPress={this.onIgnoreClick} style={GlobalStyles.stickyButton}>
+                                <Text>Done</Text>
+                            </Button>
+                        ): (
+                            <Button danger onPress={this.onIgnoreClick} style={GlobalStyles.stickyButton}>
+                                <Text>Ignore</Text>
+                            </Button>
+                        )}
                         <Button success onPress={this.props.submitForm} style={GlobalStyles.stickyButton}>
                             <Text>Save</Text>
                         </Button>

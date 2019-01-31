@@ -2,7 +2,7 @@ import React from "react";
 import {
     Button, Text, Toast
 } from "native-base";
-import {View, Keyboard, ScrollView, StyleSheet, TextInput} from 'react-native';
+import {View, Keyboard, ScrollView} from 'react-native';
 import { connect } from 'react-redux'
 import { updateNote, getNote } from "../../redux/actions/NoteAction"
 import NoteForm from "./NoteForm";
@@ -80,9 +80,15 @@ class NoteUpdate extends React.Component {
                 </ScrollView>
                 <KeyboardAccessory>
                     <View style={GlobalStyles.stickyButtonWrapper}>
-                        <Button danger onPress={this.onIgnoreClick} style={GlobalStyles.stickyButton}>
-                            <Text>Ignore</Text>
-                        </Button>
+                        {this.state.isKeyboardOpened ? (
+                            <Button info onPress={this.onIgnoreClick} style={GlobalStyles.stickyButton}>
+                                <Text>Done</Text>
+                            </Button>
+                        ): (
+                            <Button danger onPress={this.onIgnoreClick} style={GlobalStyles.stickyButton}>
+                                <Text>Ignore</Text>
+                            </Button>
+                        )}
                         <Button success onPress={this.props.submitForm} style={GlobalStyles.stickyButton}>
                             <Text>Save</Text>
                         </Button>

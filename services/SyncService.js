@@ -1,5 +1,6 @@
 import {Sqlite} from "./DbService";
 import {NetInfo} from 'react-native';
+import {CategoryService} from "./CategoryService";
 
 export const NOTE_SYNC_REQUEST   = 'ASYNC_NOTE_SYNC_REQUEST';
 export const NOTE_SYNC_SUCCESS   = 'ASYNC_NOTE_SYNC_SUCCESS';
@@ -41,7 +42,7 @@ const SyncService = class
         });
     }
 
-    static async runSync(dispatch)
+    static async runSync(dispatch, hostToLocal)
     {
         if (!SyncService.eventRegistered) {
             SyncService.eventRegistered = true;
@@ -49,7 +50,11 @@ const SyncService = class
         }
         const isConnected = await NetInfo.isConnected.fetch();
         if (isConnected) {
-           await SyncService.syncFromLocalToHost(dispatch)
+            if (hostToLocal) {
+                await SyncService.syncFromHostToLocal(auth.currentUser.uid, dispatch)
+            } else {
+                await SyncService.syncFromLocalToHost(dispatch)
+            }
         }
     }
 
@@ -116,6 +121,43 @@ const SyncService = class
         SyncService.isRunning = false;
     }
 
+    static async syncFromHostToLocal(userId, dispatch)
+    {
+        console.log('syncFromHostToLocal');
+        console.log(userId)
+        const noteRef = SyncService.db.collection("notes");
+        const querySnapshot = await noteRef.where("user_id", "==", userId).get();
+        console.log(querySnapshot.size)
+        const total = querySnapshot.size;
+
+        if (total === 0) {
+            return true;
+        }
+
+        querySnapshot.forEach(function(doc) {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+            const remoteNote = doc.data();
+            const localNote = SyncService.getNoteByRefId(doc.id);
+            if (localNote) {
+                let localCategory = SyncService.getCategoryByRefId(remoteNote.cat_ref_id);
+
+                if (!localCategory) {
+                    localCategory = CategoryService.createCategoryWithRefId(remoteNote.cat_title, remoteNote.cat_ref_id);
+                }
+
+                Sqlite.updateNote(localNote.id, {
+                    title: remoteNote.title,
+                    explanation: remoteNote.explanation,
+                    cat_id: localCategory.id
+                });
+            } else {
+                // When localNote has not been created
+            }
+        });
+
+    }
+
     static async createRemoteNote(noteId, noteRefId, catRefId, params)
     {
         try {
@@ -127,6 +169,7 @@ const SyncService = class
             // If noteRefId exists then update data with the new one
             if (noteRefId) {
                 await SyncService.db.collection("notes").doc(noteRefId).set(data);
+                await SyncService.updateNoteRefId(noteId, noteRefId);
 
             // If noteRefId does not exist, create a new instance on firebase
             } else {
@@ -218,6 +261,56 @@ const SyncService = class
         })
     }
 
+    static getCategoryByRefId(ref_id) {
+        return new Promise((resolve, reject) => {
+            Sqlite.db.transaction(tx => {
+                    tx.executeSql(
+                        'SELECT id, title, ref_id FROM categories WHERE ref_id = ?',
+                        [
+                            ref_id
+                        ],
+                        (txt, result) => {
+                            if (result.rows.length) {
+                                let {0 : category} = result.rows._array;
+                                resolve(category);
+                            } else {
+                                resolve(null)
+                            }
+                        },
+                        (txt, error) => {
+                            reject(error)
+                        }
+                    );
+                }
+            );
+        })
+    }
+
+    static getNoteByRefId(ref_id) {
+        return new Promise((resolve, reject) => {
+            Sqlite.db.transaction(tx => {
+                    tx.executeSql(
+                        'SELECT id, title, ref_id, cat_id FROM notes WHERE ref_id = ?',
+                        [
+                            ref_id
+                        ],
+                        (txt, result) => {
+                            if (result.rows.length) {
+                                let {0 : note} = result.rows._array;
+                                resolve(note);
+                            } else {
+                                resolve(null)
+                            }
+                        },
+                        (txt, error) => {
+                            reject(error)
+                        }
+                    );
+                }
+            );
+        })
+    }
+
     static updateCategoryRefId(id, refId) {
         return new Promise((resolve, reject) => {
             Sqlite.db.transaction(tx => {
@@ -283,7 +376,7 @@ const SyncService = class
         }
     }
 
-    static async synchronizeLocalToRemote(dispatch) {
+   /* static async synchronizeLocalToRemote(dispatch) {
         try {
             const result = await SyncService.runSync(dispatch);
             dispatch(success(result));
@@ -294,7 +387,7 @@ const SyncService = class
         }
         function success(data) { return { type: NOTE_SYNC_SUCCESS, data } }
         function failure(error) { return { type: NOTE_SYNC_FAILURE, error } }
-    }
+    }*/
 };
 
 export default SyncService;

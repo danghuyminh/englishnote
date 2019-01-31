@@ -5,7 +5,8 @@ export const CategoryService = {
     updateCategory,
     getCategories,
     getCategory,
-    deleteCategory
+    deleteCategory,
+    createCategoryWithRefId
 };
 
 function createCategory(title) {
@@ -21,6 +22,28 @@ function createCategory(title) {
                         getCategories().then((categories) => {
                             resolve(categories)
                         });
+                    },
+                    (txt, error) => {
+                        reject(error)
+                    }
+                );
+            }
+        );
+    })
+}
+
+function createCategoryWithRefId(title, refId) {
+    return new Promise((resolve, reject) => {
+        Sqlite.db.transaction(tx => {
+                tx.executeSql(
+                    'INSERT INTO categories (title, ref_id, user_id) VALUES (?, ?, ?) ',
+                    [
+                        title,
+                        refId,
+                        auth.currentUser.uid
+                    ],
+                    (txt, result) => {
+                        resolve(result.insertId);
                     },
                     (txt, error) => {
                         reject(error)

@@ -2,7 +2,7 @@ import React from 'react';
 import {Icon, Input, Label} from 'native-base';
 import FieldWrapper from "./FieldWrapper";
 const TextField = (props) => {
-    const { input, meta, label, autoFocus, style, ...inputProps } = props;
+    const { input, meta, label, autoFocus, style, handleBlur, ...inputProps } = props;
     const {error, touched} = meta;
 
     return (
@@ -12,7 +12,11 @@ const TextField = (props) => {
                 {...inputProps}
                 autoFocus={autoFocus}
                 onChangeText={input.onChange}
-                onBlur={input.onBlur}
+                onBlur={(event) => {
+                    if (handleBlur)
+                        handleBlur(input.value);
+                    input.onBlur(event);
+                }}
                 onFocus={input.onFocus}
                 value={input.value}
                 style={style}
