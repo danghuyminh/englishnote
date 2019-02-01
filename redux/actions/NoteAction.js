@@ -1,5 +1,6 @@
 import {Sqlite} from "../../services/DbService";
 import SyncService, {NOTE_SYNC_SUCCESS, NOTE_SYNC_FAILURE} from "../../services/SyncService";
+import {Toast} from "native-base";
 
 export const NOTE_CREATE_REQUEST   = 'ASYNC_NOTE_CREATE_REQUEST';
 export const NOTE_CREATE_SUCCESS   = 'ASYNC_NOTE_CREATE_SUCCESS';
@@ -188,7 +189,12 @@ export function synchronizeLocalToRemote() {
             return result;
         } catch (error) {
             dispatch(failure(error.toString()));
-            throw error.toString()
+            Toast.show({
+                text: error.toString(),
+                buttonText: 'Hide',
+                type: "danger",
+                duration: 5000
+            });
         }
     };
 
@@ -206,10 +212,15 @@ export function synchronizeRemoteToLocal() {
             return result;
         } catch (error) {
             dispatch(failure(error.toString()));
-            throw error.toString()
+            Toast.show({
+                text: error.toString(),
+                buttonText: 'Hide',
+                type: "danger",
+                duration: 5000
+            });
         }
     };
 
     function success(data) { return { type: NOTE_SYNC_SUCCESS, data } }
-    function failure(error) { return { type: NOTE_SYNC_FAILURE, error } }
+    function failure(error) { return { type: NOTE_SYNC_FAILURE, error} }
 }

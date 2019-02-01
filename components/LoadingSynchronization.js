@@ -30,13 +30,13 @@ class LoadingSynchronization extends React.Component {
     }
 
     render() {
-        const {visible, togglePopup, progress, done, total, canClose} = this.props;
+        const {isSynchronizing, togglePopup, progress, done, total, canClose, syncType, type} = this.props;
 
         return (
             <Modal
                 animationType="slide"
                 transparent={false}
-                visible={visible}
+                visible={(isSynchronizing && syncType === type)}
                 presentationStyle="overFullScreen"
                 onRequestClose={() => {
                     if (canClose) {
@@ -68,12 +68,14 @@ const styles = StyleSheet.create({
 
 function mapStateToProps (state) {
 
-    const {progress, done, total} = state.synchronizeNote;
+    const {progress, done, total, syncType, isSynchronizing} = state.synchronizeNote;
 
     return {
         progress,
         done,
-        total
+        total,
+        syncType,
+        isSynchronizing
     }
 }
 

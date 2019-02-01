@@ -128,6 +128,7 @@ export function synchronizeNote (state = {
     total: 0,
     isSynchronizing: false,
     canClose: false,
+    type: 'local'
 }, action) {
     switch (action.type) {
         case NOTE_SYNC_REQUEST:
@@ -135,7 +136,8 @@ export function synchronizeNote (state = {
                 isSynchronizing: true,
                 canClose: false,
                 progress: 0,
-                done: 0
+                done: 0,
+                syncType: action.syncType
             });
         case NOTE_SYNC_PROGRESS:
             return Object.assign({}, state, {
@@ -150,7 +152,8 @@ export function synchronizeNote (state = {
         case NOTE_SYNC_CONTINUE:
             return Object.assign({}, state, {
                 isSynchronizing: true,
-                canClose: false
+                canClose: false,
+                syncType: action.syncType
             });
         default:
             return state

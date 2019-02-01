@@ -1,6 +1,7 @@
 import {Sqlite} from "./DbService";
 import {NetInfo} from 'react-native';
 import {CategoryService} from "./CategoryService";
+import { Toast } from 'native-base';
 
 export const NOTE_SYNC_REQUEST   = 'ASYNC_NOTE_SYNC_REQUEST';
 export const NOTE_SYNC_SUCCESS   = 'ASYNC_NOTE_SYNC_SUCCESS';
@@ -29,7 +30,7 @@ const SyncService = class
                         console.log('resync again!');
                         await SyncService.runSync(dispatch)
                     } else {
-                        dispatch(SyncService.synchronizeContinue(dispatch));
+                        dispatch(SyncService.synchronizeContinue('local'));
                     }
                 }
             } else {
@@ -70,7 +71,7 @@ const SyncService = class
             return true;
         }
 
-        dispatch(SyncService.synchronizeStart());
+        dispatch(SyncService.synchronizeStart('local'));
 
         SyncService.isRunning = true;
 
@@ -112,6 +113,10 @@ const SyncService = class
                 await SyncService.createRemoteNote(note.id, note.ref_id, catRefId, note);
             } catch (error) {
                 SyncService.isBroken = true;
+                dispatch({
+                    type: NOTE_SYNC_FAILURE,
+                    error: 'Create remote note failed'
+                })
             }
             done++;
             dispatch(SyncService.synchronizeProgress(((done * 100 / total)/100), done, total))
@@ -124,38 +129,56 @@ const SyncService = class
     static async syncFromHostToLocal(userId, dispatch)
     {
         console.log('syncFromHostToLocal');
-        console.log(userId)
         const noteRef = SyncService.db.collection("notes");
         const querySnapshot = await noteRef.where("user_id", "==", userId).get();
-        console.log(querySnapshot.size)
         const total = querySnapshot.size;
 
         if (total === 0) {
             return true;
         }
 
+        let done = 0;
+
+        dispatch(SyncService.synchronizeStart('remote'));
+
+        let remoteNotes = [];
+
         querySnapshot.forEach(function(doc) {
-            // doc.data() is never undefined for query doc snapshots
-            console.log(doc.id, " => ", doc.data());
-            const remoteNote = doc.data();
-            const localNote = SyncService.getNoteByRefId(doc.id);
-            if (localNote) {
-                let localCategory = SyncService.getCategoryByRefId(remoteNote.cat_ref_id);
-
-                if (!localCategory) {
-                    localCategory = CategoryService.createCategoryWithRefId(remoteNote.cat_title, remoteNote.cat_ref_id);
-                }
-
-                Sqlite.updateNote(localNote.id, {
-                    title: remoteNote.title,
-                    explanation: remoteNote.explanation,
-                    cat_id: localCategory.id
-                });
-            } else {
-                // When localNote has not been created
-            }
+            let item = doc.data();
+            item.doc_id = doc.id;
+            remoteNotes.push(item);
         });
 
+        for (const remoteNote of remoteNotes) {
+            try {
+                console.log(remoteNote.doc_id, " => ", remoteNote);
+                const localNote = await SyncService.getNoteByRefId(remoteNote.doc_id);
+                // Determine corresponding local category
+                let localCategory = {id: null};
+                if (remoteNote.cat_ref_id) {
+                    localCategory = await SyncService.getCategoryByRefId(remoteNote.cat_ref_id);
+                    if (!localCategory) {
+                        localCategory = await CategoryService.createLocalCategory(remoteNote.cat_title, remoteNote.cat_ref_id);
+                    }
+                }
+
+                if (localNote) {
+                    await Sqlite.updateNote(localNote.id, {
+                        title: remoteNote.title,
+                        explanation: remoteNote.explanation,
+                        cat_id: localCategory.id
+                    });
+                } else {
+                    // When localNote has not been created
+                    // Create local note
+                    await SyncService.createLocalNote(remoteNote);
+                }
+            } catch (error) {
+                throw error;
+            }
+            done++;
+            dispatch(SyncService.synchronizeProgress(((done * 100 / total)/100), done, total))
+        }
     }
 
     static async createRemoteNote(noteId, noteRefId, catRefId, params)
@@ -185,6 +208,32 @@ const SyncService = class
         }
     }
 
+    static createLocalNote = (params) => {
+        return new Promise((resolve, reject) => {
+            Sqlite.db.transaction(tx => {
+                    tx.executeSql(
+                        'INSERT INTO notes (title, explanation, cat_id, ref_id, user_id, created_at) VALUES (?, ?, ?, ?, ?, DateTime("now")) ',
+                        [
+                            params.title,
+                            params.explanation,
+                            params.cat_id,
+                            params.ref_id,
+                            auth.currentUser.uid,
+
+                        ],
+                        (txt, result) => {
+                            resolve(result.insertId);
+                        },
+                        (txt, error) => {
+                            console.log('Cannot create local note due to this error: ' + error.toString())
+                            reject('Cannot create local note due to this error: ' + error.toString())
+                        }
+                    );
+                }
+            );
+        })
+    };
+
     static async deleteRemoteNote(noteId, noteRefId)
     {
         try {
@@ -210,6 +259,28 @@ const SyncService = class
             console.error("Error adding category document: ", error);
             throw(error)
         }
+    }
+
+    static createLocalCategory(title, refId) {
+        return new Promise((resolve, reject) => {
+            Sqlite.db.transaction(tx => {
+                    tx.executeSql(
+                        'INSERT INTO categories (title, ref_id, user_id) VALUES (?, ?, ?) ',
+                        [
+                            title,
+                            refId,
+                            auth.currentUser.uid
+                        ],
+                        (txt, result) => {
+                            resolve(result.insertId);
+                        },
+                        (txt, error) => {
+                            reject('Cannot create local category due to this error: ' + error.toString())
+                        }
+                    );
+                }
+            );
+        })
     }
 
     static getUnsyncNotes()
@@ -364,15 +435,17 @@ const SyncService = class
         }
     }
 
-    static synchronizeStart() {
+    static synchronizeStart(syncType) {
         return {
-            type: NOTE_SYNC_REQUEST
+            type: NOTE_SYNC_REQUEST,
+            syncType
         }
     }
 
-    static synchronizeContinue() {
+    static synchronizeContinue(syncType) {
         return {
-            type: NOTE_SYNC_CONTINUE
+            type: NOTE_SYNC_CONTINUE,
+            syncType
         }
     }
 

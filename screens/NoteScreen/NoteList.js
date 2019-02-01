@@ -116,13 +116,13 @@ class NoteList extends React.Component {
 
         const {
             notes, hasMore, offset, total, limit, isRefresh,
-            isFetching, isLoadingMore, isFirstLoading, isSynchronizing,
+            isFetching, isLoadingMore, isFirstLoading,
             categoryId, categoryName, updatedItem
         } = this.props;
 
         return (
             <Container>
-                <LoadingSynchronization visible={isSynchronizing} togglePopup={this.togglePopup}/>
+                <LoadingSynchronization togglePopup={this.togglePopup} type='remote'/>
                 <HeaderDrawer title='Notes' navigation={this.props.navigation}/>
                 <SearchForm onSubmit={this.onSearchSubmit} />
                 {categoryId && (
@@ -172,7 +172,6 @@ class NoteList extends React.Component {
 function mapStateToProps (state) {
     const {notes, hasMore, offset, total, limit, isRefresh, isFetching, isLoadingMore, isFirstLoading, newItemModified, updatedItem} = state.sqliteGetNote;
     const {categoryId, categoryName} = state.sqliteGetNoteCategory;
-    const {isSynchronizing} = state.synchronizeNote;
 
     return {
         notes,
@@ -185,7 +184,6 @@ function mapStateToProps (state) {
         isLoadingMore,
         isFirstLoading,
         categoryId,
-        isSynchronizing,
         categoryName,
         newItemModified,
         updatedItem
