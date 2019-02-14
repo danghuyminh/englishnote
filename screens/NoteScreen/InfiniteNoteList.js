@@ -48,7 +48,7 @@ export default class InfiniteNoteList extends PureComponent {
             };
         } else if (prevState.notes.length && nextProps.updatedItem && prevState.updatedItem === undefined) {
             //console.log('Its time to update note list item!!!!!!!!!!!!!!!!!!!!!!');
-            let foundIndex = prevState.notes.findIndex(obj => obj .id === nextProps.updatedItem.id);
+            let foundIndex = prevState.notes.findIndex(obj => obj.id === nextProps.updatedItem.id);
             prevState.notes[foundIndex] = nextProps.updatedItem;
             return {
                 notes: prevState.notes,

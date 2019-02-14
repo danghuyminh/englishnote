@@ -31,12 +31,17 @@ export default class KeyboardShift extends Component {
     }
 
     handleKeyboardDidShow = (event) => {
-        console.log('--------------> ran here')
+        console.log('--------------> ran here');
+        console.log('asdasd22');
         const { height: windowHeight } = Dimensions.get('window');
+
         const keyboardHeight = event ? event.endCoordinates.height : this.keyboardHeight;
         this.keyboardHeight = keyboardHeight;
         const currentlyFocusedField = TextInputState.currentlyFocusedField();
-        console.log(TextInputState)
+
+        if (!currentlyFocusedField)
+            return;
+
         UIManager.measure(currentlyFocusedField, (originX, originY, width, height, pageX, pageY) => {
             const fieldHeight = height;
             const fieldTop = pageY;
