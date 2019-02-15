@@ -1,9 +1,9 @@
 import React from "react";
 import {
-    Container, Button, Body, Content, Text, Card, CardItem, Toast
+    Button, Text, Toast
 } from "native-base";
 import { connect } from 'react-redux'
-import { createNote } from "../../redux/actions/NoteAction"
+import {createNote, synchronizeLocalToRemote} from "../../redux/actions/NoteAction"
 import NoteForm from "./NoteForm";
 import HeaderGoBack from "../../components/HeaderGoBack";
 import {getCategories} from "../../redux/actions/CategoryAction";
@@ -57,6 +57,9 @@ class NoteCreate extends React.Component {
             buttonText: "Okay",
             duration: 5000,
             type: "success"
+        });
+        this.syncLocalToHost().then(() => {
+            console.log('start synchronizing after create new note');
         });
         this.props.navigation.navigate("NoteList")
     };
@@ -113,6 +116,7 @@ function mapDispatchToProps (dispatch) {
         createNote: (values) => dispatch(createNote(values)),
         getCategories: () => dispatch(getCategories()),
         submitForm: () => dispatch(submit('form-note-create')),
+        synchronizeLocalToRemote: () => dispatch(synchronizeLocalToRemote()),
     }
 }
 

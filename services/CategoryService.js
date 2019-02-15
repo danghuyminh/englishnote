@@ -129,8 +129,8 @@ function getCategories() {
     return new Promise((resolve, reject) => {
         Sqlite.db.transaction(tx => {
                 tx.executeSql(
-                    'SELECT * FROM categories',
-                    [],
+                    'SELECT * FROM categories WHERE user_id = ?',
+                    [auth.currentUser.uid],
                     (txt, result) => {
                         resolve({
                             categories: result.rows._array,

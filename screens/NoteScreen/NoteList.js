@@ -26,7 +26,7 @@ class NoteList extends React.Component {
     });
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-
+        console.log('Note List component did update');
        if (prevProps.categoryId !== this.props.categoryId) {
            console.log('category changed---------------------------')
            this._scrollToTop();
@@ -35,7 +35,9 @@ class NoteList extends React.Component {
        } else if (this.props.newItemModified) {
            console.log('scroll top after did update');
            this._scrollToTop();
-           this.syncLocalToHost();
+       } else if (this.props.forceReload) {
+           console.log('run into force reload <--------------------');
+           this.props.fetchNotes({isRefresh: true, keyword: undefined, categoryId: undefined});
        }
     }
 
@@ -89,8 +91,8 @@ class NoteList extends React.Component {
     };
 
     syncLocalToHost = async () => {
-        //this.props.synchronizeLocalToRemote();
-        this.props.synchronizeRemoteToLocal();
+        this.props.synchronizeLocalToRemote();
+        //this.props.synchronizeRemoteToLocal();
     };
 
     togglePopup = () => {
@@ -122,7 +124,7 @@ class NoteList extends React.Component {
 
         return (
             <Container>
-                <LoadingSynchronization togglePopup={this.togglePopup} type='remote'/>
+                <LoadingSynchronization togglePopup={this.togglePopup} type='local'/>
                 <HeaderDrawer title='Notes' navigation={this.props.navigation}/>
                 <SearchForm onSubmit={this.onSearchSubmit} />
                 {categoryId && (
@@ -170,7 +172,7 @@ class NoteList extends React.Component {
 }
 
 function mapStateToProps (state) {
-    const {notes, hasMore, offset, total, limit, isRefresh, isFetching, isLoadingMore, isFirstLoading, newItemModified, updatedItem} = state.sqliteGetNote;
+    const {notes, hasMore, offset, total, limit, isRefresh, isFetching, isLoadingMore, isFirstLoading, newItemModified, updatedItem, forceReload} = state.sqliteGetNote;
     const {categoryId, categoryName} = state.sqliteGetNoteCategory;
 
     return {
@@ -186,7 +188,8 @@ function mapStateToProps (state) {
         categoryId,
         categoryName,
         newItemModified,
-        updatedItem
+        updatedItem,
+        forceReload
     }
 }
 

@@ -12,8 +12,10 @@ export function loginWithGoogle() {
         try {
             const data = await AuthService.loginWithGoogle();
             dispatch(success(data));
+            return data;
         } catch (error) {
             dispatch(failure(error));
+            throw error;
         }
 
     };

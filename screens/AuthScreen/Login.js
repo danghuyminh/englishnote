@@ -4,6 +4,7 @@ import {Body, Container, Content, Form, Header, Input, Item, Label, Title, Butto
 import {loginWithGoogle} from '../../redux/actions/AuthAction'
 import Spinner from 'react-native-loading-spinner-overlay';
 import connect from "react-redux/es/connect/connect";
+import {UserService} from "../../services/UserService";
 
 class Login extends React.Component {
     state = { email: '', password: '', errorMessage: null }
@@ -16,8 +17,13 @@ class Login extends React.Component {
         });
     };
 
-    handleLoginWithGoogle = () => {
-        this.props.loginWithGoogle();
+    handleLoginWithGoogle = async () => {
+        await this.props.loginWithGoogle();
+        await this.storeUserInfo();
+    };
+
+    storeUserInfo = async () => {
+        await UserService.updateUserInfo();
     };
 
     render() {

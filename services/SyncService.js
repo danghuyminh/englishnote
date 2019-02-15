@@ -1,7 +1,6 @@
 import {Sqlite} from "./DbService";
 import {NetInfo} from 'react-native';
 import {CategoryService} from "./CategoryService";
-import { Toast } from 'native-base';
 
 export const NOTE_SYNC_REQUEST   = 'ASYNC_NOTE_SYNC_REQUEST';
 export const NOTE_SYNC_SUCCESS   = 'ASYNC_NOTE_SYNC_SUCCESS';

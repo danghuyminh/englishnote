@@ -33,6 +33,13 @@ class Category extends React.Component {
         console.log('Category List Unmount')
     }
 
+    componentDidUpdate() {
+        if (this.props.forceReload) {
+            console.log('run into category force reload <--------------------');
+            this.props.getCategories();
+        }
+    }
+
     onFormSubmit = async (values) => {
         console.log(values);
         try {
@@ -104,7 +111,7 @@ class Category extends React.Component {
 }
 
 function mapStateToProps (state) {
-    const {isFetching, categories} = state.sqliteGetCategory;
+    const {isFetching, categories, forceReload} = state.sqliteGetCategory;
 
     let modifiedCategories = categories.map((category) => {
         category.key = category.id.toString();
@@ -112,7 +119,8 @@ function mapStateToProps (state) {
     });
     return {
         categories: modifiedCategories,
-        isFetching
+        isFetching,
+        forceReload
     }
 }
 

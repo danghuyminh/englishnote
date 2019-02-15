@@ -6,6 +6,7 @@ import {
 import {NOTE_SYNC_REQUEST, NOTE_SYNC_SUCCESS, NOTE_SYNC_PROGRESS, NOTE_SYNC_FAILURE, NOTE_SYNC_CONTINUE} from "../../services/SyncService";
 
 import {CATEGORY_SELECT} from "../actions/CategoryAction";
+import {AUTH_SUCCESS} from "../actions/AuthAction";
 
 const initialState = {
     notes: [],
@@ -19,7 +20,6 @@ const initialState = {
 };
 
 export function sqliteGetNote (state = initialState, action) {
-    console.log(action.type)
     switch (action.type) {
         case NOTE_GET_REQUEST:
             return Object.assign({}, state, {
@@ -27,7 +27,10 @@ export function sqliteGetNote (state = initialState, action) {
                 isFetching: true,
                 isRefresh: action.isRefresh,
                 //notes: [],
-                hasMore: false
+                hasMore: false,
+                newItemModified: undefined,
+                updatedItem: undefined,
+                forceReload: false
             });
         case NOTE_GET_SUCCESS:
         case NOTE_CREATE_SUCCESS:
@@ -39,7 +42,8 @@ export function sqliteGetNote (state = initialState, action) {
                 hasMore: hasMore(action.data),
                 isLoadingMore: false,
                 newItemModified: action.type === NOTE_CREATE_SUCCESS,
-                updatedItem: action.data.newNote
+                updatedItem: action.data.newNote,
+                forceReload: false
             });
         case NOTE_UPDATE_SUCCESS:
             return Object.assign({}, state, {
@@ -51,13 +55,16 @@ export function sqliteGetNote (state = initialState, action) {
             return Object.assign({}, state, {
                 isFetching: false,
                 isFirstLoading: false,
+                forceReload: false,
             });
         case NOTE_MORE_REQUEST:
             return Object.assign({}, state, {
                 //notes: [],
                 isRefresh: false,
                 isLoadingMore: true,
-                newItemModified: false
+                newItemModified: false,
+                updatedItem: undefined,
+                forceReload: false
             });
         case NOTE_MORE_SUCCESS:
             return Object.assign({}, state, {
@@ -68,13 +75,15 @@ export function sqliteGetNote (state = initialState, action) {
             });
         case NOTE_MORE_FAILURE:
             return Object.assign({}, state, {
-                isLoadingMore: false
+                isLoadingMore: false,
+                forceReload: false
             });
         case NOTE_RESET:
             return Object.assign({}, state, {
                 notes: [],
                 offset: 0,
-                isRefresh: false
+                isRefresh: false,
+                forceReload: false
             });
         case NOTE_GET_SINGLE_SUCCESS:
             return Object.assign({}, state, {
@@ -84,6 +93,18 @@ export function sqliteGetNote (state = initialState, action) {
         case NOTE_UPDATE_FAILURE:
             return Object.assign({}, state, {
                 updatedItem: undefined
+            });
+        case AUTH_SUCCESS:
+            return Object.assign({}, state, {
+                notes: [],
+                limit: 10,
+                offset: 0,
+                hasMore: false,
+                isLoadingMore: true,
+                isFetching: false,
+                isRefresh: true,
+                isFirstLoading: false,
+                forceReload: true
             });
         default:
             return state

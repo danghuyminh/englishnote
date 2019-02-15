@@ -4,7 +4,7 @@ import {
 } from "native-base";
 import {View, Keyboard, ScrollView} from 'react-native';
 import { connect } from 'react-redux'
-import { updateNote, getNote } from "../../redux/actions/NoteAction"
+import {updateNote, getNote, synchronizeLocalToRemote} from "../../redux/actions/NoteAction"
 import NoteForm from "./NoteForm";
 import HeaderGoBack from "../../components/HeaderGoBack";
 import {getCategories} from "../../redux/actions/CategoryAction";
@@ -59,7 +59,15 @@ class NoteUpdate extends React.Component {
             duration: 5000,
             type: "success"
         });
+        this.syncLocalToHost().then(() => {
+            console.log('start synchronizing after update existing note');
+        });
         this.props.navigation.navigate("NoteList")
+    };
+
+    syncLocalToHost = async () => {
+        this.props.synchronizeLocalToRemote();
+        //this.props.synchronizeRemoteToLocal();
     };
 
     onIgnoreClick = () => {
@@ -117,6 +125,7 @@ function mapDispatchToProps (dispatch) {
         getNote: (id) => dispatch(getNote(id)),
         getCategories: () => dispatch(getCategories()),
         submitForm: () => dispatch(submit('form-note-create')),
+        synchronizeLocalToRemote: () => dispatch(synchronizeLocalToRemote()),
     }
 }
 
