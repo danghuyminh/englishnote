@@ -1,10 +1,10 @@
 import React from "react";
 import {
-    Body, Container, ListItem, Text
+    Body, Container, ListItem, Text, Footer, FooterTab, Button
 } from "native-base";
 import { connect } from 'react-redux'
 import HeaderGoBack from "../../components/HeaderGoBack";
-import {ActivityIndicator, FlatList, View} from "react-native";
+import {ActivityIndicator, FlatList, StyleSheet, View} from "react-native";
 import {getRemoteNotes} from "../../redux/actions/UserAction";
 import {GlobalStyles} from "../../helpers/Styles";
 
@@ -32,6 +32,11 @@ class CommunityView extends React.Component {
         console.log('LOADING MORE <-----------------------');
         const {uid} = this.props.navigation.state.params;
         this.props.getRemoteNotes(uid, next);
+    };
+
+    onRefresh = () => {
+        const {uid} = this.props.navigation.state.params;
+        this.props.getRemoteNotes(uid);
     };
 
     render() {
@@ -71,7 +76,7 @@ class CommunityView extends React.Component {
                             );
                         }}
                         onScrollBeginDrag={() =>  {this.moreEnabled = true}}
-                        onEndReachedThreshold={0.3}
+                        onEndReachedThreshold={0.1}
                         onEndReached={
                             () => {
                                 console.log(
@@ -83,6 +88,19 @@ class CommunityView extends React.Component {
                             }
                         }
                     />
+
+                )}
+                { !isFetching && (
+                    <Footer>
+                        <FooterTab style={styles.footerTab}>
+                            <Button light onPress={() => this.props.navigation.goBack()}>
+                                <Text>Back</Text>
+                            </Button>
+                            <Button success quare style={{opacity: notes.length ? 100 : 0}}>
+                                <Text style={styles.retrieveButton}>Retrieve</Text>
+                            </Button>
+                        </FooterTab>
+                    </Footer>
                 )}
             </Container>
         );
@@ -94,6 +112,7 @@ class CommunityView extends React.Component {
                 <Body>
                     <Text>{data.item.title}</Text>
                     <Text note numberOfLines={2}>{data.item.explanation}</Text>
+                    <Text style={styles.itemCat}>{data.item.cat_title ?? 'Uncategorized'}</Text>
                 </Body>
             </ListItem>
         )
@@ -123,3 +142,17 @@ export default connect(
     mapStateToProps,
     mapDispatchToProps
 )(CommunityView)
+
+const styles = StyleSheet.create({
+    itemCat: {
+        marginTop: 5,
+        color: '#276858',
+        fontSize: 10
+    },
+    footerTab: {
+        backgroundColor: 'white'
+    },
+    retrieveButton: {
+        color: '#fff'
+    }
+});

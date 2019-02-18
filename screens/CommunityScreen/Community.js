@@ -70,10 +70,10 @@ class Community extends React.Component {
                     <Thumbnail source={{ uri: data.item.photoURL }} />
                 </Left>
                 <Body>
-                    <Text>{data.item.username}</Text>
+                    <Text>{data.item.name}</Text>
                     <Text note numberOfLines={1}>{data.item.email}</Text>
                 </Body>
-                <Right>
+                <Right style={{height:67.5}} >
                     <Icon name="arrow-forward" />
                 </Right>
             </ListItem>
