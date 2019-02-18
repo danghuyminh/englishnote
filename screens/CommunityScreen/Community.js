@@ -64,14 +64,13 @@ class Community extends React.Component {
     }
 
     _renderItem = (data) => {
-        console.log(data)
         return (
             <ListItem avatar onPress={() => this.onItemClick(data.item.id)}>
                 <Left>
                     <Thumbnail source={{ uri: data.item.photoURL }} />
                 </Left>
                 <Body>
-                    <Text>data.item.username</Text>
+                    <Text>{data.item.username}</Text>
                     <Text note numberOfLines={1}>{data.item.email}</Text>
                 </Body>
                 <Right>
@@ -83,11 +82,12 @@ class Community extends React.Component {
 }
 
 function mapStateToProps (state) {
-
     const {users} = state.firebaseGetUsers;
-    console.log(users)
+    const {isFetching} = state.AsyncReducer;
+
     return {
-        users
+        users,
+        isFetching
     }
 }
 

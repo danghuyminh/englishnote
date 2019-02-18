@@ -3,6 +3,7 @@ import {Sqlite} from "./DbService";
 export const UserService = {
     getAllUsers,
     updateUserInfo,
+    getRemoteNotes
 };
 
 async function updateUserInfo() {
@@ -36,4 +37,39 @@ async function getAllUsers() {
         users.push({id: doc.id, ...doc.data()})
     });
     return users;
+}
+
+async function getRemoteNotes(uid, nextQuery) {
+    if (!nextQuery) {
+        nextQuery = firestore.collection("notes")
+            .where("user_id", "==", uid)
+            .orderBy("id", "desc")
+            .limit(10);
+    }
+
+    const querySnapShot = await nextQuery.get();
+
+    let notes = [];
+    if (!querySnapShot.size) {
+        return {notes, next: undefined};
+    }
+
+    querySnapShot.forEach(function(doc) {
+        notes.push({id: doc.id, ...doc.data()})
+    });
+
+    if (querySnapShot.size && querySnapShot.size < 10) {
+        return {notes, next: undefined};
+    }
+
+    // Get the last visible document
+    let lastVisible = querySnapShot.docs[querySnapShot.docs.length-1];
+
+    let next = firestore.collection("notes")
+        .where("user_id", "==", uid)
+        .orderBy("id", "desc")
+        .startAfter(lastVisible)
+        .limit(10);
+
+    return {notes, next}
 }

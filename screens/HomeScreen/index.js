@@ -68,7 +68,8 @@ const HomeScreenRouter = createDrawerNavigator(
             renderIcon: ({ route, index, focused, tintColor: color }) => {
                 return <Icon type="FontAwesome" name="home" />;
             }
-        }
+        },
+        initialRouteName: "Community"
     }
 );
 export default HomeScreenRouter;

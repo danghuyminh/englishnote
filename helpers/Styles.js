@@ -24,4 +24,9 @@ export const GlobalStyles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
+    centerScreen: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center'
+    }
 });
