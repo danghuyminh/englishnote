@@ -81,7 +81,6 @@ class NoteCreate extends React.Component {
 
         return (
             <View style={GlobalStyles.noteFormContainer}>
-                <LoadingSpinner visible={isFetching} title='Update Category' />
                 <NoteForm onSubmit={this.handleSubmit} categories={categories} />
                 <KeyboardAccessory>
                     <View style={GlobalStyles.stickyButtonWrapper}>

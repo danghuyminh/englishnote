@@ -88,25 +88,7 @@ export default class SwipeListItem extends PureComponent {
     };
 
     handleItemClick = (id) => {
-        this.springValue.setValue(1);
-        Animated.sequence([
-            Animated.spring(
-                this.springValue,
-                {
-                    toValue: 2,
-                    tension : 60,
-                }
-            ),
-        ]).start(() => this.props.viewNote(id));
-        setTimeout(() => {
-            Animated.timing(
-                this.springValue,
-                {
-                    toValue: 1,
-                    duration: 500
-                }
-            ).start();
-        }, 2000);
+        this.props.viewNote(id)
     };
 
     render() {

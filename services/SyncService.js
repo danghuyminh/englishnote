@@ -129,7 +129,7 @@ const SyncService = class
     {
         console.log('syncFromHostToLocal');
         const noteRef = SyncService.db.collection("notes");
-        const querySnapshot = await noteRef.where("user_id", "==", userId).get();
+        const querySnapshot = await noteRef.where("user_id", "==", userId).orderBy("id").get();
         const total = querySnapshot.size;
 
         if (total === 0) {
@@ -157,7 +157,8 @@ const SyncService = class
                 if (remoteNote.cat_ref_id) {
                     localCategory = await SyncService.getCategoryByRefId(remoteNote.cat_ref_id);
                     if (!localCategory) {
-                        localCategory = await SyncService.createLocalCategory(remoteNote.cat_title, remoteNote.cat_ref_id);
+                        const localCategoryId = await SyncService.createLocalCategory(remoteNote.cat_title, remoteNote.cat_ref_id);
+                        localCategory = {id: localCategoryId}
                     }
                 }
 
@@ -170,7 +171,7 @@ const SyncService = class
                 } else {
                     // When localNote has not been created
                     // Create local note
-                    await SyncService.createLocalNote(remoteNote);
+                    await SyncService.createLocalNote({...remoteNote, cat_id: localCategory.id});
                 }
             } catch (error) {
                 throw error;
@@ -361,7 +362,7 @@ const SyncService = class
         return new Promise((resolve, reject) => {
             Sqlite.db.transaction(tx => {
                     tx.executeSql(
-                        'SELECT id, title, ref_id, cat_id FROM notes WHERE ref_id = ? and user_id = ? and `deleted` != 1',
+                        'SELECT id, title, ref_id, cat_id FROM notes WHERE ref_id = ? and user_id = ? and (`deleted` != 1 or `deleted` is null)',
                         [
                             refId,
                             auth.currentUser.uid

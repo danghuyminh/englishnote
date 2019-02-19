@@ -28,7 +28,7 @@ export default class Profile extends React.Component {
                             <Left>
                                 <Button transparent>
                                     <Icon active name="thumbs-up" />
-                                    <Text>12 times synchronized</Text>
+                                    <Text>{data.synchronizedTimes ? data.synchronizedTimes : 0} times synchronized</Text>
                                 </Button>
                             </Left>
                             <Right>

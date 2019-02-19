@@ -16,7 +16,6 @@ class NoteForm extends Component {
                         <Field
                             name='title'
                             component={TextField}
-                            autoFocus={true}
                             label="Note title"
                             handleBlur={() => handleKeyboard()}
                             validate={[ required, maxLength128 ]}
@@ -28,7 +27,7 @@ class NoteForm extends Component {
                             multiline={true}
                             numberOfLines={6}
                             label="Note explanation"
-                            style={{height: 220}}
+                            style={{height: 210}}
                             validate={[ required ]}
                         />
 

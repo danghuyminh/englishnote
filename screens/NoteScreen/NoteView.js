@@ -39,7 +39,7 @@ class NoteView extends React.Component {
         const {isFetching, data} = this.props;
         return (
             <View style={GlobalStyles.noteFormContainer} >
-                <LoadingSpinner visible={isFetching} title='Update Category' />
+
                 <ScrollView>
                     <Card style={{flex: 0}}>
                         <CardItem>

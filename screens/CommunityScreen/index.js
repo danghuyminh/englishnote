@@ -4,6 +4,7 @@ import CommunityView from "./CommunityView.js";
 import CommunityNoteView from "./CommunityNoteView.js";
 
 import { createStackNavigator } from "react-navigation";
+import {fromTop} from "react-navigation-transitions";
 
 export default (DrawNav = createStackNavigator(
     {
@@ -12,6 +13,7 @@ export default (DrawNav = createStackNavigator(
         CommunityNoteView
     },
     {
-        initialRouteName: "Community"
+        initialRouteName: "Community",
+        transitionConfig: () => fromTop(),
     }
 ));

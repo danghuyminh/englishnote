@@ -256,8 +256,20 @@ export class Sqlite {
                             reject(error)
                         }
                     );
+                    tx.executeSql(
+                        'DROP TABLE IF EXISTS categories',
+                        [],
+                        (txt, result) => {
+
+                        },
+                        (txt, error) => {
+                            console.log(error)
+                            reject(error)
+                        }
+                    );
                 }
             );
+
         })
     };
 

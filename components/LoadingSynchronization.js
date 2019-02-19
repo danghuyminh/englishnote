@@ -39,10 +39,6 @@ class LoadingSynchronization extends React.Component {
 
     render() {
         const {isSynchronizing, progress, done, total, canClose, syncType, type, userName, color, backgroundColor} = this.props;
-        console.log('Sync Type<-----------');
-        console.log(syncType);
-        console.log(type);
-        console.log(this.state.show)
         return (
             <Modal
                 animationType="slide"

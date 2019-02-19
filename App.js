@@ -42,6 +42,7 @@ export default class App extends React.Component {
         //Sqlite.createSampleNotes(sample30, sampleCat);
         //Sqlite.resetRefId();
         //Sqlite.setUpdateTest();
+        //Sqlite.dropNotes();
     }
 
     render() {

@@ -1,11 +1,12 @@
 import React from "react";
 import {
-    Body, Container, ListItem, Text, Footer, FooterTab, Button
+    Body, Container, ListItem, Text, Footer, FooterTab, Button, Toast
 } from "native-base";
 import { connect } from 'react-redux'
 import HeaderGoBack from "../../components/HeaderGoBack";
 import {ActivityIndicator, FlatList, StyleSheet, View} from "react-native";
 import {getRemoteNotes} from "../../redux/actions/UserAction";
+import {UserService} from "../../services/UserService";
 import {GlobalStyles} from "../../helpers/Styles";
 import LoadingSynchronization from "../../components/LoadingSynchronization";
 import {synchronizeRemoteToLocal} from "../../redux/actions/NoteAction";
@@ -31,7 +32,7 @@ class CommunityView extends React.Component {
     }
 
     loadMoreContent = (next) => {
-        console.log('LOADING MORE <-----------------------');
+        //console.log('LOADING MORE <-----------------------');
         const {uid} = this.props.navigation.state.params;
         this.props.getRemoteNotes(uid, next);
     };
@@ -48,7 +49,17 @@ class CommunityView extends React.Component {
     };
 
     syncHostToLocal = async (uid) => {
-        this.props.synchronizeRemoteToLocal(uid);
+        try {
+            await this.props.synchronizeRemoteToLocal(uid);
+            await UserService.addSynchronizedTimes(uid, 1);
+        } catch (error) {
+            Toast.show({
+                text: error,
+                buttonText: 'Hide',
+                type: "danger",
+                duration: 4000
+            });
+        }
     };
 
     render() {

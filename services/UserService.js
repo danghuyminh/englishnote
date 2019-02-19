@@ -2,7 +2,8 @@ export const UserService = {
     getAllUsers,
     updateUserInfo,
     getRemoteNotes,
-    viewRemoteNote
+    viewRemoteNote,
+    addSynchronizedTimes
 };
 
 async function updateUserInfo() {
@@ -26,7 +27,10 @@ async function addSynchronizedTimes(uid, value) {
     const doc = await firestore.collection("users").doc(uid).get();
 
     if (doc.exists) {
-        let synchronizedTimes = doc.synchronizedTimes ? doc.synchronizedTimes : 0;
+        let synchronizedTimes = doc.get('synchronizedTimes');
+        if (!synchronizedTimes) {
+            synchronizedTimes = 0;
+        }
 
         try {
             await firestore.collection("users").doc(uid).set({

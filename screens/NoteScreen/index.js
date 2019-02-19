@@ -6,6 +6,7 @@ import NoteUpdate from "./NoteUpdate";
 import NoteView from "./NoteView";
 
 import { createStackNavigator } from "react-navigation";
+import {fromBottom} from "react-navigation-transitions";
 
 export default (createStackNavigator(
     {
@@ -17,6 +18,7 @@ export default (createStackNavigator(
     },
     {
         initialRouteName: "NoteList",
-        headerMode: 'screen'
+        headerMode: 'screen',
+        transitionConfig: () => fromBottom(),
     }
 ));

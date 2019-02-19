@@ -82,7 +82,6 @@ class NoteUpdate extends React.Component {
         const {categories, isFetching, data} = this.props;
         return (
             <View style={GlobalStyles.noteFormContainer} >
-                <LoadingSpinner visible={isFetching} title='Update Category' />
                 <ScrollView>
                     <NoteForm onSubmit={this.handleSubmit} categories={categories} initialValues={data} />
                 </ScrollView>
