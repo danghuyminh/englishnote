@@ -24,6 +24,11 @@ export const GlobalStyles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
+    stickyButtonFull: {
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
     centerScreen: {
         flex: 1,
         alignItems: 'center',

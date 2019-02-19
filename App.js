@@ -38,6 +38,7 @@ export default class App extends React.Component {
         global['firestore'] = firestore;
         //console.log(Expo.FileSystem.documentDirectory);
 
+        //Sqlite.deleteSpecificNotes();
         //Sqlite.createSampleNotes(sample30, sampleCat);
         //Sqlite.resetRefId();
         //Sqlite.setUpdateTest();

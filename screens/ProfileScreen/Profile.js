@@ -1,67 +1,43 @@
 import React from "react";
-import { Alert } from "react-native";
-import { Container, Header, Left, Body, Title, Card, CardItem, Content, Right, Icon, Button, Text } from "native-base";
-import EditScreenOne from "./EditScreenOne.js";
-import { NavigationActions } from 'react-navigation';
+import { Container, Content, Thumbnail, Text, Button, Icon, Card, CardItem, Left, Right, Body} from "native-base";
+import HeaderDrawer from "../../components/HeaderDrawer";
+import Moment from "moment";
 
 export default class Profile extends React.Component {
     componentDidMount() {
-        let params = this.props.navigation.state.params;
-        if (!params || !params.name) {
-            Alert.alert("USER NOT found", 'Please go to Chat and select User 2');
-        }
-    }
 
-    componentWillUnmount() {
-        console.log('Profile Unmount')
-        const setParamsAction = NavigationActions.setParams({
-            params: undefined,
-            key: 'Screen',
-        });
-        this.props.navigation.dispatch(setParamsAction);
     }
 
     render() {
-        let params = this.props.navigation.state.params;
-
+        const {0: data} = auth.currentUser.providerData;
         return (
             <Container>
+                <HeaderDrawer title='Profile' navigation={this.props.navigation}/>
                 <Content padder>
                     <Card>
                         <CardItem>
-                            <Icon active name="paper-plane" />
-                            {params ? (
-                                <Text>{this.props.navigation.state.params.name}</Text>
-                            ): (
-                                <Text>Show User profiles here</Text>
-                            )}
+                            <Left>
+                                <Thumbnail source={{uri: data.photoURL}} />
+                                <Body>
+                                <Text>{data.displayName}</Text>
+                                <Text note>{data.email}</Text>
+                                </Body>
+                            </Left>
+                        </CardItem>
+                        <CardItem>
+                            <Left>
+                                <Button transparent>
+                                    <Icon active name="thumbs-up" />
+                                    <Text>12 times synchronized</Text>
+                                </Button>
+                            </Left>
                             <Right>
-                                <Icon name="close" />
+                                <Text>Last login: {new Moment(auth.currentUser.metadata.lastSignInTime).format("dddd, DD MMM YYYY")}</Text>
                             </Right>
                         </CardItem>
                     </Card>
-                    <Button full rounded primary
-                            style={{ marginTop: 10 }}
-                            onPress={() => this.props.navigation.navigate("EditScreenOne")}>
-                        <Text>Goto EditScreen One</Text>
-                    </Button>
                 </Content>
             </Container>
         );
     }
 }
-Profile.navigationOptions = ({ navigation }) => ({
-    header: (
-        <Header>
-            <Left>
-                <Button transparent onPress={() => navigation.openDrawer()}>
-                    <Icon name="menu" />
-                </Button>
-            </Left>
-            <Body>
-            <Title>Profile</Title>
-            </Body>
-            <Right />
-        </Header>
-    )
-});

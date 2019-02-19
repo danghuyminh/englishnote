@@ -95,12 +95,6 @@ class NoteList extends React.Component {
         //this.props.synchronizeRemoteToLocal();
     };
 
-    togglePopup = () => {
-        this.setState({
-            showLoading: !this.state.showLoading
-        })
-    };
-
     getNotes = async () => {
         const notes = await Sqlite.selectNotes({limit: 10, offset: 0});
         console.log('data---------------------------')
@@ -124,7 +118,7 @@ class NoteList extends React.Component {
 
         return (
             <Container>
-                <LoadingSynchronization togglePopup={this.togglePopup} type='local'/>
+                <LoadingSynchronization type='local'/>
                 <HeaderDrawer title='Notes' navigation={this.props.navigation}/>
                 <SearchForm onSubmit={this.onSearchSubmit} />
                 {categoryId && (
@@ -199,7 +193,7 @@ function mapDispatchToProps (dispatch) {
         fetchMoreNotes: (params) => dispatch(fetchMoreNotes(params)),
         deleteNote: (id) => dispatch(deleteNote(id)),
         synchronizeLocalToRemote: () => dispatch(synchronizeLocalToRemote()),
-        synchronizeRemoteToLocal: () => dispatch(synchronizeRemoteToLocal()),
+        synchronizeRemoteToLocal: (uid) => dispatch(synchronizeRemoteToLocal(uid)),
         //resetNoteList: () => dispatch(resetNoteList()),
     }
 }

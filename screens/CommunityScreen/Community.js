@@ -9,6 +9,7 @@ import { connect } from 'react-redux'
 import {FlatList, View} from "react-native";
 import {getAllUsers} from "../../redux/actions/UserAction"
 import HeaderDrawer from "../../components/HeaderDrawer";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 class Community extends React.Component {
 
@@ -25,9 +26,10 @@ class Community extends React.Component {
         this.props.getAllUsers();
     }
 
-    onItemClick = (id) => {
+    onItemClick = (id, userName) => {
         this.props.navigation.navigate('CommunityView', {
-            uid: id
+            uid: id,
+            userName
         });
     };
 
@@ -42,6 +44,7 @@ class Community extends React.Component {
             <Container>
                 <HeaderDrawer title='Community' navigation={this.props.navigation}/>
                 <Content padder>
+                    <LoadingSpinner visible={isFetching} title='Retrieving users...' />
                     <List>
                         <FlatList
                             data={users}
@@ -65,7 +68,7 @@ class Community extends React.Component {
 
     _renderItem = (data) => {
         return (
-            <ListItem avatar onPress={() => this.onItemClick(data.item.id)}>
+            <ListItem avatar onPress={() => this.onItemClick(data.item.id, data.item.name)}>
                 <Left>
                     <Thumbnail source={{ uri: data.item.photoURL }} />
                 </Left>
@@ -82,8 +85,7 @@ class Community extends React.Component {
 }
 
 function mapStateToProps (state) {
-    const {users} = state.firebaseGetUsers;
-    const {isFetching} = state.AsyncReducer;
+    const {users, isFetching} = state.firebaseGetUsers;
 
     return {
         users,

@@ -69,7 +69,7 @@ const HomeScreenRouter = createDrawerNavigator(
                 return <Icon type="FontAwesome" name="home" />;
             }
         },
-        initialRouteName: "Community"
+        initialRouteName: "Notes"
     }
 );
 export default HomeScreenRouter;

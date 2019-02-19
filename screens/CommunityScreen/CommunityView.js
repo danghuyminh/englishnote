@@ -7,6 +7,8 @@ import HeaderGoBack from "../../components/HeaderGoBack";
 import {ActivityIndicator, FlatList, StyleSheet, View} from "react-native";
 import {getRemoteNotes} from "../../redux/actions/UserAction";
 import {GlobalStyles} from "../../helpers/Styles";
+import LoadingSynchronization from "../../components/LoadingSynchronization";
+import {synchronizeRemoteToLocal} from "../../redux/actions/NoteAction";
 
 class CommunityView extends React.Component {
 
@@ -39,15 +41,22 @@ class CommunityView extends React.Component {
         this.props.getRemoteNotes(uid);
     };
 
+    onItemClick = (id) => {
+        this.props.navigation.navigate('CommunityNoteView', {
+           id
+        });
+    };
+
+    syncHostToLocal = async (uid) => {
+        this.props.synchronizeRemoteToLocal(uid);
+    };
+
     render() {
-        const {uid} = this.props.navigation.state.params;
         const {notes, next, isFetching, isLoadMore} = this.props;
-        //console.log('next<----------------');
-        //console.log(next);
+        const {uid, userName} = this.props.navigation.state.params;
+
         return (
             <Container>
-                <Text>Community view content</Text>
-                <Text>{uid}</Text>
                 { isFetching && !isLoadMore ? (
                     <View style={GlobalStyles.centerScreen}>
                         <ActivityIndicator size="large" />
@@ -81,14 +90,13 @@ class CommunityView extends React.Component {
                             () => {
                                 console.log(
                                     'on end reached'
-                                )
+                                );
                                 console.log(this.moreEnabled)
                                 if (this.moreEnabled && !isFetching && next)
                                     this.loadMoreContent(next)
                             }
                         }
                     />
-
                 )}
                 { !isFetching && (
                     <Footer>
@@ -96,9 +104,10 @@ class CommunityView extends React.Component {
                             <Button light onPress={() => this.props.navigation.goBack()}>
                                 <Text>Back</Text>
                             </Button>
-                            <Button success quare style={{opacity: notes.length ? 100 : 0}}>
+                            <Button info onPress={() => this.syncHostToLocal(uid)} quare style={{opacity: notes.length ? 100 : 0}}>
                                 <Text style={styles.retrieveButton}>Retrieve</Text>
                             </Button>
+                            <LoadingSynchronization color='#137596' backgroundColor='#20acdb' type='remote' userName={userName}/>
                         </FooterTab>
                     </Footer>
                 )}
@@ -108,7 +117,7 @@ class CommunityView extends React.Component {
 
     _renderItem = (data) => {
         return (
-            <ListItem onPress={() => this.onItemClick(data.item.id)}>
+            <ListItem onPress={() => this.onItemClick(data.item.ref_id)}>
                 <Body>
                     <Text>{data.item.title}</Text>
                     <Text note numberOfLines={2}>{data.item.explanation}</Text>
@@ -122,8 +131,7 @@ class CommunityView extends React.Component {
 function mapStateToProps (state) {
     const {notes, next, isLoadMore} = state.firebaseGetNotes;
     const {isFetching} = state.AsyncReducer;
-    console.log('mapStateToProps <------------');
-    console.log(notes)
+
     return {
         notes,
         next,
@@ -134,7 +142,8 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
     return {
-        getRemoteNotes: (uid, next) => dispatch(getRemoteNotes(uid, next))
+        getRemoteNotes: (uid, next) => dispatch(getRemoteNotes(uid, next)),
+        synchronizeRemoteToLocal: (uid) => dispatch(synchronizeRemoteToLocal(uid)),
     }
 }
 

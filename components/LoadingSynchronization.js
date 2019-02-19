@@ -3,16 +3,24 @@ import {connect} from "react-redux";
 import {StyleSheet, View, Text, Modal} from "react-native";
 import config from "../config";
 import {Circle as Progress} from 'react-native-progress';
+import {GlobalStyles} from "../helpers/Styles";
 
 class LoadingSynchronization extends React.Component {
 
     state = {
-        progress: 0
+        progress: 0,
+        show: true
     };
 
     componentDidMount() {
         //this.animate();
     }
+
+    hidePopup = () => {
+        this.setState({
+            show: false
+        })
+    };
 
     animate() {
         let progress = 0;
@@ -30,23 +38,28 @@ class LoadingSynchronization extends React.Component {
     }
 
     render() {
-        const {isSynchronizing, togglePopup, progress, done, total, canClose, syncType, type} = this.props;
-
+        const {isSynchronizing, progress, done, total, canClose, syncType, type, userName, color, backgroundColor} = this.props;
+        console.log('Sync Type<-----------');
+        console.log(syncType);
+        console.log(type);
+        console.log(this.state.show)
         return (
             <Modal
                 animationType="slide"
                 transparent={false}
-                visible={(isSynchronizing && syncType === type)}
+                visible={(isSynchronizing && syncType === type && this.state.show)}
                 presentationStyle="overFullScreen"
                 onRequestClose={() => {
                     if (canClose) {
-                        togglePopup()
+                        this.hidePopup()
                     }
                 }}
             >
-                <View style={styles.loading}>
-                    <Progress progress={progress} size={100} color={config.themeColor} showsText={true} />
-                    <Text style={{color: config.themeColor}}>Synchronizing {done} / {total}</Text>
+                <View style={[styles.loading, {backgroundColor: backgroundColor ? backgroundColor : config.loadingOverlayColor}]}>
+                    <Progress progress={progress} size={100} color={color ? color : config.themeColor} showsText={true} />
+                    <Text style={{color: color ? color : config.themeColor}}>
+                        {`${syncType === 'local' ? 'Synchronizing' : 'Synchronizing from ' + userName} ${done} / ${total}`}
+                    </Text>
                 </View>
             </Modal>
         );
@@ -60,7 +73,6 @@ const styles = StyleSheet.create({
         right: 0,
         top: 0,
         bottom: 0,
-        backgroundColor: config.loadingOverlayColor,
         justifyContent: 'center',
         alignItems: 'center'
     }

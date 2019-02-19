@@ -1,26 +1,42 @@
-import {Sqlite} from "./DbService";
-
 export const UserService = {
     getAllUsers,
     updateUserInfo,
-    getRemoteNotes
+    getRemoteNotes,
+    viewRemoteNote
 };
 
 async function updateUserInfo() {
     let user = auth.currentUser;
 
-    firestore.collection("users").doc(user.uid).set({
-        name: user.displayName,
-        email: user.email,
-        photoURL: user.photoURL
-    })
-    .then(function() {
-        return true;
-    })
-    .catch(function(error) {
+    try {
+        await firestore.collection("users").doc(user.uid).set({
+            name: user.displayName,
+            email: user.email,
+            photoURL: user.photoURL,
+            lastLoginAt: new Date()
+        })
+    } catch (error) {
         console.error("Error writing user document: ", error);
         throw error;
-    });
+    }
+}
+
+async function addSynchronizedTimes(uid, value) {
+
+    const doc = await firestore.collection("users").doc(uid).get();
+
+    if (doc.exists) {
+        let synchronizedTimes = doc.synchronizedTimes ? doc.synchronizedTimes : 0;
+
+        try {
+            await firestore.collection("users").doc(uid).set({
+                synchronizedTimes: synchronizedTimes + value
+            }, {merge: true})
+        } catch (error) {
+            console.error("Error writing user document: ", error);
+            throw error;
+        }
+    }
 }
 
 async function getAllUsers() {
@@ -72,4 +88,17 @@ async function getRemoteNotes(uid, nextQuery) {
         .limit(10);
 
     return {notes, next}
+}
+
+async function viewRemoteNote(id) {
+    console.log(id);
+    let docRef = firestore.collection("notes").doc(id);
+    try {
+        const doc = await docRef.get();
+        if (doc.exists)
+            return doc.data();
+        return null;
+    } catch (error) {
+        throw error;
+    }
 }

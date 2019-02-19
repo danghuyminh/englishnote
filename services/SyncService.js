@@ -42,7 +42,7 @@ const SyncService = class
         });
     }
 
-    static async runSync(dispatch, hostToLocal)
+    static async runSync(dispatch, hostToLocal, uid)
     {
         if (!SyncService.eventRegistered) {
             SyncService.eventRegistered = true;
@@ -51,7 +51,7 @@ const SyncService = class
         const isConnected = await NetInfo.isConnected.fetch();
         if (isConnected) {
             if (hostToLocal) {
-                await SyncService.syncFromHostToLocal(auth.currentUser.uid, dispatch)
+                await SyncService.syncFromHostToLocal(uid, dispatch)
             } else {
                 await SyncService.syncFromLocalToHost(dispatch)
             }
@@ -157,7 +157,7 @@ const SyncService = class
                 if (remoteNote.cat_ref_id) {
                     localCategory = await SyncService.getCategoryByRefId(remoteNote.cat_ref_id);
                     if (!localCategory) {
-                        localCategory = await CategoryService.createLocalCategory(remoteNote.cat_title, remoteNote.cat_ref_id);
+                        localCategory = await SyncService.createLocalCategory(remoteNote.cat_title, remoteNote.cat_ref_id);
                     }
                 }
 
@@ -335,9 +335,10 @@ const SyncService = class
         return new Promise((resolve, reject) => {
             Sqlite.db.transaction(tx => {
                     tx.executeSql(
-                        'SELECT id, title, ref_id FROM categories WHERE ref_id = ?',
+                        'SELECT id, title, ref_id FROM categories WHERE ref_id = ? and user_id = ?',
                         [
-                            ref_id
+                            ref_id,
+                            auth.currentUser.uid
                         ],
                         (txt, result) => {
                             if (result.rows.length) {
@@ -356,13 +357,14 @@ const SyncService = class
         })
     }
 
-    static getNoteByRefId(ref_id) {
+    static getNoteByRefId(refId) {
         return new Promise((resolve, reject) => {
             Sqlite.db.transaction(tx => {
                     tx.executeSql(
-                        'SELECT id, title, ref_id, cat_id FROM notes WHERE ref_id = ?',
+                        'SELECT id, title, ref_id, cat_id FROM notes WHERE ref_id = ? and user_id = ? and `deleted` != 1',
                         [
-                            ref_id
+                            refId,
+                            auth.currentUser.uid
                         ],
                         (txt, result) => {
                             if (result.rows.length) {

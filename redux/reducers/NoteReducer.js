@@ -95,6 +95,7 @@ export function sqliteGetNote (state = initialState, action) {
                 updatedItem: undefined
             });
         case AUTH_SUCCESS:
+        case NOTE_SYNC_SUCCESS:
             return Object.assign({}, state, {
                 notes: [],
                 limit: 10,
@@ -149,7 +150,7 @@ export function synchronizeNote (state = {
     total: 0,
     isSynchronizing: false,
     canClose: false,
-    type: 'local'
+    syncType: 'local'
 }, action) {
     switch (action.type) {
         case NOTE_SYNC_REQUEST:

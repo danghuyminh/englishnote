@@ -181,12 +181,15 @@ export function resetNoteList() {
 export function synchronizeLocalToRemote() {
 
     return async dispatch => {
-        //dispatch(request());
-
         try {
             const result = await SyncService.runSync(dispatch);
-            dispatch(success(result));
-            return result;
+            Toast.show({
+                text: 'Synchronize note successfully!',
+                buttonText: 'Hide',
+                type: "success",
+                duration: 3000,
+            });
+            return dispatch(success(result));
         } catch (error) {
             dispatch(failure(error.toString()));
             Toast.show({
@@ -203,13 +206,18 @@ export function synchronizeLocalToRemote() {
     function failure(error) { return { type: NOTE_SYNC_FAILURE, error } }
 }
 
-export function synchronizeRemoteToLocal() {
+export function synchronizeRemoteToLocal(uid) {
 
     return async dispatch => {
         try {
-            const result = await SyncService.runSync(dispatch, true);
-            dispatch(success(result));
-            return result;
+            const result = await SyncService.runSync(dispatch, true, uid);
+            Toast.show({
+                text: 'Retrieve notes successfully.',
+                buttonText: 'Hide',
+                type: "success",
+                duration: 3000,
+            });
+            return dispatch(success(result));
         } catch (error) {
             dispatch(failure(error.toString()));
             Toast.show({
@@ -221,6 +229,6 @@ export function synchronizeRemoteToLocal() {
         }
     };
 
-    function success(data) { return { type: NOTE_SYNC_SUCCESS, data } }
+    function success(data) { return { type: NOTE_SYNC_SUCCESS, data, syncType: 'remote' } }
     function failure(error) { return { type: NOTE_SYNC_FAILURE, error} }
 }

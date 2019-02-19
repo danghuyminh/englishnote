@@ -50,6 +50,10 @@ class NoteCreate extends React.Component {
         })
     };
 
+    syncLocalToHost = async () => {
+        this.props.synchronizeLocalToRemote();
+    };
+
     handleSubmit = async (values) => {
         await this.props.createNote(values);
         Toast.show({

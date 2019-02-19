@@ -414,4 +414,22 @@ export class Sqlite {
             );
         })
     };
+
+    static deleteSpecificNotes = () => {
+        return new Promise((resolve, reject) => {
+            Sqlite.db.transaction(tx => {
+                    tx.executeSql(
+                        'DELETE FROM `notes` WHERE user_id = "VTtNciAC7OQG79nMxnHz5WSxu3O2"',
+                        [],
+                        (txt, result) => {
+                            resolve(result);
+                        },
+                        (txt, error) => {
+                            reject(error)
+                        }
+                    );
+                }
+            );
+        })
+    };
 }
