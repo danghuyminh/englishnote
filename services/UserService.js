@@ -1,3 +1,5 @@
+import {NetInfo} from "react-native";
+
 export const UserService = {
     getAllUsers,
     updateUserInfo,
@@ -6,7 +8,21 @@ export const UserService = {
     addSynchronizedTimes
 };
 
+async function isSystemOnline() {
+   return await NetInfo.isConnected.fetch();
+}
+
+async function checkUserOnline() {
+    const isOnline = await isSystemOnline();
+    if (!isOnline) {
+        throw 'No internet connection';
+    }
+}
+
 async function updateUserInfo() {
+
+    await checkUserOnline();
+
     let user = auth.currentUser;
 
     try {
@@ -44,6 +60,9 @@ async function addSynchronizedTimes(uid, value) {
 }
 
 async function getAllUsers() {
+
+    await checkUserOnline();
+
     // Create a reference to the users collection
     const usersRef = firestore.collection("users");
 
@@ -60,10 +79,13 @@ async function getAllUsers() {
 }
 
 async function getRemoteNotes(uid, nextQuery) {
+
+    await checkUserOnline();
+
     if (!nextQuery) {
         nextQuery = firestore.collection("notes")
             .where("user_id", "==", uid)
-            .orderBy("id", "desc")
+            .orderBy("created_at", "desc")
             .limit(10);
     }
 
@@ -87,7 +109,7 @@ async function getRemoteNotes(uid, nextQuery) {
 
     let next = firestore.collection("notes")
         .where("user_id", "==", uid)
-        .orderBy("id", "desc")
+        .orderBy("created_at", "desc")
         .startAfter(lastVisible)
         .limit(10);
 
@@ -95,7 +117,9 @@ async function getRemoteNotes(uid, nextQuery) {
 }
 
 async function viewRemoteNote(id) {
-    console.log(id);
+
+    await checkUserOnline();
+
     let docRef = firestore.collection("notes").doc(id);
     try {
         const doc = await docRef.get();

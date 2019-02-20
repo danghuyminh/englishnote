@@ -96,7 +96,7 @@ export function sqliteGetNote (state = initialState, action) {
             });
         case AUTH_SUCCESS:
         case NOTE_SYNC_SUCCESS:
-            if (action.syncType === 'remote') {
+            if (action.type === AUTH_SUCCESS || action.syncType === 'remote') {
                 return Object.assign({}, state, {
                     notes: [],
                     limit: 10,

@@ -40,7 +40,12 @@ export function getNote(id) {
             return result;
         } catch (error) {
             dispatch(failure(error.toString()));
-            throw error.toString()
+            Toast.show({
+                text: error.toString(),
+                buttonText: 'Hide',
+                type: "danger",
+                duration: 5000
+            });
         }
     };
 
@@ -60,7 +65,12 @@ export function getNoteFull(id) {
             return result;
         } catch (error) {
             dispatch(failure(error.toString()));
-            throw error.toString()
+            Toast.show({
+                text: error.toString(),
+                buttonText: 'Hide',
+                type: "danger",
+                duration: 5000
+            });
         }
     };
 

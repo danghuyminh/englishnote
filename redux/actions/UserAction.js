@@ -46,7 +46,7 @@ export function getRemoteNotes(uid, nextQuery) {
         } catch (error) {
             dispatch(failure(error.toString()));
             Toast.show({
-                text: 'Could not load more. Please check the internet connection.',
+                text: error.toString(),
                 buttonText: 'Hide',
                 type: "danger",
                 duration: 5000

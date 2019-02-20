@@ -78,7 +78,7 @@ class CommunityView extends React.Component {
                         renderItem={this._renderItem}
                         onRefresh={this.onRefresh}
                         refreshing={isFetching}
-                        keyExtractor = {(item) => item.id.toString()}
+                        keyExtractor = {(item) => item.ref_id.toString()}
                         ListEmptyComponent={() => {
                             return (
                                 <View>

@@ -113,10 +113,8 @@ const SyncService = class
             // Create and update scenario
             const category = note.cat_id ? await SyncService.getCategory(note.cat_id) : {ref_id: 'uncategorized'};
             let catRefId = category.ref_id;
-
-            console.log('Syncing note ID ' + note.id);
-            console.log(note.ref_id);
-
+            //console.log('Syncing note ID ' + note.id);
+            //console.log(note.ref_id);
             try {
                 if (!catRefId) {
                     catRefId = await SyncService.createRemoteCategory(note.cat_id, note.cat_title, note.user_id);
@@ -142,7 +140,7 @@ const SyncService = class
     {
         console.log('syncFromHostToLocal');
         const noteRef = SyncService.db.collection("notes");
-        const querySnapshot = await noteRef.where("user_id", "==", userId).orderBy("id").get();
+        const querySnapshot = await noteRef.where("user_id", "==", userId).orderBy("created_at").get();
         const total = querySnapshot.size;
 
         if (total === 0) {
@@ -204,7 +202,14 @@ const SyncService = class
 
             // If noteRefId exists then update data with the new one
             if (noteRefId) {
-                await SyncService.db.collection("notes").doc(noteRefId).set(data);
+                const {user_id} = params;
+                if (user_id === auth.currentUser.uid) {
+                    await SyncService.db.collection("notes").doc(noteRefId).set(data);
+                } else {
+                    const newNoteDoc = await SyncService.db.collection("notes").add(data);
+                    await SyncService.db.collection("notes").doc(newNoteDoc.id).update({ref_id: newNoteDoc.id});
+                    noteRefId = newNoteDoc.id;
+                }
                 await SyncService.updateNoteRefId(noteId, noteRefId);
 
             // If noteRefId does not exist, create a new instance on firebase
@@ -216,7 +221,7 @@ const SyncService = class
             }
             return catRefId
         } catch(error) {
-            console.error("Error adding note document: ", error);
+            console.error("Error adding note document: ", error.toString());
             throw(error)
         }
     }
@@ -301,7 +306,7 @@ const SyncService = class
         return new Promise((resolve, reject) => {
             Sqlite.db.transaction(tx => {
                     tx.executeSql(
-                        'SELECT n.id, n.title, n.explanation, n.user_id, n.ref_id, n.cat_id, c.title as cat_title, n.deleted ' +
+                        'SELECT n.id, n.title, n.explanation, n.user_id, n.ref_id, n.cat_id, c.title as cat_title, n.deleted, n.created_at ' +
                         'FROM notes n ' +
                         'LEFT JOIN categories c ON n.cat_id = c.id ' +
                         'WHERE n.user_id = ? AND (n.ref_id is null OR n.updated = 1 OR n.deleted = 1)',
