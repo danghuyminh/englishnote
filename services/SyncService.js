@@ -1,6 +1,6 @@
 import {Sqlite} from "./DbService";
 import {NetInfo} from 'react-native';
-import {CategoryService} from "./CategoryService";
+import {Toast} from "native-base";
 
 export const NOTE_SYNC_REQUEST   = 'ASYNC_NOTE_SYNC_REQUEST';
 export const NOTE_SYNC_SUCCESS   = 'ASYNC_NOTE_SYNC_SUCCESS';
@@ -55,6 +55,13 @@ const SyncService = class
             } else {
                 await SyncService.syncFromLocalToHost(dispatch)
             }
+        } else {
+            Toast.show({
+                text: 'No internet connection',
+                buttonText: 'Hide',
+                type: "warning",
+                duration: 3000
+            });
         }
     }
 
@@ -67,6 +74,12 @@ const SyncService = class
         let done = 0;
 
         if (notes.length === 0) {
+            Toast.show({
+                text: 'Everything is up-to-date',
+                buttonText: 'Hide',
+                type: "success",
+                duration: 3000
+            });
             return true;
         }
 

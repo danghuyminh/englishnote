@@ -3,7 +3,7 @@ import {
     Body, Thumbnail, Icon,
     Container,
     Content, List, ListItem, Right, Left,
-    Text
+    Text, Button
 } from "native-base";
 import { connect } from 'react-redux'
 import {FlatList, View} from "react-native";
@@ -75,8 +75,12 @@ class Community extends React.Component {
                 <Body>
                     <Text>{data.item.name}</Text>
                     <Text note numberOfLines={1}>{data.item.email}</Text>
+                    <View style={{flex: 1, flexDirection: 'row'}}>
+                        <Icon active name="star" style={{color: '#0cb787', fontSize: 16, marginRight: 5}} />
+                        <Text style={{fontSize: 12}}>{data.item.synchronizedTimes ? data.item.synchronizedTimes : 0}</Text>
+                    </View>
                 </Body>
-                <Right style={{height:67.5}} >
+                <Right  >
                     <Icon name="arrow-forward" />
                 </Right>
             </ListItem>

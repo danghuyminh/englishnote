@@ -96,17 +96,20 @@ export function sqliteGetNote (state = initialState, action) {
             });
         case AUTH_SUCCESS:
         case NOTE_SYNC_SUCCESS:
-            return Object.assign({}, state, {
-                notes: [],
-                limit: 10,
-                offset: 0,
-                hasMore: false,
-                isLoadingMore: true,
-                isFetching: false,
-                isRefresh: true,
-                isFirstLoading: false,
-                forceReload: true
-            });
+            if (action.syncType === 'remote') {
+                return Object.assign({}, state, {
+                    notes: [],
+                    limit: 10,
+                    offset: 0,
+                    hasMore: false,
+                    isLoadingMore: false,
+                    isFetching: false,
+                    isRefresh: true,
+                    isFirstLoading: false,
+                    forceReload: true
+                });
+            }
+            return state;
         default:
             return state
     }

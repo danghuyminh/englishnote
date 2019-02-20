@@ -10,6 +10,7 @@ import {Sqlite} from "../../services/DbService";
 import HeaderDrawer from "../../components/HeaderDrawer";
 import SearchForm from "./SearchForm";
 import LoadingSynchronization from "../../components/LoadingSynchronization";
+import Config from "../../config";
 
 class NoteList extends React.Component {
 
@@ -26,9 +27,7 @@ class NoteList extends React.Component {
     });
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        console.log('Note List component did update');
        if (prevProps.categoryId !== this.props.categoryId) {
-           console.log('category changed---------------------------')
            this._scrollToTop();
            this.props.fetchNotes({isRefresh: true, keyword: prevState.keyword, categoryId: this.props.categoryId});
            this.setState({active: false})
@@ -92,7 +91,6 @@ class NoteList extends React.Component {
 
     syncLocalToHost = async () => {
         this.props.synchronizeLocalToRemote();
-        //this.props.synchronizeRemoteToLocal();
     };
 
     getNotes = async () => {
@@ -156,8 +154,8 @@ class NoteList extends React.Component {
                     <Button style={{ backgroundColor: '#34A34F' }} onPress={() => this.props.navigation.navigate('NoteCreate')}>
                         <Icon name="add" />
                     </Button>
-                    <Button onPress={this.syncLocalToHost} style={{ backgroundColor: '#DD5144' }}>
-                        <Icon type="Ionicons" name="ios-reorder" />
+                    <Button onPress={this.syncLocalToHost} style={{ backgroundColor: Config.themeColor }}>
+                        <Icon type="Ionicons" name="sync" />
                     </Button>
                 </Fab>
             </Container>
@@ -193,7 +191,6 @@ function mapDispatchToProps (dispatch) {
         fetchMoreNotes: (params) => dispatch(fetchMoreNotes(params)),
         deleteNote: (id) => dispatch(deleteNote(id)),
         synchronizeLocalToRemote: () => dispatch(synchronizeLocalToRemote()),
-        synchronizeRemoteToLocal: (uid) => dispatch(synchronizeRemoteToLocal(uid)),
         //resetNoteList: () => dispatch(resetNoteList()),
     }
 }
