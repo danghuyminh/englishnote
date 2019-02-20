@@ -206,7 +206,7 @@ const SyncService = class
                 if (user_id === auth.currentUser.uid) {
                     await SyncService.db.collection("notes").doc(noteRefId).set(data);
                 } else {
-                    const newNoteDoc = await SyncService.db.collection("notes").add(data);
+                    const newNoteDoc = await SyncService.db.collection("notes").add({...data, created_at: new Date()});
                     await SyncService.db.collection("notes").doc(newNoteDoc.id).update({ref_id: newNoteDoc.id});
                     noteRefId = newNoteDoc.id;
                 }
