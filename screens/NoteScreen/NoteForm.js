@@ -27,7 +27,7 @@ class NoteForm extends Component {
                             multiline={true}
                             numberOfLines={6}
                             label="Note explanation"
-                            style={{height: 210}}
+                            style={{height: 220}}
                             validate={[ required ]}
                         />
 

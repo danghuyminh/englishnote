@@ -10,6 +10,7 @@ import {UserService} from "../../services/UserService";
 import {GlobalStyles} from "../../helpers/Styles";
 import LoadingSynchronization from "../../components/LoadingSynchronization";
 import {synchronizeRemoteToLocal} from "../../redux/actions/NoteAction";
+import NoNotesFound from "../../components/NoNotesFound";
 
 class CommunityView extends React.Component {
 
@@ -79,13 +80,7 @@ class CommunityView extends React.Component {
                         onRefresh={this.onRefresh}
                         refreshing={isFetching}
                         keyExtractor = {(item) => item.ref_id.toString()}
-                        ListEmptyComponent={() => {
-                            return (
-                                <View>
-                                    <Text>No notes found!</Text>
-                                </View>
-                            )
-                        }}
+                        ListEmptyComponent={NoNotesFound}
                         ListFooterComponent={() => {
                             return (
                                 (isFetching && isLoadMore) &&

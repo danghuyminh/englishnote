@@ -3,6 +3,7 @@ import NoteStackNavigator from "../NoteScreen/index.js";
 import ProfileNavigator from "../ProfileScreen/index";
 import CommunityNavigator from "../CommunityScreen/index";
 import CategoryNavigator from "../CategoryScreen/index";
+import SettingNavigator from "../SettingScreen/index";
 import Logout from "../AuthScreen/Logout";
 import SideBar from "../../components/SideBar/SideBar.js";
 import { createDrawerNavigator } from "react-navigation";
@@ -35,7 +36,7 @@ const HomeScreenRouter = createDrawerNavigator(
             }
         },
         Settings: {
-            screen: ProfileNavigator,
+            screen: SettingNavigator,
             navigationOptions: {
                 drawerIcon: ({ tintColor }) => (<Icon type="MaterialCommunityIcons" name='cellphone-settings-variant' style={{ color: tintColor, width: 32 }} />),
             }

@@ -4,6 +4,7 @@ import InitReducer from "./InitReducer";
 import * as NoteReducers from "./NoteReducer";
 import * as CategoryReducers from "./CategoryReducer";
 import * as UserReducers from "./UserReducer";
+import * as SettingReducers from "./SettingReducer";
 
 const reducers = {
     AuthReducer,
@@ -11,7 +12,8 @@ const reducers = {
     AsyncReducer,
     ...CategoryReducers,
     ...NoteReducers,
-    ...UserReducers
+    ...UserReducers,
+    ...SettingReducers
 };
 
 export default reducers

@@ -11,6 +11,7 @@ import HeaderDrawer from "../../components/HeaderDrawer";
 import SearchForm from "./SearchForm";
 import LoadingSynchronization from "../../components/LoadingSynchronization";
 import Config from "../../config";
+import {SettingService} from "../../services/SettingService";
 
 class NoteList extends React.Component {
 
@@ -94,7 +95,7 @@ class NoteList extends React.Component {
     };
 
     getNotes = async () => {
-        const notes = await Sqlite.selectNotes({limit: 10, offset: 0});
+        const notes = await Sqlite.selectNotes({limit: 2, offset: 0});
         console.log('data---------------------------')
         console.log(notes)
     };
@@ -107,7 +108,8 @@ class NoteList extends React.Component {
 
     render() {
         console.log('render NoteList');
-
+        //this.getNotes();
+        //SettingService.updateSetting('auto_sync');
         const {
             notes, hasMore, offset, total, limit, isRefresh,
             isFetching, isLoadingMore, isFirstLoading,

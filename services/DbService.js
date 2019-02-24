@@ -12,6 +12,8 @@ export class Sqlite {
                             'explanation text,' +
                             'cat_id integer,' +
                             'ref_id varchar(255),' +
+                            'ref_user_id varchar(255),' +
+                            'ref_user_name varchar(255),' +
                             'updated tinyint,' +
                             'deleted tinyint,' +
                             'created_at datetime,' +
@@ -24,6 +26,15 @@ export class Sqlite {
                         'id integer primary key not null, ' +
                         'title varchar(255) not null, ' +
                         'ref_id varchar(255),' +
+                        'user_id varchar(128) not null' +
+                        ');',
+                        []
+                    );
+                    tx.executeSql(
+                        'CREATE TABLE IF NOT EXISTS settings (' +
+                        'id integer primary key not null, ' +
+                        'name varchar(128) not null, ' +
+                        'value varchar(255),' +
                         'user_id varchar(128) not null' +
                         ');',
                         []
@@ -209,7 +220,7 @@ export class Sqlite {
         return new Promise((resolve, reject) => {
             Sqlite.db.transaction(tx => {
                     tx.executeSql(
-                        'SELECT n.id, n.title, n.explanation, c.title as cat_title, n.created_at FROM notes as n' + leftJoin + whereClause + ' ORDER BY n.id DESC LIMIT ? OFFSET ?',
+                        'SELECT n.id, n.title, n.explanation, c.title as cat_title, n.created_at, n.user_id, n.ref_user_id, n.ref_user_name FROM notes as n' + leftJoin + whereClause + ' ORDER BY n.id DESC LIMIT ? OFFSET ?',
                         [
                             auth.currentUser.uid,
                             params.limit,
@@ -267,6 +278,17 @@ export class Sqlite {
                             reject(error)
                         }
                     );
+                    tx.executeSql(
+                        'DROP TABLE IF EXISTS settings',
+                        [],
+                        (txt, result) => {
+
+                        },
+                        (txt, error) => {
+                            console.log(error)
+                            reject(error)
+                        }
+                    );
                 }
             );
 
@@ -308,6 +330,8 @@ export class Sqlite {
                         'explanation text,' +
                         'cat_id integer,' +
                         'ref_id varchar(255),' +
+                        'ref_user_id varchar(255),' +
+                        'ref_user_name varchar(255),' +
                         'created_at datetime,' +
                         'updated tinyint,' +
                         'deleted tinyint,' +

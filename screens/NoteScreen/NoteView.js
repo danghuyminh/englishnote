@@ -66,6 +66,14 @@ class NoteView extends React.Component {
                                 </Button>
                             </Left>
                         </CardItem>
+                        <CardItem>
+                            <Left>
+                                <Button transparent>
+                                    <Icon type="MaterialCommunityIcons" size={24} name="sync" style={styles.syncUsername} />
+                                    <Text style={styles.syncUsername}>{data.ref_user_name}</Text>
+                                </Button>
+                            </Left>
+                        </CardItem>
                     </Card>
                 </ScrollView>
                 <KeyboardAccessory>
@@ -115,5 +123,8 @@ const styles = StyleSheet.create({
         fontSize: 18,
         textAlign: 'justify',
         lineHeight: 25,
+    },
+    syncUsername: {
+        color: '#f48f42'
     }
 });

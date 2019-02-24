@@ -197,6 +197,7 @@ const SyncService = class
         try {
             let data = {
                 ...params,
+                user_name: auth.currentUser.displayName,
                 cat_ref_id: catRefId === 'uncategorized' ? null : catRefId
             };
 
@@ -205,11 +206,12 @@ const SyncService = class
                 const {user_id} = params;
                 if (user_id === auth.currentUser.uid) {
                     await SyncService.db.collection("notes").doc(noteRefId).set(data);
-                } else {
+                }
+                /*else {
                     const newNoteDoc = await SyncService.db.collection("notes").add({...data, created_at: new Date()});
                     await SyncService.db.collection("notes").doc(newNoteDoc.id).update({ref_id: newNoteDoc.id});
                     noteRefId = newNoteDoc.id;
-                }
+                }*/
                 await SyncService.updateNoteRefId(noteId, noteRefId);
 
             // If noteRefId does not exist, create a new instance on firebase
@@ -230,12 +232,14 @@ const SyncService = class
         return new Promise((resolve, reject) => {
             Sqlite.db.transaction(tx => {
                     tx.executeSql(
-                        'INSERT INTO notes (title, explanation, cat_id, ref_id, user_id, created_at) VALUES (?, ?, ?, ?, ?, DateTime("now")) ',
+                        'INSERT INTO notes (title, explanation, cat_id, ref_id, ref_user_id, ref_user_name, user_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, DateTime("now")) ',
                         [
                             params.title,
                             params.explanation,
                             params.cat_id,
                             params.ref_id,
+                            params.user_id,
+                            params.user_name,
                             auth.currentUser.uid,
 
                         ],
@@ -309,7 +313,7 @@ const SyncService = class
                         'SELECT n.id, n.title, n.explanation, n.user_id, n.ref_id, n.cat_id, c.title as cat_title, n.deleted, n.created_at ' +
                         'FROM notes n ' +
                         'LEFT JOIN categories c ON n.cat_id = c.id ' +
-                        'WHERE n.user_id = ? AND (n.ref_id is null OR n.updated = 1 OR n.deleted = 1)',
+                        'WHERE n.user_id = ? AND n.ref_user_id = n.user_id AND (n.ref_id is null OR n.updated = 1 OR n.deleted = 1)',
                         [
                             auth.currentUser.uid
                         ],
