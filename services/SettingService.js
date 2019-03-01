@@ -13,8 +13,14 @@ function getSettings() {
                     'SELECT * FROM settings WHERE user_id = ?',
                     [auth.currentUser.uid],
                     (txt, result) => {
+                        let settings = result.rows._array;
+                        let modifiedSettings = {};
+                        settings.forEach(setting => {
+                            modifiedSettings[setting.name] = setting.value;
+                        });
+
                         resolve({
-                            settings: result.rows._array,
+                            ...modifiedSettings,
                         })
                     },
                     (txt, error) => {
@@ -28,7 +34,7 @@ function getSettings() {
 
 function updateSetting(name, value) {
    return new Promise((resolve, reject) => {
-       getSetting(name).then((setting) => {
+       getSetting(name, true).then((setting) => {
            if (setting === false) {
                Sqlite.db.transaction(tx => {
                        tx.executeSql(
@@ -73,7 +79,7 @@ function updateSetting(name, value) {
    })
 }
 
-function getSetting(name) {
+function getSetting(name, returnObject) {
     return new Promise((resolve, reject) => {
         Sqlite.db.transaction(tx => {
                 tx.executeSql(
@@ -84,7 +90,10 @@ function getSetting(name) {
                     (txt, result) => {
                         if (result.rows.length) {
                             let {0: setting} = result.rows._array;
-                            resolve(setting)
+                            if (returnObject)
+                                resolve(setting);
+                            else
+                                resolve(setting.value)
                         }
                         resolve(false)
                     },

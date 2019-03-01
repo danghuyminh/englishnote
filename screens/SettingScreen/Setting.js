@@ -1,19 +1,20 @@
-import React from "react";
-import { Container, Content, Text, ListItem, Left, Button, Icon, Body, Right, Switch} from "native-base";
+import React, {PureComponent} from "react";
+import {Switch} from 'react-native';
+import { Container, Content, Text, ListItem, Left, Button, Icon, Body, Right} from "native-base";
 import HeaderDrawer from "../../components/HeaderDrawer";
-import {getSettings, updateSetting} from "../../redux/actions/SettingAction";
+import {getSettings, updateSetting, updateAutoSync} from "../../redux/actions/SettingAction";
 import connect from "react-redux/es/connect/connect";
 import Config from "../../config";
-import {SettingService} from "../../services/SettingService";
 
-class Setting extends React.Component {
+class Setting extends PureComponent {
 
     componentDidMount() {
         this.props.getSettings();
     }
 
-    toggleSwitch = (value) => {
-        this.props.updateSetting('autoSync', value ? '1' : '0');
+    toggleSwitch = async (value) => {
+        this.props.changeAutoSync(value ? '1' : '0');
+        await this.props.updateSetting('autoSync', value ? '1' : '0');
     };
 
     render() {
@@ -30,7 +31,7 @@ class Setting extends React.Component {
                             </Button>
                         </Left>
                         <Body>
-                        <Text>Auto synchronize notes</Text>
+                            <Text>Auto synchronize notes</Text>
                         </Body>
                         <Right>
                             <Switch onValueChange={this.toggleSwitch} value={autoSync} />
@@ -42,14 +43,8 @@ class Setting extends React.Component {
     }
 }
 
-
 function mapStateToProps (state) {
-    const {settings, isFetching} = state.sqliteGetSetting;
-    let modifiedSettings = {};
-    settings.forEach(setting => {
-        modifiedSettings[setting.name] = setting.value;
-    });
-    const {autoSync} = modifiedSettings;
+    const {autoSync, isFetching} = state.sqliteGetSetting;
 
     return {
         autoSync: (autoSync !== '0'),
@@ -60,7 +55,8 @@ function mapStateToProps (state) {
 function mapDispatchToProps (dispatch) {
     return {
         getSettings: () => dispatch(getSettings()),
-        updateSetting: (name, value) => dispatch(updateSetting(name, value))
+        updateSetting: (name, value) => dispatch(updateSetting(name, value)),
+        changeAutoSync: (value) => dispatch(updateAutoSync(value))
     }
 }
 

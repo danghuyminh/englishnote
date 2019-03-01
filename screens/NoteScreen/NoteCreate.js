@@ -7,6 +7,7 @@ import {createNote, synchronizeLocalToRemote} from "../../redux/actions/NoteActi
 import NoteForm from "./NoteForm";
 import HeaderGoBack from "../../components/HeaderGoBack";
 import {getCategories} from "../../redux/actions/CategoryAction";
+import {getSetting} from "../../redux/actions/SettingAction";
 import {Keyboard, View} from "react-native";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import KeyboardAccessory from "react-native-sticky-keyboard-accessory";
@@ -62,9 +63,11 @@ class NoteCreate extends React.Component {
             duration: 5000,
             type: "success"
         });
-        this.syncLocalToHost().then(() => {
-            console.log('start synchronizing after create new note');
-        });
+        if (!!+await this.props.getSetting('autoSync')) {
+            this.syncLocalToHost().then(() => {
+                console.log('start synchronizing after create new note');
+            });
+        }
         this.props.navigation.navigate("NoteList")
     };
 
@@ -120,6 +123,7 @@ function mapDispatchToProps (dispatch) {
         getCategories: () => dispatch(getCategories()),
         submitForm: () => dispatch(submit('form-note-create')),
         synchronizeLocalToRemote: () => dispatch(synchronizeLocalToRemote()),
+        getSetting: (name) => dispatch(getSetting(name)),
     }
 }
 

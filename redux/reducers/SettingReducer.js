@@ -3,7 +3,7 @@ import {
 } from '../actions/SettingAction'
 
 const initialState = {
-    settings: [],
+    autoSync: true,
     isFetching: false
 };
 
@@ -16,9 +16,15 @@ export function sqliteGetSetting (state = initialState, action) {
             });
         case SETTING_SUCCESS:
         case SETTING_UPDATE_SUCCESS:
+            console.log('reducer <-------------------');
+            console.log(action.data)
             return Object.assign({}, state, {
                 ...action.data,
                 isFetching: false,
+            });
+        case 'SETTING_CHANGE_AUTOSYNC':
+            return Object.assign({}, state, {
+                autoSync: action.value
             });
         default:
             return state
