@@ -8,7 +8,7 @@ class Loading extends React.Component {
     componentDidMount() {
         this.props.initialize().then(() => {
             fire.auth().onAuthStateChanged(user => {
-                this.props.navigation.navigate(user ? 'Main' : 'SignUp')
+                this.props.navigation.navigate(user ? 'Main' : 'Login')
             })
         }).catch(error => {
             console.log(error)

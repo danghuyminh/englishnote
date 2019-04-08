@@ -1,6 +1,6 @@
 import React from 'react'
-import { StyleSheet } from 'react-native'
-import {Body, Container, Content, Form, Header, Input, Item, Label, Title, Button, Text} from "native-base";
+import { StyleSheet, View } from 'react-native'
+import {Body, Container, Content, Form, Header, Title, Button, Text, Icon} from "native-base";
 import {loginWithGoogle} from '../../redux/actions/AuthAction'
 import Spinner from 'react-native-loading-spinner-overlay';
 import connect from "react-redux/es/connect/connect";
@@ -34,7 +34,7 @@ class Login extends React.Component {
             <Container>
                 <Header>
                     <Body>
-                    <Title>Login2</Title>
+                    <Title>Login</Title>
                     </Body>
                 </Header>
                 <Content contentContainerStyle={styles.container}>
@@ -44,36 +44,43 @@ class Login extends React.Component {
                         textStyle={StyleSheet.flatten(styles.spinnerTextStyle)}
                     />
                     <Form>
-                        <Item>
-                            <Text>
-                                {this.state.errorMessage}
-                            </Text>
-                        </Item>
-                        <Item>
-                            <Input placeholder="Email"
-                                   onChangeText={email => this.setState({ email })}
-                                   value={this.state.email}
-                            />
-                        </Item>
-                        <Item last>
-                            <Input placeholder="Password"
-                                   secureTextEntry={true}
-                                   onChangeText={password => this.setState({ password })}
-                                   value={this.state.password}
-                            />
-                        </Item>
-                        <Button full style={{marginTop: 10}} onPress={this.handleLogin}>
-                            <Text>Login</Text>
+
+                    <Text>
+                        {this.state.errorMessage}
+                    </Text>
+
+                   {/* <Item>
+                        <Input placeholder="Email"
+                               onChangeText={email => this.setState({ email })}
+                               value={this.state.email}
+                        />
+                    </Item>
+                    <Item last>
+                        <Input placeholder="Password"
+                               secureTextEntry={true}
+                               onChangeText={password => this.setState({ password })}
+                               value={this.state.password}
+                        />
+                    </Item>*/}
+                   {/* <Button full style={{marginTop: 10}} onPress={this.handleLogin}>
+                        <Text>Login</Text>
+                    </Button>*/}
+                    <View style={{padding: '5%'}}>
+                        <Button full rounded style={{marginTop: 10}} onPress={this.handleLoginWithGoogle}>
+                            <Icon type="FontAwesome" name="facebook" />
+                            <Text>Login with Facebook</Text>
                         </Button>
-                        <Button full style={{marginTop: 10}} onPress={this.handleLoginWithGoogle}>
+                        <Button full rounded danger style={{marginTop: 10}} onPress={this.handleLoginWithGoogle}>
+                            <Icon type="FontAwesome" name="google" />
                             <Text>Login with Google</Text>
                         </Button>
-                        <Item inlineLabel>
-                            <Label>Don't have an account?</Label>
-                            <Button success style={{marginTop: 10}} onPress={() => this.props.navigation.navigate('SignUp')}>
-                                <Text>SignUp</Text>
-                            </Button>
-                        </Item>
+                    </View>
+                    {/*<Item inlineLabel>
+                        <Label>Don't have an account?</Label>
+                        <Button success style={{marginTop: 10}} onPress={() => this.props.navigation.navigate('SignUp')}>
+                            <Text>SignUp</Text>
+                        </Button>
+                    </Item>*/}
                     </Form>
                 </Content>
             </Container>
