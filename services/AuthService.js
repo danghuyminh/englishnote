@@ -1,10 +1,11 @@
 export const AuthService = {
-    authorizeWithGoogle,
     loginWithGoogle,
+    loginWithFacebook
 };
 
 async function loginWithGoogle() {
     const result = await authorizeWithGoogle();
+    console.log(result);
     if (result['error']) {
        throw result['message'];
     } else {
@@ -15,9 +16,10 @@ async function loginWithGoogle() {
 const authorizeWithGoogle = async () => {
     try {
         const result = await Expo.Google.logInAsync({
-            androidClientId: "81512437678-egb3j88rtp27c85eboc0vdcpa23a44rn.apps.googleusercontent.com",
+            androidClientId : "81512437678-egb3j88rtp27c85eboc0vdcpa23a44rn.apps.googleusercontent.com",
             scopes: ['profile', 'email'],
         });
+        console.log(result);
         if (result.type === 'success') {
             return {error: false, ...result };
         } else {
@@ -30,6 +32,7 @@ const authorizeWithGoogle = async () => {
 
 const googleAuthenticate = (idToken, accessToken) => {
     const credential = fire.auth.GoogleAuthProvider.credential(idToken, accessToken);
+
     return auth.setPersistence(fire.auth.Auth.Persistence.LOCAL)
         .then(function() {
             // Existing and future Auth states are now persisted in the current

@@ -1,6 +1,7 @@
 import React from "react";
 import NoteStackNavigator from "../NoteScreen/index.js";
 import ProfileNavigator from "../ProfileScreen/index";
+import AboutNavigator from "../AboutScreen/index";
 import CommunityNavigator from "../CommunityScreen/index";
 import CategoryNavigator from "../CategoryScreen/index";
 import SettingNavigator from "../SettingScreen/index";
@@ -42,7 +43,7 @@ const HomeScreenRouter = createDrawerNavigator(
             }
         },
         About: {
-            screen: ProfileNavigator,
+            screen: AboutNavigator,
             navigationOptions: {
                 drawerIcon: ({ tintColor }) => (<Icon type="MaterialCommunityIcons" name='information-outline' style={{ color: tintColor, width: 32 }} />),
             }

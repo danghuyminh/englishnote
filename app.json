@@ -24,7 +24,7 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "com.holyapp.englishnote"
+      "package": "host.exp.exponent"
     }
   }
 }

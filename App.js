@@ -1,6 +1,6 @@
 import React from 'react';
 import {Platform, StatusBar, StyleSheet, View} from 'react-native';
-import {AppLoading, Asset, Font, Icon} from 'expo';
+import {AppLoading, Asset, Font} from 'expo';
 import { Provider } from 'react-redux';
 import {store} from './redux/configureStore'
 import * as firebase from 'firebase';
@@ -32,7 +32,7 @@ export default class App extends React.Component {
         global['auth'] = firebase.auth();
         const firestore = firebase.firestore();
         const settings = {
-            timestampsInSnapshots: true
+           //timestampsInSnapshots: true
         };
         firestore.settings(settings);
         global['firestore'] = firestore;

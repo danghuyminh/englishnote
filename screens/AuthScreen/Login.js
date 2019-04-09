@@ -1,7 +1,7 @@
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import {Body, Container, Content, Form, Header, Title, Button, Text, Icon} from "native-base";
-import {loginWithGoogle} from '../../redux/actions/AuthAction'
+import {loginWithGoogle, loginWithFacebook} from '../../redux/actions/AuthAction'
 import Spinner from 'react-native-loading-spinner-overlay';
 import connect from "react-redux/es/connect/connect";
 import {UserService} from "../../services/UserService";
@@ -19,6 +19,11 @@ class Login extends React.Component {
 
     handleLoginWithGoogle = async () => {
         await this.props.loginWithGoogle();
+        await this.storeUserInfo();
+    };
+
+    handleLoginWithFacebook = async () => {
+        await this.props.loginWithFacebook();
         await this.storeUserInfo();
     };
 
@@ -66,7 +71,7 @@ class Login extends React.Component {
                         <Text>Login</Text>
                     </Button>*/}
                     <View style={{padding: '5%'}}>
-                        <Button full rounded style={{marginTop: 10}} onPress={this.handleLoginWithGoogle}>
+                        <Button full rounded style={{marginTop: 10}} onPress={this.handleLoginWithFacebook}>
                             <Icon type="FontAwesome" name="facebook" />
                             <Text>Login with Facebook</Text>
                         </Button>
@@ -114,7 +119,8 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
     return {
-        loginWithGoogle: () => dispatch(loginWithGoogle())
+        loginWithGoogle: () => dispatch(loginWithGoogle()),
+        loginWithFacebook: () => dispatch(loginWithFacebook()),
     }
 }
 
