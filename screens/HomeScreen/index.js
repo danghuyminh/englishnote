@@ -71,6 +71,7 @@ const HomeScreenRouter = createDrawerNavigator(
                 return <Icon type="FontAwesome" name="home" />;
             }
         },
+        edgeWidth: 60,
         initialRouteName: "Notes"
     }
 );

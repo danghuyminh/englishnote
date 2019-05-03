@@ -1,15 +1,12 @@
 import React from 'react';
 import {Platform, StatusBar, StyleSheet, View} from 'react-native';
 import {AppLoading, Asset, Font} from 'expo';
-import { Provider } from 'react-redux';
+import {Provider} from 'react-redux';
 import {store} from './redux/configureStore'
 import * as firebase from 'firebase';
 import 'firebase/firestore';
 import InitScreen from "./screens/LoadingScreen";
 import {Root} from 'native-base';
-import {Sqlite} from "./services/DbService";
-import sample30 from "./screens/NoteScreen/sample30";
-import sampleCat from "./screens/NoteScreen/sampleCat";
 import "./helpers/IgnoreTimerWarning";
 
 export default class App extends React.Component {
@@ -30,12 +27,7 @@ export default class App extends React.Component {
         firebase.initializeApp(config);
         global['fire'] = firebase;
         global['auth'] = firebase.auth();
-        const firestore = firebase.firestore();
-        const settings = {
-           //timestampsInSnapshots: true
-        };
-        firestore.settings(settings);
-        global['firestore'] = firestore;
+        global['firestore'] = firebase.firestore();
         //console.log(Expo.FileSystem.documentDirectory);
 
         //Sqlite.deleteSpecificNotes();

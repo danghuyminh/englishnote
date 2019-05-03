@@ -57,17 +57,17 @@ async function loginWithFacebook() {
 
 const authorizeWithFacebook = async () => {
     try {
-        const result = await Expo.Facebook.logInWithReadPermissionsAsync({
-            androidClientId: "81512437678-egb3j88rtp27c85eboc0vdcpa23a44rn.apps.googleusercontent.com",
-            scopes: ['public_profile'],
-        });
+        const result = await Expo.Facebook.logInWithReadPermissionsAsync('348052389176970');
         if (result.type === 'success') {
             return {error: false, ...result };
         } else {
             return {error: true, message: 'Authorization cancelled'};
         }
     } catch (error) {
-        return {error: true, message: error.message};
+        console.log('the error is---------');
+        console.log(error)
+        console.log('---------')
+        return {error: true, message: error};
     }
 };
 

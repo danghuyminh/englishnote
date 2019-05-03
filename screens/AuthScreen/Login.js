@@ -7,7 +7,7 @@ import connect from "react-redux/es/connect/connect";
 import {UserService} from "../../services/UserService";
 
 class Login extends React.Component {
-    state = { email: '', password: '', errorMessage: null }
+    state = { email: '', password: '', errorMessage: null };
 
     handleLogin = () => {
         auth.signInWithEmailAndPassword(this.state.email, this.state.password).catch((error) => {
@@ -23,8 +23,15 @@ class Login extends React.Component {
     };
 
     handleLoginWithFacebook = async () => {
-        await this.props.loginWithFacebook();
-        await this.storeUserInfo();
+        try {
+            await this.props.loginWithFacebook();
+            await this.storeUserInfo();
+        } catch (error) {
+            console.log(error);
+            this.setState({
+                errorMessage: error.toString()
+            })
+        }
     };
 
     storeUserInfo = async () => {
