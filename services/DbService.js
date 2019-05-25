@@ -107,12 +107,13 @@ export class Sqlite {
         return new Promise((resolve, reject) => {
             Sqlite.db.transaction(tx => {
                     tx.executeSql(
-                        'INSERT INTO notes (title, explanation, cat_id, created_at, user_id) VALUES (?, ?, ?, DateTime("now"), ?) ',
+                        'INSERT INTO notes (title, explanation, cat_id, created_at, user_id, ref_user_id) VALUES (?, ?, ?, DateTime("now"), ?, ?) ',
                         [
                             params.title,
                             params.explanation,
                             params.cat_id,
                             auth.currentUser.uid,
+                            auth.currentUser.uid
 
                         ],
                         (txt, result) => {

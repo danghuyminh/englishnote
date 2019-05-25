@@ -1,3 +1,5 @@
+import {Google, Facebook} from 'expo';
+
 export const AuthService = {
     loginWithGoogle,
     loginWithFacebook
@@ -15,7 +17,7 @@ async function loginWithGoogle() {
 
 const authorizeWithGoogle = async () => {
     try {
-        const result = await Expo.Google.logInAsync({
+        const result = await Google.logInAsync({
             androidClientId : "81512437678-egb3j88rtp27c85eboc0vdcpa23a44rn.apps.googleusercontent.com",
             scopes: ['profile', 'email'],
         });
@@ -57,7 +59,7 @@ async function loginWithFacebook() {
 
 const authorizeWithFacebook = async () => {
     try {
-        const result = await Expo.Facebook.logInWithReadPermissionsAsync('348052389176970');
+        const result = await Expo.Facebook.logInWithReadPermissionsAsync('277204403058744');
         if (result.type === 'success') {
             return {error: false, ...result };
         } else {
